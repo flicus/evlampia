@@ -1,0 +1,91 @@
+<?xml version='1.0' encoding='UTF-8'?><!-- Published by JAX-WS RI at http://jax-ws.dev.java.net. RI's version is Metro/2.1.1-b09 (branches/2.1-6834; 2011-07-16T17:14:48+0000) JAXWS-RI/2.2.5-promoted-b04 JAXWS/2.2. --><definitions xmlns:tns="http://russianpost.org/operationhistory" xmlns:msg="http://russianpost.org/operationhistory/data" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://schemas.xmlsoap.org/wsdl/" name="OperationHistory" targetNamespace="http://russianpost.org/operationhistory">
+
+    <types>
+        <xsd:schema>
+            <xsd:import schemaLocation="http://voh.russianpost.ru:8080/niips-operationhistory-web/OperationHistory?xsd=1" namespace="http://russianpost.org/operationhistory/data"/>
+        </xsd:schema>
+    </types>
+
+    <message name="getOperationHistoryIn">
+        <part name="historyRequest" element="msg:OperationHistoryRequest"/>
+        <part name="AuthorizationHeader" element="msg:AuthorizationHeader"/>
+    </message>
+
+    <message name="getOperationHistoryOut">
+        <part name="messagePart" element="msg:OperationHistoryData"/>
+    </message>
+
+    <message name="AuthorizationFault">
+        <part name="Reason" element="msg:AuthorizationFaultReason"/>
+    </message>
+
+    <message name="OperationHistoryFault">
+        <part name="Reason" element="msg:OperationHistoryFaultReason"/>
+    </message>
+
+    <message name="UpdateOperationDataRequest">
+    	<part name="UpdateRequest" element="msg:UpdateOperationRequest"/>
+    	<part name="AuthorizationHeader" element="msg:AuthorizationHeader"/>
+    </message>
+    
+    <message name="UpdateOperationDataResponse">
+    	<part name="messagePart" element="msg:OperationHistoryData"/>
+    </message>
+    
+    <portType name="OperationHistoryInterface">
+        <operation name="GetOperationHistory">
+            <input message="tns:getOperationHistoryIn"/>
+            <output message="tns:getOperationHistoryOut"/>
+            <fault name="AuthorizationFault" message="tns:AuthorizationFault"/>
+            <fault name="OperationHistoryFault" message="tns:OperationHistoryFault"/>
+        </operation>
+        <operation name="UpdateOperationData">
+        	<input message="tns:UpdateOperationDataRequest"/>
+        	<output message="tns:UpdateOperationDataResponse"/>
+ 			<fault name="AuthorizationFault" message="tns:AuthorizationFault"/>	
+            <fault name="OperationHistoryFault" message="tns:OperationHistoryFault"/>        	
+        </operation>
+    </portType>
+
+    <binding name="WebOperationHistory" type="tns:OperationHistoryInterface">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="GetOperationHistory">
+            <soap:operation style="document"/>
+            <input>
+                <soap:header message="tns:getOperationHistoryIn" part="AuthorizationHeader" use="literal"/>
+                <soap:body use="literal" parts="historyRequest"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+            <fault name="AuthorizationFault">
+                <soap:fault name="AuthorizationFault" use="literal"/>
+            </fault>
+            <fault name="OperationHistoryFault">
+                <soap:fault name="OperationHistoryFault" use="literal"/>
+            </fault>
+        </operation>
+        <operation name="UpdateOperationData">
+            <soap:operation style="document"/>
+            <input>
+                <soap:header message="tns:UpdateOperationDataRequest" part="AuthorizationHeader" use="literal"/>
+                <soap:body use="literal" parts="UpdateRequest"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+            <fault name="AuthorizationFault">
+                <soap:fault name="AuthorizationFault" use="literal"/>
+            </fault>
+            <fault name="OperationHistoryFault">
+                <soap:fault name="OperationHistoryFault" use="literal"/>
+            </fault>
+        </operation>        
+    </binding>
+
+    <service name="OperationHistory">
+        <port name="OperationHistory" binding="tns:WebOperationHistory">
+            <soap:address location="http://voh.russianpost.ru:8080/niips-operationhistory-web/OperationHistory"/>
+        </port>
+    </service>
+</definitions>

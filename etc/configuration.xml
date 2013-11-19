@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+    Document   : configuration.xml
+    Created on : 31 March 2011, 22:20
+    Author     : flic
+    Description:
+        Purpose of the document follows.
+-->
+
+<configuration>
+    <!-- прокси пока не работает ;) не включать -->
+
+    <jabber>
+        <botName>Vasya</botName>
+        <botNick>Евлампия</botNick>
+        <jabberServer>127.0.0.1</jabberServer>
+        <jabberId>bot</jabberId>
+        <!--jabberPassword>ljujybvtyzrbhgbx</jabberPassword-->
+        <jabberPassword>123</jabberPassword>
+        <rooms>
+            <room>
+                <name>test@conference.koko</name>
+                <modules>
+                    <module>history</module>
+                </modules>
+            </room>
+        </rooms>
+    </jabber>
+    <search>
+        <indexDirectory>d:\tmp\lucene\index</indexDirectory>
+        <urlPrefix></urlPrefix>
+        <port>8080</port>
+        <webRoot>d:\tmp\webroot_eva</webRoot>
+    </search>
+
+    <logsPath>d:\tmp\lucene\logs</logsPath>
+
+    <dataBaseConfig>
+        <driver>org.postgresql.Driver</driver>
+        <host>localhost</host>
+        <database>eva</database>
+        <user>postgres</user>
+        <password>fghbjhb77</password>
+        <maxConnections>10</maxConnections>
+    </dataBaseConfig>
+    <dynDns>
+        <domainName>schors.zapto.org</domainName>
+        <userName>flicus@gmail.com</userName>
+        <password>fghbjhb77</password>
+    </dynDns>
+
+</configuration>
