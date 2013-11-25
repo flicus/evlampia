@@ -52,21 +52,16 @@ public class Main {
         } else fileToRead = "configuration.xml";
 
         ConfigurationManager.getInstance().readConfiguration(fileToRead);
-        CommandManager cmdm = new CommandManagerImpl();
-        cmdm.registerCommands(ConfigurationManager.getInstance().getConfiguration());
+//        CommandManager cmdm = new CommandManagerImpl();
+//        cmdm.registerCommands(ConfigurationManager.getInstance().getConfiguration());
 
-        URL url = null;
-        try {
-            url = new URL("http://ursa-tm.ru/forum/index.php?/rss/forums/1-%D1%83%D1%81%D0%B0%D0%B4%D1%8C%D0%B1%D0%B0-%D1%83%D1%80%D1%81%D1%8B/");
-        } catch (MalformedURLException ex) {
-            log.error(ex, ex);
-        }
         Directory d = null;
         try {
             d = FSDirectory.open(new File(ConfigurationManager.getInstance().getConfiguration().getSearch().getIndexDirectory()));
         } catch (IOException ex) {
             log.error(ex, ex);
         }
+        SearchManager.getInstanse().init(d);
 
 
         final WebServer server;
@@ -82,11 +77,8 @@ public class Main {
                 EvaExecutors.getInstance().getExecutor().shutdownNow();
                 SearchManager.getInstanse().shutDown();
                 DAOManager.getInstance().shutDown();
-
             }
         });
-
-        SearchManager.getInstanse().init(d);
 
         try {
             server = new WebServer();
@@ -97,6 +89,13 @@ public class Main {
 
         jbot.connect();
         jbot.joinRooms();
+
+        URL url = null;
+        try {
+            url = new URL("http://ursa-tm.ru/forum/index.php?/rss/forums/1-%D1%83%D1%81%D0%B0%D0%B4%D1%8C%D0%B1%D0%B0-%D1%83%D1%80%D1%81%D1%8B/");
+        } catch (MalformedURLException ex) {
+            log.error(ex, ex);
+        }
         jbot.startFeedReader(url);
         //jbot.startTwittor();
         jbot.run();

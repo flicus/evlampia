@@ -1,5 +1,6 @@
 package org.schors.evlampia.commands;
 
+import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.schors.evlampia.FeedReader;
 import org.schors.evlampia.core.Command;
 import org.schors.evlampia.core.CommandContext;
@@ -25,7 +26,9 @@ import org.schors.evlampia.core.Jbot;
 public class RssShutUpCmd extends Command {
     @Override
     public void execute(CommandContext context) throws Exception {
+        MultiUserChat muc = (MultiUserChat) context.getFacilities().get(Jbot.F_MUC);
         FeedReader feedReader = (FeedReader) context.getFacilities().get(Jbot.F_FEED_READER);
         feedReader.setSilent(!feedReader.isSilent());
+        muc.sendMessage(feedReader.isSilent() ? "Молчу, молчу" : "Вот теперь наговорюсь!");
     }
 }

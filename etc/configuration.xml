@@ -53,7 +53,7 @@
     <cmds>
         <cmd>
             <cmdClass>org.schors.evlampia.commands.FlushLogCmd</cmdClass>
-            <shortDescription> сохранение лога</shortDescription>
+            <shortDescription>!л, !лог : сохранение лога</shortDescription>
             <longDescription>Сохранить лог из внутреннего кэша на диск</longDescription>
             <prefixes>
                 <prefix>!л</prefix>
@@ -62,7 +62,7 @@
         </cmd>
         <cmd>
             <cmdClass>org.schors.evlampia.commands.ChangeNickCmd</cmdClass>
-            <shortDescription> смена ника</shortDescription>
+            <shortDescription>!н [новый ник] : смена ника</shortDescription>
             <longDescription>Изменить ник бота на [новый ник]</longDescription>
             <prefixes>
                 <prefix>!н</prefix>
@@ -70,23 +70,23 @@
         </cmd>
         <cmd>
             <cmdClass>org.schors.evlampia.commands.ShuffleCmd</cmdClass>
-            <shortDescription> перетасовка букв в словах</shortDescription>
-            <longDescription>Перетасовать в случайном порядке буквы в словах</longDescription>
+            <shortDescription>!ш [слово1..словоN] : перетасовка букв в словах</shortDescription>
+            <longDescription>Перетасовать в случайном порядке буквы во всех словах</longDescription>
             <prefixes>
                 <prefix>!ш</prefix>
             </prefixes>
         </cmd>
         <cmd>
             <cmdClass>org.schors.evlampia.commands.RssShutUpCmd</cmdClass>
-            <shortDescription> переключение режима молчания RSS</shortDescription>
-            <longDescription>Переключить режим молчания RSS читалки на противоположный</longDescription>
+            <shortDescription>!з : переключение режима молчания RSS</shortDescription>
+            <longDescription>Переключить режим молчания RSS читалки на противоположный (молчать\не молчать)</longDescription>
             <prefixes>
                 <prefix>!з</prefix>
             </prefixes>
         </cmd>
         <cmd>
             <cmdClass>org.schors.evlampia.commands.SearchCmd</cmdClass>
-            <shortDescription> поиск в логах</shortDescription>
+            <shortDescription>!п [что искать] : поиск в логах</shortDescription>
             <longDescription>Найти в логах [что искать]</longDescription>
             <prefixes>
                 <prefix>!п</prefix>
@@ -94,15 +94,15 @@
         </cmd>
         <cmd>
             <cmdClass>org.schors.evlampia.commands.GetTockenCmd</cmdClass>
-            <shortDescription> получение ключика на сайт</shortDescription>
-            <longDescription>Получить сгенерированый временный ключ для входа на сайт лампы</longDescription>
+            <shortDescription>!т : получение ключика на сайт</shortDescription>
+            <longDescription>Получить сгенерированый временный ключ для входа на сайт лампы (действует в течении суток)</longDescription>
             <prefixes>
                 <prefix>!т</prefix>
             </prefixes>
         </cmd>
         <cmd>
             <cmdClass>org.schors.evlampia.commands.AlarmCmd</cmdClass>
-            <shortDescription> отоварить всех рыбой</shortDescription>
+            <shortDescription>!! : отоварить всех рыбой</shortDescription>
             <longDescription>Громко закричать и устроить переполох!</longDescription>
             <prefixes>
                 <prefix>!!</prefix>
@@ -110,7 +110,7 @@
         </cmd>
         <cmd>
             <cmdClass>org.schors.evlampia.commands.BotInfoCmd</cmdClass>
-            <shortDescription> показать информацию</shortDescription>
+            <shortDescription>!и : показать информацию</shortDescription>
             <longDescription>Показать всякую информацию о лампе</longDescription>
             <prefixes>
                 <prefix>!и</prefix>
@@ -118,18 +118,26 @@
         </cmd>
         <cmd>
             <cmdClass>org.schors.evlampia.commands.AddTrackCmd</cmdClass>
-            <shortDescription> добавить трек</shortDescription>
-            <longDescription>Показать всякую информацию о лампе</longDescription>
+            <shortDescription>!а [имяСписка код имяПосылки] : добавить посылку для отслеживания</shortDescription>
+            <longDescription>Добавить в список [имяСписка] новую посылку с кодом [код] для отслеживания. Посылку пометить понятным названием [имяПосылки]. Если такого списка еще нет, он будет создан. Статуст посылки проверяется каждые 2 часа</longDescription>
             <prefixes>
                 <prefix>!а</prefix>
             </prefixes>
         </cmd>
         <cmd>
             <cmdClass>org.schors.evlampia.commands.DeleteTrackCmd</cmdClass>
-            <shortDescription> удалить трек</shortDescription>
-            <longDescription>Показать всякую информацию о лампе</longDescription>
+            <shortDescription>!д [имяСписка код] : удалить посылку из списка отслеживаемых</shortDescription>
+            <longDescription>Удалить из списка [имяСписка] посылку с кодом [код] и больше не отслеживать ее статус. Если это была последняя посылка в списке, список тоже будет удален</longDescription>
             <prefixes>
                 <prefix>!д</prefix>
+            </prefixes>
+        </cmd>
+        <cmd>
+            <cmdClass>org.schors.evlampia.commands.CheckTrackCmd</cmdClass>
+            <shortDescription>!с [имяСписка] : статус посылок в списке</shortDescription>
+            <longDescription>Показать статусы всех посылок в списке [имяСписка]</longDescription>
+            <prefixes>
+                <prefix>!с</prefix>
             </prefixes>
         </cmd>
     </cmds>
