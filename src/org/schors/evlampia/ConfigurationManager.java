@@ -39,6 +39,8 @@ public class ConfigurationManager {
         parser.alias("module", String.class);
         parser.alias("dataBaseConfig", DataBaseConfig.class);
         parser.alias("dynDns", DynDNS.class);
+        parser.alias("cmd", Cmd.class);
+        parser.alias("prefix", String.class);
 
         try {
             configuration = (Configuration) parser.fromXML(in);

@@ -6,12 +6,10 @@
 package org.schors.evlampia;
 
 
-import org.schors.evlampia.model.DataBaseConfig;
-import org.schors.evlampia.model.DynDNS;
-import org.schors.evlampia.model.Jabber;
-import org.schors.evlampia.model.Search;
+import org.schors.evlampia.model.*;
 
 import java.io.Serializable;
+import java.util.Arrays;
 
 /**
  *
@@ -23,7 +21,21 @@ public class Configuration implements Serializable {
     private Search search;
     private String logsPath;
     private DataBaseConfig dataBaseConfig;
+    private String hostAddress;
     private DynDNS dynDns;
+    private Cmd[] cmds;
+
+    public String getHostAddress() {
+        return hostAddress;
+    }
+
+    public Cmd[] getCmds() {
+        return cmds;
+    }
+
+    public void setCmds(Cmd[] cmds) {
+        this.cmds = cmds;
+    }
 
     public DynDNS getDynDns() {
         return dynDns;
@@ -73,6 +85,7 @@ public class Configuration implements Serializable {
                 ", logsPath='" + logsPath + '\'' +
                 ", dataBaseConfig=" + dataBaseConfig +
                 ", dynDns=" + dynDns +
+                ", cmds=" + Arrays.toString(cmds) +
                 '}';
     }
 }

@@ -12,49 +12,46 @@ import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.ServiceDiscoveryManager;
 import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.jivesoftware.smackx.muc.SubjectUpdatedListener;
-import org.jivesoftware.smackx.packet.DiscoverItems;
 import org.jivesoftware.smackx.packet.VCard;
-import org.joda.time.Instant;
-import org.joda.time.Period;
-import org.joda.time.format.PeriodFormatter;
-import org.joda.time.format.PeriodFormatterBuilder;
 import org.schors.evlampia.*;
+import org.schors.evlampia.commands.HelpCmd;
 import org.schors.evlampia.model.Room;
 import org.schors.evlampia.rupost.TracksManager;
-import org.schors.evlampia.search.LogEntry;
-import org.schors.evlampia.search.SearchManager;
-import org.schors.evlampia.search.SearchResult;
 
 import java.io.File;
-import java.lang.management.ManagementFactory;
 import java.net.URL;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
 
 /**
  * @author flic
  */
 public class Jbot implements PacketListener, ConnectionListener {
 
+    public static final String F_DAO = "dao";
+    public static final String F_TRACKER = "tracker";
+    public static final String F_FEED_READER = "feedReader";
+    public static final String F_XMPP_CONNECTION = "xmppConnection";
+    public static final String F_RANDOM = "random";
+    public static final String F_MUC = "muc";
+
+
     public static String newline = System.getProperty("line.separator");
     public static String fileSeparator = System.getProperty("file.separator");
     private static final Logger log = Logger.getLogger(Jbot.class);
     private Connection conn;
-    private PacketCollector collector;
     private Map<String, MultiUserChat> rooms = new HashMap<String, MultiUserChat>();
     private vbotDAOInterface dao;
-    private Random rnd = new Random(System.currentTimeMillis());
     private FeedReader feedReader;
-    private Twittor twittor;
     private TracksManager privateTrackManager;
     private File hostFile;
-    private static volatile boolean alarmGap = false;
     private static Random random = new Random(System.currentTimeMillis());
-    private static final PeriodFormatter pf = new PeriodFormatterBuilder().printZeroRarelyLast().appendYears().appendSuffix(" year", " years").appendSeparator(", ")//.printZeroRarelyLast()
-            .appendMonths().appendSuffix(" month", " months").appendSeparator(", ")
-            .appendDays().appendSuffix(" day", " days").appendSeparator(", ")
-            .appendHours().appendSuffix(" hour", " hours").appendSeparator(", ")
-            .appendMinutes().appendSuffix(" minute", " minutes").appendSeparator(", ")
-            .appendSecondsWithOptionalMillis().appendSuffix(" second", " seconds").toFormatter();
+    private static CommandManager commandManager = new CommandManagerImpl();
+
+    private static Map<String, Object> facilities = new HashMap<>();
+
 
     public Jbot() {
         String pth = Jbot.class.getProtectionDomain().getCodeSource().getLocation().getPath();
@@ -71,12 +68,14 @@ public class Jbot implements PacketListener, ConnectionListener {
             }
         });
         privateTrackManager.load();
-    }
+        facilities.put(F_DAO, dao);
+        facilities.put(F_TRACKER, privateTrackManager);
+        facilities.put(F_FEED_READER, feedReader);
+        facilities.put(F_XMPP_CONNECTION, conn);
+        facilities.put(F_RANDOM, random);
 
-    public void startTwittor() {
-        twittor = Twittor.getInstance();
-        twittor.init(rooms);
-        twittor.start();
+        commandManager.registerCommands(ConfigurationManager.getInstance().getConfiguration());
+        commandManager.registerCommand(new HelpCmd(commandManager));
     }
 
     public void startFeedReader(URL url) {
@@ -237,8 +236,6 @@ public class Jbot implements PacketListener, ConnectionListener {
             }
             if (tmpMuc == null) {
                 muc.addMessageListener(new RoomListener(muc));
-
-                //Тема: Щорс невозбранно сломал тему с логами. Так делать не хорошо. Больше так не делай. 3335^84=8,71064697904005E295 inb4: молчачат скрытых игрунов в ерепаблики | http://z0r.de/4034 | Лоли чата: http://schors.zapto.org/logs
                 muc.addSubjectUpdatedListener(new SubjectUpdatedListener() {
 
                     @Override
@@ -258,24 +255,6 @@ public class Jbot implements PacketListener, ConnectionListener {
                 }
             }
         }
-
-    }
-
-    private String shuffle(String substring) {
-        char[] item = substring.toCharArray();
-        if (item.length == 4) {
-            char tmp = item[1];
-            item[1] = item[2];
-            item[2] = tmp;
-        } else {
-            for (int i = 1; i < substring.length() - 1; i++) {
-                int moveTo = rnd.nextInt(substring.length() - 2) + 1;
-                char tmp = item[moveTo];
-                item[moveTo] = item[i];
-                item[i] = tmp;
-            }
-        }
-        return String.valueOf(item);
     }
 
     public void run() {
@@ -335,27 +314,11 @@ public class Jbot implements PacketListener, ConnectionListener {
         log.warn("Reconnection failed: " + excptn);
     }
 
-    public String getRoomOccupants(Connection conn, String roomName) throws XMPPException {
-        StringBuffer sb = new StringBuffer();
-        ServiceDiscoveryManager discoManager = ServiceDiscoveryManager.getInstanceFor(conn);
-        DiscoverItems items = discoManager.discoverItems(roomName);
-        for (Iterator it = items.getItems(); it.hasNext(); ) {
-            if (it.hasNext()) {
-                DiscoverItems.Item item = (DiscoverItems.Item) it.next();
-                String occupant = StringUtils.parseResource(item.getEntityID());
-                sb.append(occupant + " ");
-            }
-        }
-        if (sb.length() < 1) {
-            sb.append("Никого нет дома");
-        }
-        return sb.toString();
-    }
-
     public class RoomListener implements PacketListener {
 
         private MultiUserChat muc;
         private TracksManager tracksManager;
+        private Map<String, Object> roomFacilities = new HashMap<>();
 
         public RoomListener(MultiUserChat mc) {
             this.muc = mc;
@@ -372,6 +335,9 @@ public class Jbot implements PacketListener, ConnectionListener {
                 }
             });
             this.tracksManager.load();
+            roomFacilities.putAll(facilities);
+            roomFacilities.put(F_MUC, this.muc);
+            roomFacilities.put(F_TRACKER, this.tracksManager);
         }
 
         @Override
@@ -380,170 +346,19 @@ public class Jbot implements PacketListener, ConnectionListener {
             //"vnations@conference.ubuntu/schors"
             String[] tmp = from.split("/");
             String body = ((Message) packet).getBody();
+            String[] commands = body.split(" ");
 
-            if (body.startsWith("!лог") || body.startsWith("!л")) {
-                dao.flush();
-                try {
-                    muc.sendMessage("Логи чата: http://0xffff.net/logs");
-                } catch (XMPPException ex) {
-                    log.error(ex, ex);
-                }
-            } else if (body.startsWith("!н")) {
-                String[] commands = body.split(" ");
-                if (commands.length == 2) {
-                    try {
-                        muc.changeNickname(commands[1]);
-                    } catch (XMPPException ex) {
-                        log.error(ex, ex);
-                        try {
-                            muc.sendMessage(ex.getMessage());
-                        } catch (XMPPException ex1) {
-                            log.error(ex1, ex1);
-                        }
-                    }
-                }
-            } else if (body.startsWith("!ш")) {
-                rnd.setSeed(System.currentTimeMillis());
-                String words[] = body.replace("!ш", "").split(" ");
-                StringBuilder sb = new StringBuilder();
-                for (String item : words) {
-                    if (item.length() < 4) {
-                        sb.append(item).append(" ");
-                        continue;
-                    }
-                    sb.append(shuffle(item)).append(" ");
-                }
-                try {
-                    muc.sendMessage(sb.toString());
-                } catch (XMPPException ex1) {
-                    log.error(ex1, ex1);
-                }
-            } else if (body.startsWith("!з")) {
-                feedReader.setSilent(!feedReader.isSilent());
-            } else if (body.startsWith("!п")) {
+            CommandContext commandContext = new CommandContext(from, body, roomFacilities, commands);
 
-                String[] commands = body.split(" ");
-                if (commands.length >= 2) {
-                    SearchResult<LogEntry> result = SearchManager.getInstanse().search(body.replace("!п", ""), 5, 0);
-                    if (result != null) {
-                        StringBuilder sb = new StringBuilder();
-                        sb.append("Найдено: ").append(result.hits).append(newline);
-                        if (result.getItems() != null) {
-                            for (LogEntry entry : result.getItems()) {
-                                sb.append(entry.getAuthor()).append(" : ").append(entry.getMessage()).append(newline).append(entry.getUrl()).append(newline);
-                            }
-                        }
-                        sb.append(newline).append("Веб поиск - http://0xffff.net/eva/");
-                        try {
-                            muc.sendMessage(sb.toString());
-                        } catch (XMPPException ex1) {
-                            log.error(ex1, ex1);
-                        }
-                    }
-                }
+            commandManager.proceed(commandContext);
 
-            } else if (body.startsWith("!а")) {
-                String[] items = body.split(" ");
-                if (items.length >= 4) {
-                    tracksManager.addTrack(items[1], items[2], items[3]);
-                }
-            } else if (body.startsWith("!д")) {
-                String[] items = body.split(" ");
-                if (items.length >= 3) {
-                    tracksManager.deleteTrack(items[1], items[2]);
-                }
-            } else if (body.startsWith("!с")) {
-                String[] items = body.split(" ");
-                if (items.length >= 2) {
-                    List<String> list = tracksManager.getStatus(items[1]);
-                    if (list != null && list.size() > 0) {
-                        StringBuilder sb = new StringBuilder();
-                        for (String s : list) {
-                            sb.append(s).append(newline);
-                        }
-                        try {
-                            muc.sendMessage(sb.toString());
-                        } catch (XMPPException ex1) {
-                            log.error(ex1, ex1);
-                        }
-                    }
-                }
-//            }else if (body.startsWith("!!!")) {
-//                try {
-//                    Collection<Affiliate> m = muc.getMembers();
-//                    StringBuilder sb = new StringBuilder();
-//                    for (Affiliate a : m) {
-//                        sb.append(a.getNick()).append(" ");
-//                    }
-//                    muc.sendMessage(sb.toString());
-//                } catch (XMPPException e) {
-//                    log.error(e,e);
-//                }
-            } else if (body.startsWith("!т")) {
-                String token = TokenManager.getInstance().makeNewToken(from);
-                try {
-                    muc.sendMessage("http://0xffff.net/eva/?evaid=" + token);
-                } catch (XMPPException e) {
-                    log.error(e, e);
-                }
-            } else if (body.startsWith("!!")) {
-                try {
-//                    Iterator<String> o = muc.getOccupants();
-//                    StringBuilder sb = new StringBuilder();
-//                    while (o.hasNext()) {
-//                        sb.append(StringUtils.parseResource(o.next())).append(" ");
-//                    }
-                    String s = null;
-                    if (alarmGap) s = "Иди колядуй";
-                    else {
-                        s = getRoomOccupants(conn, muc.getRoom());
-                        EvaExecutors.getInstance().getExecutor().execute(new GapCleaner());
-                    }
-                    muc.sendMessage(s);
-                } catch (XMPPException e) {
-                    log.error(e, e);
-                }
-            } else if (body.startsWith("!и")) {
-                StringBuilder info = new StringBuilder();
-                info.append(newline).append("OS: ").append(ManagementFactory.getOperatingSystemMXBean().getName()).append(" ").append(ManagementFactory.getOperatingSystemMXBean().getVersion()).append(" ").append(ManagementFactory.getOperatingSystemMXBean().getArch()).append(newline)
-                        .append("Memory: ").append(ManagementFactory.getMemoryMXBean().getHeapMemoryUsage().getUsed()).append("/").append(ManagementFactory.getMemoryMXBean().getHeapMemoryUsage().getMax()).append(newline)
-                        .append("CPU: ").append(ManagementFactory.getOperatingSystemMXBean().getSystemLoadAverage()).append(newline)
-                        .append("External IP: ").append(ExternalIPResolver.resolve(true)).append(newline)
-                        .append("Uptime: ").append(new Period(ConfigurationManager.startTime, new Instant()).toString(pf));
-                try {
-                    muc.sendMessage(info.toString());
-                } catch (XMPPException e) {
-                    log.error(e, e);
-                }
-
-            } else if (body.startsWith("!ddns")) {
-                try {
-                    muc.sendMessage(DynDNSManager.update(ConfigurationManager.getInstance().getConfiguration()));
-                } catch (XMPPException e) {
-                    log.error(e, e);
-                }
-            } else {
-                if (body.startsWith(". ")) {
-                    body = " <совершенно секретно>";
-                }
+            if (body.startsWith(". ")) {
+                body = " <совершенно секретно>";
             }
+
             String mType = org.schors.evlampia.model.Message.t_normal;
             if (!from.equals(muc.getRoom() + "/" + muc.getNickname())) mType = org.schors.evlampia.model.Message.t_self;
             dao.store(System.currentTimeMillis(), tmp[0], tmp[1], body, mType);
-        }
-    }
-
-    private class GapCleaner implements Runnable {
-
-        @Override
-        public void run() {
-            alarmGap = true;
-            try {
-                Thread.sleep(10000);
-            } catch (InterruptedException e) {
-                log.warn(e, e);
-            }
-            alarmGap = false;
         }
     }
 

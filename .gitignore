@@ -1,5 +1,6 @@
-lib
-build
-.idea
-ivy
+lib/*
+build/*
+.idea/*
+ivy/*
+eva.iml
 ant.log

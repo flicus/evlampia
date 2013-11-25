@@ -16,6 +16,7 @@
         <dependency org="commons-logging" name="commons-logging" rev="1.1.1"/>
         <dependency org="commons-discovery" name="commons-discovery" rev="0.5"/>
         <dependency org="wsdl4j" name="wsdl4j" rev="1.6.3"/>
+        <dependency org="org.postgresql" name="postgresql" rev="latest.integration"/>
         <!--<dependency org="org.twitter4j" name="twitter4j-core" rev="3.0.3"/>-->
         <!--<dependency org="org.teleal.cling" name="cling-core" rev="latest.integration"/>-->
         <!--<dependency org="org.teleal" name="teleal-common" rev="latest.integration"/>-->

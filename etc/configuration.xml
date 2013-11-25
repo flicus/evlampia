@@ -33,6 +33,7 @@
         <port>8080</port>
         <webRoot>d:\tmp\webroot_eva</webRoot>
     </search>
+    <hostAddress>http://0xffff.net/</hostAddress>
 
     <logsPath>d:\tmp\lucene\logs</logsPath>
 
@@ -49,5 +50,88 @@
         <userName>flicus@gmail.com</userName>
         <password>fghbjhb77</password>
     </dynDns>
+    <cmds>
+        <cmd>
+            <cmdClass>org.schors.evlampia.commands.FlushLogCmd</cmdClass>
+            <shortDescription> сохранение лога</shortDescription>
+            <longDescription>Сохранить лог из внутреннего кэша на диск</longDescription>
+            <prefixes>
+                <prefix>!л</prefix>
+                <prefix>!лог</prefix>
+            </prefixes>
+        </cmd>
+        <cmd>
+            <cmdClass>org.schors.evlampia.commands.ChangeNickCmd</cmdClass>
+            <shortDescription> смена ника</shortDescription>
+            <longDescription>Изменить ник бота на [новый ник]</longDescription>
+            <prefixes>
+                <prefix>!н</prefix>
+            </prefixes>
+        </cmd>
+        <cmd>
+            <cmdClass>org.schors.evlampia.commands.ShuffleCmd</cmdClass>
+            <shortDescription> перетасовка букв в словах</shortDescription>
+            <longDescription>Перетасовать в случайном порядке буквы в словах</longDescription>
+            <prefixes>
+                <prefix>!ш</prefix>
+            </prefixes>
+        </cmd>
+        <cmd>
+            <cmdClass>org.schors.evlampia.commands.RssShutUpCmd</cmdClass>
+            <shortDescription> переключение режима молчания RSS</shortDescription>
+            <longDescription>Переключить режим молчания RSS читалки на противоположный</longDescription>
+            <prefixes>
+                <prefix>!з</prefix>
+            </prefixes>
+        </cmd>
+        <cmd>
+            <cmdClass>org.schors.evlampia.commands.SearchCmd</cmdClass>
+            <shortDescription> поиск в логах</shortDescription>
+            <longDescription>Найти в логах [что искать]</longDescription>
+            <prefixes>
+                <prefix>!п</prefix>
+            </prefixes>
+        </cmd>
+        <cmd>
+            <cmdClass>org.schors.evlampia.commands.GetTockenCmd</cmdClass>
+            <shortDescription> получение ключика на сайт</shortDescription>
+            <longDescription>Получить сгенерированый временный ключ для входа на сайт лампы</longDescription>
+            <prefixes>
+                <prefix>!т</prefix>
+            </prefixes>
+        </cmd>
+        <cmd>
+            <cmdClass>org.schors.evlampia.commands.AlarmCmd</cmdClass>
+            <shortDescription> отоварить всех рыбой</shortDescription>
+            <longDescription>Громко закричать и устроить переполох!</longDescription>
+            <prefixes>
+                <prefix>!!</prefix>
+            </prefixes>
+        </cmd>
+        <cmd>
+            <cmdClass>org.schors.evlampia.commands.BotInfoCmd</cmdClass>
+            <shortDescription> показать информацию</shortDescription>
+            <longDescription>Показать всякую информацию о лампе</longDescription>
+            <prefixes>
+                <prefix>!и</prefix>
+            </prefixes>
+        </cmd>
+        <cmd>
+            <cmdClass>org.schors.evlampia.commands.AddTrackCmd</cmdClass>
+            <shortDescription> добавить трек</shortDescription>
+            <longDescription>Показать всякую информацию о лампе</longDescription>
+            <prefixes>
+                <prefix>!а</prefix>
+            </prefixes>
+        </cmd>
+        <cmd>
+            <cmdClass>org.schors.evlampia.commands.DeleteTrackCmd</cmdClass>
+            <shortDescription> удалить трек</shortDescription>
+            <longDescription>Показать всякую информацию о лампе</longDescription>
+            <prefixes>
+                <prefix>!д</prefix>
+            </prefixes>
+        </cmd>
+    </cmds>
 
 </configuration>

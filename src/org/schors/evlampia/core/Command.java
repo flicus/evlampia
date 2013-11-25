@@ -16,11 +16,43 @@ public abstract class Command {
     private String shortDescription;
     private String longDescription;
 
-    public abstract void execute(CommandContext context);
+    public abstract void execute(CommandContext context) throws Exception;
 
-    public boolean isApply(String line) {
-        return prefixes.contains(line);
-    };
+    public String getPrefix(String body) {
+        int firstSpace = body.indexOf(" ");
+        return body.substring(0, firstSpace);
+    }
 
+    public String getWithoutPrefix(String body) {
+        int firstSpace = body.indexOf(" ");
+        return body.substring(firstSpace);
+    }
 
+    public void setPrefixes(Set<String> prefixes) {
+        this.prefixes = prefixes;
+    }
+
+    public void setShortDescription(String shortDescription) {
+        this.shortDescription = shortDescription;
+    }
+
+    public void setLongDescription(String longDescription) {
+        this.longDescription = longDescription;
+    }
+
+    public Set<String> getPrefixes() {
+        return prefixes;
+    }
+
+    public String getShortDescription() {
+        return shortDescription;
+    }
+
+    public String getLongDescription() {
+        return longDescription;
+    }
+
+    public boolean isApply(String prefix) {
+        return prefixes.contains(prefix);
+    }
 }

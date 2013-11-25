@@ -4,6 +4,8 @@ import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
+import org.schors.evlampia.core.CommandManager;
+import org.schors.evlampia.core.CommandManagerImpl;
 import org.schors.evlampia.core.Jbot;
 import org.schors.evlampia.dao.DAOManager;
 import org.schors.evlampia.search.SearchManager;
@@ -50,6 +52,8 @@ public class Main {
         } else fileToRead = "configuration.xml";
 
         ConfigurationManager.getInstance().readConfiguration(fileToRead);
+        CommandManager cmdm = new CommandManagerImpl();
+        cmdm.registerCommands(ConfigurationManager.getInstance().getConfiguration());
 
         URL url = null;
         try {
