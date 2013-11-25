@@ -60,7 +60,7 @@ public class CommandManagerImpl implements CommandManager {
 
     @Override
     public void proceed(CommandContext context) {
-        String[] commands = context.getBody().split(" ");
+        String[] commands = context.getParsedCommand();
         Command command = null;
         if (commands.length > 0) {
             if (commandCache.containsKey(commands[0])) {
@@ -70,6 +70,7 @@ public class CommandManagerImpl implements CommandManager {
                     if (cmd.isApply(commands[0])) {
                         command = cmd;
                         commandCache.put(commands[0], command);
+                        break;
                     }
                 }
             }

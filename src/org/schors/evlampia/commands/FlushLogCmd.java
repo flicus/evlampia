@@ -4,7 +4,6 @@ import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.schors.evlampia.core.Command;
 import org.schors.evlampia.core.CommandContext;
 import org.schors.evlampia.core.Jbot;
-import org.schors.evlampia.core.PacketSender;
 import org.schors.evlampia.vbotDAOInterface;
 
 /**
@@ -22,9 +21,6 @@ public class FlushLogCmd extends Command {
         MultiUserChat muc = (MultiUserChat)context.getFacilities().get(Jbot.F_MUC);
         if (muc != null) {
             muc.sendMessage("Логи чата: http://0xffff.net/logs");
-        } else {
-            PacketSender ps = (PacketSender)context.getFacilities().get("xmpp");
-            ps.send("Логи чата: http://0xffff.net/logs");
         }
     }
 }

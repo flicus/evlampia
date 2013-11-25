@@ -30,20 +30,23 @@ public class ShuffleCmd extends Command {
 
     @Override
     public void execute(CommandContext context) throws Exception {
-        Random random = (Random) context.getFacilities().get(Jbot.F_RANDOM);
+        random = (Random) context.getFacilities().get(Jbot.F_RANDOM);
         MultiUserChat muc = (MultiUserChat) context.getFacilities().get(Jbot.F_MUC);
 
         random.setSeed(System.currentTimeMillis());
-        String[] words  = getWithoutPrefix(context.getBody()).split(" ");
-        StringBuilder sb = new StringBuilder();
-        for (String item : words) {
-            if (item.length() < 4) {
-                sb.append(item).append(" ");
-                continue;
+        String rest = getWithoutPrefix(context.getBody());
+        if (rest != null) {
+            String[] words  = rest.trim().split(" ");
+            StringBuilder sb = new StringBuilder();
+            for (String item : words) {
+                if (item.length() < 4) {
+                    sb.append(item).append(" ");
+                    continue;
+                }
+                sb.append(shuffle(item)).append(" ");
             }
-            sb.append(shuffle(item)).append(" ");
+            muc.sendMessage(sb.toString());
         }
-        muc.sendMessage(sb.toString());
     }
 
     private String shuffle(String substring) {

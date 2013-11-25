@@ -25,7 +25,7 @@ public abstract class Command {
 
     public String getWithoutPrefix(String body) {
         int firstSpace = body.indexOf(" ");
-        return body.substring(firstSpace);
+        return firstSpace > 0 ? body.substring(firstSpace) : null;
     }
 
     public void setPrefixes(Set<String> prefixes) {

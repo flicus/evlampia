@@ -52,7 +52,7 @@ public class HelpCmd extends Command {
                 }
             }
         } else {
-            sb.append("Доступные команды:").append(Jbot.newline).append(Jbot.newline);
+            sb.append(Jbot.newline).append("Доступные команды:").append(Jbot.newline);
             for (Command command : commandManager.getCommandList()) {
                 sb.append(command.getShortDescription()).append(Jbot.newline);
             }

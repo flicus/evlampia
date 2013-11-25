@@ -68,6 +68,8 @@ public class Jbot implements PacketListener, ConnectionListener {
             }
         });
         privateTrackManager.load();
+        feedReader = new FeedReader(rooms);
+
         facilities.put(F_DAO, dao);
         facilities.put(F_TRACKER, privateTrackManager);
         facilities.put(F_FEED_READER, feedReader);
@@ -79,7 +81,7 @@ public class Jbot implements PacketListener, ConnectionListener {
     }
 
     public void startFeedReader(URL url) {
-        feedReader = new FeedReader(rooms);
+
         feedReader.start(url);
     }
 
@@ -92,10 +94,11 @@ public class Jbot implements PacketListener, ConnectionListener {
             Configuration configuration = ConfigurationManager.getInstance().getConfiguration();
 
             conn = new XMPPConnection(configuration.getJabber().getJabberServer());
+            facilities.put(F_XMPP_CONNECTION, conn);
             conn.connect();
             conn.addConnectionListener(this);
             //conn.login("vasya@ubuntu", "ljujybvtyzrbhgbx");
-            conn.login(configuration.getJabber().getJabberId(), configuration.getJabber().getJabberPassword(), "porosek");
+            conn.login(configuration.getJabber().getJabberId(), configuration.getJabber().getJabberPassword(), "home");
             VCard vCard = new VCard();
             vCard.setFirstName("Евлампия");
             vCard.setLastName("Шандараховна");
