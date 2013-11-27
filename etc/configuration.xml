@@ -140,6 +140,15 @@
                 <prefix>!с</prefix>
             </prefixes>
         </cmd>
+        <cmd>
+            <cmdClass>org.schors.evlampia.commands.UpdateIndexCmd</cmdClass>
+            <shortDescription>!о, !ои : обновить поисковый индекс</shortDescription>
+            <longDescription>Индекс обновляется автоматически раз в сутки, но этой командой можно принудительно обновить индекс для поиска по логам. </longDescription>
+            <prefixes>
+                <prefix>!о</prefix>
+                <prefix>!ои</prefix>
+            </prefixes>
+        </cmd>
     </cmds>
 
 </configuration>

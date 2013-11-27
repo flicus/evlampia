@@ -62,8 +62,6 @@ public class Main {
             log.error(ex, ex);
         }
         SearchManager.getInstanse().init(d);
-
-
         final WebServer server;
         final Jbot jbot = new Jbot();
 

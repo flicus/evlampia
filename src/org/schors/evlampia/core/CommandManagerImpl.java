@@ -4,6 +4,7 @@ import org.apache.log4j.Logger;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.schors.evlampia.Configuration;
+import org.schors.evlampia.EvaExecutors;
 import org.schors.evlampia.model.Cmd;
 
 import java.util.HashMap;
@@ -59,7 +60,7 @@ public class CommandManagerImpl implements CommandManager {
     }
 
     @Override
-    public void proceed(CommandContext context) {
+    public void proceed(final CommandContext context) {
         String[] commands = context.getParsedCommand();
         Command command = null;
         if (commands.length > 0) {
@@ -74,18 +75,25 @@ public class CommandManagerImpl implements CommandManager {
                     }
                 }
             }
-            if (command != null)
-                try {
-                    command.execute(context);
-                } catch (Exception e) {
-                    MultiUserChat muc = (MultiUserChat)context.getFacilities().get(Jbot.F_MUC);
-                    try {
-                        muc.sendMessage(e.getMessage());
-                        log.error("Error on command: ", e);
-                    } catch (XMPPException e1) {
-                        log.error(e1);
+            if (command != null) {
+                final Command cmd = command;
+                EvaExecutors.getInstance().getExecutor().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            cmd.execute(context);
+                        } catch (Exception e) {
+                            MultiUserChat muc = (MultiUserChat) context.getFacilities().get(Jbot.F_MUC);
+                            try {
+                                muc.sendMessage(e.getMessage());
+                                log.error("Error on command: ", e);
+                            } catch (XMPPException e1) {
+                                log.error(e1);
+                            }
+                        }
                     }
-                }
+                });
+            }
         } else {
             //context.getSender().send(context.getFrom(), "Неизвестная команда");
         }

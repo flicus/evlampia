@@ -47,8 +47,8 @@ public class Jbot implements PacketListener, ConnectionListener {
     private FeedReader feedReader;
     private TracksManager privateTrackManager;
     private File hostFile;
-    private static Random random = new Random(System.currentTimeMillis());
-    private static CommandManager commandManager = new CommandManagerImpl();
+    private Random random = new Random(System.currentTimeMillis());
+    private CommandManager commandManager = new CommandManagerImpl();
 
     private static Map<String, Object> facilities = new HashMap<>();
 

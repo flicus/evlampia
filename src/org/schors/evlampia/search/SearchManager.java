@@ -2,10 +2,18 @@ package org.schors.evlampia.search;
 
 import org.apache.log4j.Logger;
 import org.apache.lucene.store.Directory;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeFieldType;
+import org.joda.time.JodaTimePermission;
 import org.schors.evlampia.ConfigurationManager;
+import org.schors.evlampia.EvaExecutors;
+import org.schors.evlampia.commands.UpdateIndexCmd;
+import org.schors.evlampia.core.CommandManagerImpl;
+import org.schors.evlampia.vbotDAOHTMLImplementation;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 public class SearchManager {
 
@@ -21,6 +29,21 @@ public class SearchManager {
         this.directory = d;
         searcher = Searcher.create(directory);
         indexer = new LuceneIndexer();
+
+        DateTime dt = new DateTime();
+        int hours = dt.get(DateTimeFieldType.hourOfDay());
+
+        EvaExecutors.getInstance().getScheduler().scheduleAtFixedRate(new Runnable() {
+            @Override
+            public void run() {
+                vbotDAOHTMLImplementation.getInstance().flush();
+                try {
+                    SearchManager.getInstanse().updateIndex(true);
+                } catch (IOException e) {
+                    log.error(e, e);
+                }
+            }
+        }, 24-hours, 24, TimeUnit.HOURS);
     }
 
     public void updateIndex(boolean recreate) throws IOException {
