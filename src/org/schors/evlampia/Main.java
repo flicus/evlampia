@@ -21,8 +21,11 @@ import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
+import org.schors.evlampia.core.ConfigurationManager;
+import org.schors.evlampia.core.EvaExecutors;
 import org.schors.evlampia.core.Jbot;
 import org.schors.evlampia.dao.DAOManager;
+import org.schors.evlampia.dao.vbotDAOHTMLImplementation;
 import org.schors.evlampia.search.SearchManager;
 import org.schors.evlampia.web.WebServer;
 

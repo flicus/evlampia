@@ -22,8 +22,8 @@ import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.schors.evlampia.core.Command;
 import org.schors.evlampia.core.CommandContext;
 import org.schors.evlampia.core.Jbot;
+import org.schors.evlampia.dao.vbotDAOInterface;
 import org.schors.evlampia.search.SearchManager;
-import org.schors.evlampia.vbotDAOInterface;
 
 import java.io.IOException;
 

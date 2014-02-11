@@ -20,7 +20,7 @@ package org.schors.evlampia.commands;
 import org.schors.evlampia.core.Command;
 import org.schors.evlampia.core.CommandContext;
 import org.schors.evlampia.core.Jbot;
-import org.schors.evlampia.rupost.TracksManager;
+import org.schors.evlampia.tracker.TracksManager;
 
 public class AddTrackCmd extends Command {
     @Override

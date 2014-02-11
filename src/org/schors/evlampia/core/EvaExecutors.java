@@ -15,32 +15,36 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package org.schors.evlampia.commands;
+package org.schors.evlampia.core;
 
-import org.jivesoftware.smackx.muc.MultiUserChat;
-import org.schors.evlampia.core.Command;
-import org.schors.evlampia.core.CommandContext;
-import org.schors.evlampia.core.Jbot;
-import org.schors.evlampia.tracker.TracksManager;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 
-import java.util.List;
+public class EvaExecutors {
 
-public class CheckTrackCmd extends Command {
-    @Override
-    public void execute(CommandContext context) throws Exception {
-        TracksManager tracksManager = (TracksManager) context.getFacilities().get(Jbot.F_TRACKER);
-        MultiUserChat muc = (MultiUserChat) context.getFacilities().get(Jbot.F_MUC);
-        String[] items = context.getParsedCommand();
+    private ScheduledExecutorService scheduler;
+    private ExecutorService executor;
 
-        if (items.length >= 2) {
-            List<String> list = tracksManager.getStatus(items[1]);
-            if (list != null && list.size() > 0) {
-                StringBuilder sb = new StringBuilder();
-                for (String s : list) {
-                    sb.append(s).append(Jbot.newline);
-                }
-                muc.sendMessage(sb.toString());
-            }
-        }
+    public EvaExecutors() {
+
+        scheduler = Executors.newScheduledThreadPool(3);
+        executor = Executors.newCachedThreadPool();
+    }
+
+    public ScheduledExecutorService getScheduler() {
+        return scheduler;
+    }
+
+    public ExecutorService getExecutor() {
+        return executor;
+    }
+
+    private static class Singleton {
+        public static EvaExecutors instance = new EvaExecutors();
+    }
+
+    public static EvaExecutors getInstance() {
+        return Singleton.instance;
     }
 }

@@ -15,32 +15,19 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package org.schors.evlampia.commands;
+/**
+ * OperationHistory_Service.java
+ *
+ * This file was auto-generated from WSDL
+ * by the Apache Axis 1.4 Apr 22, 2006 (06:55:48 PDT) WSDL2Java emitter.
+ */
 
-import org.jivesoftware.smackx.muc.MultiUserChat;
-import org.schors.evlampia.core.Command;
-import org.schors.evlampia.core.CommandContext;
-import org.schors.evlampia.core.Jbot;
-import org.schors.evlampia.tracker.TracksManager;
+package org.schors.evlampia.tracker.wsdl.axis;
 
-import java.util.List;
+public interface OperationHistory_Service extends javax.xml.rpc.Service {
+    public java.lang.String getOperationHistoryAddress();
 
-public class CheckTrackCmd extends Command {
-    @Override
-    public void execute(CommandContext context) throws Exception {
-        TracksManager tracksManager = (TracksManager) context.getFacilities().get(Jbot.F_TRACKER);
-        MultiUserChat muc = (MultiUserChat) context.getFacilities().get(Jbot.F_MUC);
-        String[] items = context.getParsedCommand();
+    public OperationHistoryInterface getOperationHistory() throws javax.xml.rpc.ServiceException;
 
-        if (items.length >= 2) {
-            List<String> list = tracksManager.getStatus(items[1]);
-            if (list != null && list.size() > 0) {
-                StringBuilder sb = new StringBuilder();
-                for (String s : list) {
-                    sb.append(s).append(Jbot.newline);
-                }
-                muc.sendMessage(sb.toString());
-            }
-        }
-    }
+    public OperationHistoryInterface getOperationHistory(java.net.URL portAddress) throws javax.xml.rpc.ServiceException;
 }

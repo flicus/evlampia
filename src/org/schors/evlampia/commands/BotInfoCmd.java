@@ -22,9 +22,9 @@ import org.joda.time.Instant;
 import org.joda.time.Period;
 import org.joda.time.format.PeriodFormatter;
 import org.joda.time.format.PeriodFormatterBuilder;
-import org.schors.evlampia.ConfigurationManager;
 import org.schors.evlampia.core.Command;
 import org.schors.evlampia.core.CommandContext;
+import org.schors.evlampia.core.ConfigurationManager;
 import org.schors.evlampia.core.Jbot;
 
 import java.lang.management.ManagementFactory;

@@ -15,32 +15,41 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package org.schors.evlampia.commands;
+/**
+ * OperationHistoryFault.java
+ *
+ * This file was auto-generated from WSDL
+ * by the Apache Axis 1.4 Apr 22, 2006 (06:55:48 PDT) WSDL2Java emitter.
+ */
 
-import org.jivesoftware.smackx.muc.MultiUserChat;
-import org.schors.evlampia.core.Command;
-import org.schors.evlampia.core.CommandContext;
-import org.schors.evlampia.core.Jbot;
-import org.schors.evlampia.tracker.TracksManager;
+package org.schors.evlampia.tracker.wsdl.axis;
 
-import java.util.List;
+public class OperationHistoryFault extends org.apache.axis.AxisFault {
+    public java.lang.String reason;
 
-public class CheckTrackCmd extends Command {
-    @Override
-    public void execute(CommandContext context) throws Exception {
-        TracksManager tracksManager = (TracksManager) context.getFacilities().get(Jbot.F_TRACKER);
-        MultiUserChat muc = (MultiUserChat) context.getFacilities().get(Jbot.F_MUC);
-        String[] items = context.getParsedCommand();
+    public java.lang.String getReason() {
+        return this.reason;
+    }
 
-        if (items.length >= 2) {
-            List<String> list = tracksManager.getStatus(items[1]);
-            if (list != null && list.size() > 0) {
-                StringBuilder sb = new StringBuilder();
-                for (String s : list) {
-                    sb.append(s).append(Jbot.newline);
-                }
-                muc.sendMessage(sb.toString());
-            }
-        }
+    public OperationHistoryFault() {
+    }
+
+    public OperationHistoryFault(java.lang.Exception target) {
+        super(target);
+    }
+
+    public OperationHistoryFault(java.lang.String message, java.lang.Throwable t) {
+        super(message, t);
+    }
+
+    public OperationHistoryFault(java.lang.String reason) {
+        this.reason = reason;
+    }
+
+    /**
+     * Writes the exception data to the faultDetails
+     */
+    public void writeDetails(javax.xml.namespace.QName qname, org.apache.axis.encoding.SerializationContext context) throws java.io.IOException {
+        context.serialize(qname, null, reason);
     }
 }

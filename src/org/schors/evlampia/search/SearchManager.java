@@ -21,9 +21,9 @@ import org.apache.log4j.Logger;
 import org.apache.lucene.store.Directory;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeFieldType;
-import org.schors.evlampia.ConfigurationManager;
-import org.schors.evlampia.EvaExecutors;
-import org.schors.evlampia.vbotDAOHTMLImplementation;
+import org.schors.evlampia.core.ConfigurationManager;
+import org.schors.evlampia.core.EvaExecutors;
+import org.schors.evlampia.dao.vbotDAOHTMLImplementation;
 
 import java.io.File;
 import java.io.IOException;

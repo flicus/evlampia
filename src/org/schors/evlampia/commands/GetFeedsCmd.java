@@ -18,11 +18,11 @@
 package org.schors.evlampia.commands;
 
 import org.jivesoftware.smackx.muc.MultiUserChat;
-import org.schors.evlampia.FeedReader;
-import org.schors.evlampia.RootFeed;
 import org.schors.evlampia.core.Command;
 import org.schors.evlampia.core.CommandContext;
 import org.schors.evlampia.core.Jbot;
+import org.schors.evlampia.rss.FeedReader;
+import org.schors.evlampia.rss.RootFeed;
 
 import java.util.Set;
 

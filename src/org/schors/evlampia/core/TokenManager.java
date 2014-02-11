@@ -18,8 +18,6 @@
 package org.schors.evlampia.core;
 
 
-import org.schors.evlampia.EvaExecutors;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

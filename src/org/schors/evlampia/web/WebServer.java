@@ -26,9 +26,9 @@ import org.apache.http.params.HttpParams;
 import org.apache.http.params.SyncBasicHttpParams;
 import org.apache.http.protocol.*;
 import org.apache.log4j.Logger;
-import org.schors.evlampia.Configuration;
-import org.schors.evlampia.ConfigurationManager;
-import org.schors.evlampia.EvaExecutors;
+import org.schors.evlampia.core.Configuration;
+import org.schors.evlampia.core.ConfigurationManager;
+import org.schors.evlampia.core.EvaExecutors;
 
 import java.io.IOException;
 import java.io.InterruptedIOException;

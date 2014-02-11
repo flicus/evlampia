@@ -30,10 +30,12 @@ import org.jivesoftware.smackx.ServiceDiscoveryManager;
 import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.jivesoftware.smackx.muc.SubjectUpdatedListener;
 import org.jivesoftware.smackx.packet.VCard;
-import org.schors.evlampia.*;
 import org.schors.evlampia.commands.HelpCmd;
+import org.schors.evlampia.dao.vbotDAOHTMLImplementation;
+import org.schors.evlampia.dao.vbotDAOInterface;
 import org.schors.evlampia.model.Room;
-import org.schors.evlampia.rupost.TracksManager;
+import org.schors.evlampia.rss.FeedReader;
+import org.schors.evlampia.tracker.TracksManager;
 
 import java.io.File;
 import java.util.HashMap;

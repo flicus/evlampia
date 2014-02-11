@@ -22,9 +22,9 @@ import org.joda.time.DateTime;
 import org.joda.time.Period;
 import org.joda.time.format.PeriodFormatter;
 import org.joda.time.format.PeriodFormatterBuilder;
-import org.schors.evlampia.core.FedexTracker;
 import org.schors.evlampia.core.TokenManager;
 import org.schors.evlampia.json.fedex.*;
+import org.schors.evlampia.tracker.FedexTracker;
 
 import java.io.IOException;
 import java.io.InputStream;

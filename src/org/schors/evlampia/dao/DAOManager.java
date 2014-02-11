@@ -19,7 +19,7 @@ package org.schors.evlampia.dao;
 
 import org.apache.log4j.Logger;
 import org.postgresql.ds.PGPoolingDataSource;
-import org.schors.evlampia.ConfigurationManager;
+import org.schors.evlampia.core.ConfigurationManager;
 import org.schors.evlampia.model.DataBaseConfig;
 import org.schors.evlampia.model.TagItem;
 

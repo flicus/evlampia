@@ -21,7 +21,7 @@ import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.schors.evlampia.core.Command;
 import org.schors.evlampia.core.CommandContext;
 import org.schors.evlampia.core.Jbot;
-import org.schors.evlampia.vbotDAOInterface;
+import org.schors.evlampia.dao.vbotDAOInterface;
 
 public class FlushLogCmd extends Command {
     @Override

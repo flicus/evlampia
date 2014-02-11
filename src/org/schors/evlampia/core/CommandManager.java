@@ -17,8 +17,6 @@
 
 package org.schors.evlampia.core;
 
-import org.schors.evlampia.Configuration;
-
 import java.util.Set;
 
 public interface CommandManager {

@@ -20,8 +20,6 @@ package org.schors.evlampia.core;
 import org.apache.log4j.Logger;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smackx.muc.MultiUserChat;
-import org.schors.evlampia.Configuration;
-import org.schors.evlampia.EvaExecutors;
 import org.schors.evlampia.model.Cmd;
 
 import java.util.HashMap;

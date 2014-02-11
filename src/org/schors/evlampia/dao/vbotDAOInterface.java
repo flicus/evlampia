@@ -15,32 +15,20 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package org.schors.evlampia.commands;
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
 
-import org.jivesoftware.smackx.muc.MultiUserChat;
-import org.schors.evlampia.core.Command;
-import org.schors.evlampia.core.CommandContext;
-import org.schors.evlampia.core.Jbot;
-import org.schors.evlampia.tracker.TracksManager;
+package org.schors.evlampia.dao;
 
-import java.util.List;
+/**
+ * @author flic
+ */
+public interface vbotDAOInterface {
 
-public class CheckTrackCmd extends Command {
-    @Override
-    public void execute(CommandContext context) throws Exception {
-        TracksManager tracksManager = (TracksManager) context.getFacilities().get(Jbot.F_TRACKER);
-        MultiUserChat muc = (MultiUserChat) context.getFacilities().get(Jbot.F_MUC);
-        String[] items = context.getParsedCommand();
+    public boolean store(long timestamp, String channel, String sender, String message, String msgType);
 
-        if (items.length >= 2) {
-            List<String> list = tracksManager.getStatus(items[1]);
-            if (list != null && list.size() > 0) {
-                StringBuilder sb = new StringBuilder();
-                for (String s : list) {
-                    sb.append(s).append(Jbot.newline);
-                }
-                muc.sendMessage(sb.toString());
-            }
-        }
-    }
+    public void flush();
+
 }

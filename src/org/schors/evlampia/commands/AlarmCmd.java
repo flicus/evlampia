@@ -24,9 +24,9 @@ import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.ServiceDiscoveryManager;
 import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.jivesoftware.smackx.packet.DiscoverItems;
-import org.schors.evlampia.EvaExecutors;
 import org.schors.evlampia.core.Command;
 import org.schors.evlampia.core.CommandContext;
+import org.schors.evlampia.core.EvaExecutors;
 import org.schors.evlampia.core.Jbot;
 
 import java.util.Iterator;
