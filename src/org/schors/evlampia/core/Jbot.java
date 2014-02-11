@@ -69,6 +69,8 @@ public class Jbot implements PacketListener, ConnectionListener {
         });
         privateTrackManager.load();
         feedReader = new FeedReader(rooms);
+        feedReader.setFileName("feeds.list");
+        feedReader.load();
 
         facilities.put(F_DAO, dao);
         facilities.put(F_TRACKER, privateTrackManager);
@@ -80,9 +82,9 @@ public class Jbot implements PacketListener, ConnectionListener {
         commandManager.registerCommand(new HelpCmd(commandManager));
     }
 
-    public void startFeedReader(URL url) {
+    public void startFeedReader() {
 
-        feedReader.start(url);
+        feedReader.start();
     }
 
     public void connect() {

@@ -88,13 +88,13 @@ public class Main {
         jbot.connect();
         jbot.joinRooms();
 
-        URL url = null;
-        try {
-            url = new URL("http://ursa-tm.ru/forum/index.php?/rss/forums/1-%D1%83%D1%81%D0%B0%D0%B4%D1%8C%D0%B1%D0%B0-%D1%83%D1%80%D1%81%D1%8B/");
-        } catch (MalformedURLException ex) {
-            log.error(ex, ex);
-        }
-        jbot.startFeedReader(url);
+//        URL url = null;
+//        try {
+//            url = new URL("http://ursa-tm.ru/forum/index.php?/rss/forums/1-%D1%83%D1%81%D0%B0%D0%B4%D1%8C%D0%B1%D0%B0-%D1%83%D1%80%D1%81%D1%8B/");
+//        } catch (MalformedURLException ex) {
+//            log.error(ex, ex);
+//        }
+        jbot.startFeedReader();
         //jbot.startTwittor();
         jbot.run();
 

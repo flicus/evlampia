@@ -149,6 +149,32 @@
                 <prefix>!ои</prefix>
             </prefixes>
         </cmd>
+        <cmd>
+            <cmdClass>org.schors.evlampia.commands.AddFeedCmd</cmdClass>
+            <shortDescription>!фа [адрес]: добавить RSS фид</shortDescription>
+            <longDescription>Добавить в список отслеживаемых RSS фидов фид по адресу [адрес]</longDescription>
+            <prefixes>
+                <prefix>!фа</prefix>
+                <prefix>!фак</prefix>
+            </prefixes>
+        </cmd>
+        <cmd>
+            <cmdClass>org.schors.evlampia.commands.RemoveFeedCmd</cmdClass>
+            <shortDescription>!фу [номер]: удалить RSS фид</shortDescription>
+            <longDescription>Удалить из список отслеживаемых RSS фидов фид с номером [номер]. Номера доступных фидов можно посмотреть командой !фс</longDescription>
+            <prefixes>
+                <prefix>!фу</prefix>
+                <prefix>!фух</prefix>
+            </prefixes>
+        </cmd>
+        <cmd>
+            <cmdClass>org.schors.evlampia.commands.GetFeedsCmd</cmdClass>
+            <shortDescription>!фс : просмотреть список RSS фидов</shortDescription>
+            <longDescription>Просмотреть список отслеживаемых RSS фидов</longDescription>
+            <prefixes>
+                <prefix>!фс</prefix>
+                <prefix>!фac</prefix>
+            </prefixes>
+        </cmd>
     </cmds>
-
 </configuration>
