@@ -1,3 +1,20 @@
+/*
+ * The MIT License
+ *
+ * Copyright (c) 2014.  schors (https://github.com/flicus)
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
+ * documentation files (the "Software"), to deal in the Software without restriction, including without limitation
+ * the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,
+ * and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED
+ * TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+ * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
+ * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
+
 /**
  * WebOperationHistoryStub.java
  *
@@ -13,14 +30,14 @@ public class WebOperationHistoryStub extends org.apache.axis.client.Stub impleme
     private java.util.Vector cachedSerFactories = new java.util.Vector();
     private java.util.Vector cachedDeserFactories = new java.util.Vector();
 
-    static org.apache.axis.description.OperationDesc [] _operations;
+    static org.apache.axis.description.OperationDesc[] _operations;
 
     static {
         _operations = new org.apache.axis.description.OperationDesc[2];
         _initOperationDesc1();
     }
 
-    private static void _initOperationDesc1(){
+    private static void _initOperationDesc1() {
         org.apache.axis.description.OperationDesc oper;
         org.apache.axis.description.ParameterDesc param;
         oper = new org.apache.axis.description.OperationDesc();
@@ -37,17 +54,17 @@ public class WebOperationHistoryStub extends org.apache.axis.client.Stub impleme
         oper.setStyle(org.apache.axis.constants.Style.DOCUMENT);
         oper.setUse(org.apache.axis.constants.Use.LITERAL);
         oper.addFault(new org.apache.axis.description.FaultDesc(
-                      new javax.xml.namespace.QName("http://russianpost.org/operationhistory/data", "OperationHistoryFaultReason"),
-                      "org.evlampia.post.wsdl.axis.OperationHistoryFault",
-                      new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"), 
-                      false
-                     ));
+                new javax.xml.namespace.QName("http://russianpost.org/operationhistory/data", "OperationHistoryFaultReason"),
+                "org.evlampia.post.wsdl.axis.OperationHistoryFault",
+                new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"),
+                false
+        ));
         oper.addFault(new org.apache.axis.description.FaultDesc(
-                      new javax.xml.namespace.QName("http://russianpost.org/operationhistory/data", "AuthorizationFaultReason"),
-                      "org.evlampia.post.wsdl.axis.AuthorizationFault",
-                      new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"), 
-                      false
-                     ));
+                new javax.xml.namespace.QName("http://russianpost.org/operationhistory/data", "AuthorizationFaultReason"),
+                "org.evlampia.post.wsdl.axis.AuthorizationFault",
+                new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"),
+                false
+        ));
         _operations[0] = oper;
 
         oper = new org.apache.axis.description.OperationDesc();
@@ -64,28 +81,28 @@ public class WebOperationHistoryStub extends org.apache.axis.client.Stub impleme
         oper.setStyle(org.apache.axis.constants.Style.DOCUMENT);
         oper.setUse(org.apache.axis.constants.Use.LITERAL);
         oper.addFault(new org.apache.axis.description.FaultDesc(
-                      new javax.xml.namespace.QName("http://russianpost.org/operationhistory/data", "OperationHistoryFaultReason"),
-                      "org.evlampia.post.wsdl.axis.OperationHistoryFault",
-                      new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"), 
-                      false
-                     ));
+                new javax.xml.namespace.QName("http://russianpost.org/operationhistory/data", "OperationHistoryFaultReason"),
+                "org.evlampia.post.wsdl.axis.OperationHistoryFault",
+                new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"),
+                false
+        ));
         oper.addFault(new org.apache.axis.description.FaultDesc(
-                      new javax.xml.namespace.QName("http://russianpost.org/operationhistory/data", "AuthorizationFaultReason"),
-                      "org.evlampia.post.wsdl.axis.AuthorizationFault",
-                      new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"), 
-                      false
-                     ));
+                new javax.xml.namespace.QName("http://russianpost.org/operationhistory/data", "AuthorizationFaultReason"),
+                "org.evlampia.post.wsdl.axis.AuthorizationFault",
+                new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"),
+                false
+        ));
         _operations[1] = oper;
 
     }
 
     public WebOperationHistoryStub() throws org.apache.axis.AxisFault {
-         this(null);
+        this(null);
     }
 
     public WebOperationHistoryStub(java.net.URL endpointURL, javax.xml.rpc.Service service) throws org.apache.axis.AxisFault {
-         this(service);
-         super.cachedEndpoint = endpointURL;
+        this(service);
+        super.cachedEndpoint = endpointURL;
     }
 
     public WebOperationHistoryStub(javax.xml.rpc.Service service) throws org.apache.axis.AxisFault {
@@ -94,133 +111,133 @@ public class WebOperationHistoryStub extends org.apache.axis.client.Stub impleme
         } else {
             super.service = service;
         }
-        ((org.apache.axis.client.Service)super.service).setTypeMappingVersion("1.2");
-            java.lang.Class cls;
-            javax.xml.namespace.QName qName;
-            javax.xml.namespace.QName qName2;
-            java.lang.Class beansf = org.apache.axis.encoding.ser.BeanSerializerFactory.class;
-            java.lang.Class beandf = org.apache.axis.encoding.ser.BeanDeserializerFactory.class;
-            java.lang.Class enumsf = org.apache.axis.encoding.ser.EnumSerializerFactory.class;
-            java.lang.Class enumdf = org.apache.axis.encoding.ser.EnumDeserializerFactory.class;
-            java.lang.Class arraysf = org.apache.axis.encoding.ser.ArraySerializerFactory.class;
-            java.lang.Class arraydf = org.apache.axis.encoding.ser.ArrayDeserializerFactory.class;
-            java.lang.Class simplesf = org.apache.axis.encoding.ser.SimpleSerializerFactory.class;
-            java.lang.Class simpledf = org.apache.axis.encoding.ser.SimpleDeserializerFactory.class;
-            java.lang.Class simplelistsf = org.apache.axis.encoding.ser.SimpleListSerializerFactory.class;
-            java.lang.Class simplelistdf = org.apache.axis.encoding.ser.SimpleListDeserializerFactory.class;
-            qName = new javax.xml.namespace.QName("http://russianpost.org/operationhistory/data", ">AuthorizationHeader");
-            cachedSerQNames.add(qName);
-            cls = AuthorizationHeader.class;
-            cachedSerClasses.add(cls);
-            cachedSerFactories.add(beansf);
-            cachedDeserFactories.add(beandf);
+        ((org.apache.axis.client.Service) super.service).setTypeMappingVersion("1.2");
+        java.lang.Class cls;
+        javax.xml.namespace.QName qName;
+        javax.xml.namespace.QName qName2;
+        java.lang.Class beansf = org.apache.axis.encoding.ser.BeanSerializerFactory.class;
+        java.lang.Class beandf = org.apache.axis.encoding.ser.BeanDeserializerFactory.class;
+        java.lang.Class enumsf = org.apache.axis.encoding.ser.EnumSerializerFactory.class;
+        java.lang.Class enumdf = org.apache.axis.encoding.ser.EnumDeserializerFactory.class;
+        java.lang.Class arraysf = org.apache.axis.encoding.ser.ArraySerializerFactory.class;
+        java.lang.Class arraydf = org.apache.axis.encoding.ser.ArrayDeserializerFactory.class;
+        java.lang.Class simplesf = org.apache.axis.encoding.ser.SimpleSerializerFactory.class;
+        java.lang.Class simpledf = org.apache.axis.encoding.ser.SimpleDeserializerFactory.class;
+        java.lang.Class simplelistsf = org.apache.axis.encoding.ser.SimpleListSerializerFactory.class;
+        java.lang.Class simplelistdf = org.apache.axis.encoding.ser.SimpleListDeserializerFactory.class;
+        qName = new javax.xml.namespace.QName("http://russianpost.org/operationhistory/data", ">AuthorizationHeader");
+        cachedSerQNames.add(qName);
+        cls = AuthorizationHeader.class;
+        cachedSerClasses.add(cls);
+        cachedSerFactories.add(beansf);
+        cachedDeserFactories.add(beandf);
 
-            qName = new javax.xml.namespace.QName("http://russianpost.org/operationhistory/data", ">OperationHistoryData");
-            cachedSerQNames.add(qName);
-            cls = OperationHistoryRecord[].class;
-            cachedSerClasses.add(cls);
-            qName = new javax.xml.namespace.QName("http://russianpost.org/operationhistory/data", "OperationHistoryRecord");
-            qName2 = new javax.xml.namespace.QName("http://russianpost.org/operationhistory/data", "historyRecord");
-            cachedSerFactories.add(new org.apache.axis.encoding.ser.ArraySerializerFactory(qName, qName2));
-            cachedDeserFactories.add(new org.apache.axis.encoding.ser.ArrayDeserializerFactory());
+        qName = new javax.xml.namespace.QName("http://russianpost.org/operationhistory/data", ">OperationHistoryData");
+        cachedSerQNames.add(qName);
+        cls = OperationHistoryRecord[].class;
+        cachedSerClasses.add(cls);
+        qName = new javax.xml.namespace.QName("http://russianpost.org/operationhistory/data", "OperationHistoryRecord");
+        qName2 = new javax.xml.namespace.QName("http://russianpost.org/operationhistory/data", "historyRecord");
+        cachedSerFactories.add(new org.apache.axis.encoding.ser.ArraySerializerFactory(qName, qName2));
+        cachedDeserFactories.add(new org.apache.axis.encoding.ser.ArrayDeserializerFactory());
 
-            qName = new javax.xml.namespace.QName("http://russianpost.org/operationhistory/data", ">OperationHistoryRequest");
-            cachedSerQNames.add(qName);
-            cls = OperationHistoryRequest.class;
-            cachedSerClasses.add(cls);
-            cachedSerFactories.add(beansf);
-            cachedDeserFactories.add(beandf);
+        qName = new javax.xml.namespace.QName("http://russianpost.org/operationhistory/data", ">OperationHistoryRequest");
+        cachedSerQNames.add(qName);
+        cls = OperationHistoryRequest.class;
+        cachedSerClasses.add(cls);
+        cachedSerFactories.add(beansf);
+        cachedDeserFactories.add(beandf);
 
-            qName = new javax.xml.namespace.QName("http://russianpost.org/operationhistory/data", "Address");
-            cachedSerQNames.add(qName);
-            cls = Address.class;
-            cachedSerClasses.add(cls);
-            cachedSerFactories.add(beansf);
-            cachedDeserFactories.add(beandf);
+        qName = new javax.xml.namespace.QName("http://russianpost.org/operationhistory/data", "Address");
+        cachedSerQNames.add(qName);
+        cls = Address.class;
+        cachedSerClasses.add(cls);
+        cachedSerFactories.add(beansf);
+        cachedDeserFactories.add(beandf);
 
-            qName = new javax.xml.namespace.QName("http://russianpost.org/operationhistory/data", "AddressParameters");
-            cachedSerQNames.add(qName);
-            cls = AddressParameters.class;
-            cachedSerClasses.add(cls);
-            cachedSerFactories.add(beansf);
-            cachedDeserFactories.add(beandf);
+        qName = new javax.xml.namespace.QName("http://russianpost.org/operationhistory/data", "AddressParameters");
+        cachedSerQNames.add(qName);
+        cls = AddressParameters.class;
+        cachedSerClasses.add(cls);
+        cachedSerFactories.add(beansf);
+        cachedDeserFactories.add(beandf);
 
-            qName = new javax.xml.namespace.QName("http://russianpost.org/operationhistory/data", "Barcode");
-            cachedSerQNames.add(qName);
-            cls = java.lang.String.class;
-            cachedSerClasses.add(cls);
-            cachedSerFactories.add(org.apache.axis.encoding.ser.BaseSerializerFactory.createFactory(org.apache.axis.encoding.ser.SimpleSerializerFactory.class, cls, qName));
-            cachedDeserFactories.add(org.apache.axis.encoding.ser.BaseDeserializerFactory.createFactory(org.apache.axis.encoding.ser.SimpleDeserializerFactory.class, cls, qName));
+        qName = new javax.xml.namespace.QName("http://russianpost.org/operationhistory/data", "Barcode");
+        cachedSerQNames.add(qName);
+        cls = java.lang.String.class;
+        cachedSerClasses.add(cls);
+        cachedSerFactories.add(org.apache.axis.encoding.ser.BaseSerializerFactory.createFactory(org.apache.axis.encoding.ser.SimpleSerializerFactory.class, cls, qName));
+        cachedDeserFactories.add(org.apache.axis.encoding.ser.BaseDeserializerFactory.createFactory(org.apache.axis.encoding.ser.SimpleDeserializerFactory.class, cls, qName));
 
-            qName = new javax.xml.namespace.QName("http://russianpost.org/operationhistory/data", "Country");
-            cachedSerQNames.add(qName);
-            cls = Country.class;
-            cachedSerClasses.add(cls);
-            cachedSerFactories.add(beansf);
-            cachedDeserFactories.add(beandf);
+        qName = new javax.xml.namespace.QName("http://russianpost.org/operationhistory/data", "Country");
+        cachedSerQNames.add(qName);
+        cls = Country.class;
+        cachedSerClasses.add(cls);
+        cachedSerFactories.add(beansf);
+        cachedDeserFactories.add(beandf);
 
-            qName = new javax.xml.namespace.QName("http://russianpost.org/operationhistory/data", "FinanceParameters");
-            cachedSerQNames.add(qName);
-            cls = FinanceParameters.class;
-            cachedSerClasses.add(cls);
-            cachedSerFactories.add(beansf);
-            cachedDeserFactories.add(beandf);
+        qName = new javax.xml.namespace.QName("http://russianpost.org/operationhistory/data", "FinanceParameters");
+        cachedSerQNames.add(qName);
+        cls = FinanceParameters.class;
+        cachedSerClasses.add(cls);
+        cachedSerFactories.add(beansf);
+        cachedDeserFactories.add(beandf);
 
-            qName = new javax.xml.namespace.QName("http://russianpost.org/operationhistory/data", "ItemParameters");
-            cachedSerQNames.add(qName);
-            cls = ItemParameters.class;
-            cachedSerClasses.add(cls);
-            cachedSerFactories.add(beansf);
-            cachedDeserFactories.add(beandf);
+        qName = new javax.xml.namespace.QName("http://russianpost.org/operationhistory/data", "ItemParameters");
+        cachedSerQNames.add(qName);
+        cls = ItemParameters.class;
+        cachedSerClasses.add(cls);
+        cachedSerFactories.add(beansf);
+        cachedDeserFactories.add(beandf);
 
-            qName = new javax.xml.namespace.QName("http://russianpost.org/operationhistory/data", "OperationHistoryRecord");
-            cachedSerQNames.add(qName);
-            cls = OperationHistoryRecord.class;
-            cachedSerClasses.add(cls);
-            cachedSerFactories.add(beansf);
-            cachedDeserFactories.add(beandf);
+        qName = new javax.xml.namespace.QName("http://russianpost.org/operationhistory/data", "OperationHistoryRecord");
+        cachedSerQNames.add(qName);
+        cls = OperationHistoryRecord.class;
+        cachedSerClasses.add(cls);
+        cachedSerFactories.add(beansf);
+        cachedDeserFactories.add(beandf);
 
-            qName = new javax.xml.namespace.QName("http://russianpost.org/operationhistory/data", "OperationParameters");
-            cachedSerQNames.add(qName);
-            cls = OperationParameters.class;
-            cachedSerClasses.add(cls);
-            cachedSerFactories.add(beansf);
-            cachedDeserFactories.add(beandf);
+        qName = new javax.xml.namespace.QName("http://russianpost.org/operationhistory/data", "OperationParameters");
+        cachedSerQNames.add(qName);
+        cls = OperationParameters.class;
+        cachedSerClasses.add(cls);
+        cachedSerFactories.add(beansf);
+        cachedDeserFactories.add(beandf);
 
-            qName = new javax.xml.namespace.QName("http://russianpost.org/operationhistory/data", "RequestType");
-            cachedSerQNames.add(qName);
-            cls = RequestType.class;
-            cachedSerClasses.add(cls);
-            cachedSerFactories.add(enumsf);
-            cachedDeserFactories.add(enumdf);
+        qName = new javax.xml.namespace.QName("http://russianpost.org/operationhistory/data", "RequestType");
+        cachedSerQNames.add(qName);
+        cls = RequestType.class;
+        cachedSerClasses.add(cls);
+        cachedSerFactories.add(enumsf);
+        cachedDeserFactories.add(enumdf);
 
-            qName = new javax.xml.namespace.QName("http://russianpost.org/operationhistory/data", "Rtm02Parameter");
-            cachedSerQNames.add(qName);
-            cls = Rtm02Parameter.class;
-            cachedSerClasses.add(cls);
-            cachedSerFactories.add(beansf);
-            cachedDeserFactories.add(beandf);
+        qName = new javax.xml.namespace.QName("http://russianpost.org/operationhistory/data", "Rtm02Parameter");
+        cachedSerQNames.add(qName);
+        cls = Rtm02Parameter.class;
+        cachedSerClasses.add(cls);
+        cachedSerFactories.add(beansf);
+        cachedDeserFactories.add(beandf);
 
-            qName = new javax.xml.namespace.QName("http://russianpost.org/operationhistory/data", "UpdateOperationRequest");
-            cachedSerQNames.add(qName);
-            cls = UpdateOperationRequest.class;
-            cachedSerClasses.add(cls);
-            cachedSerFactories.add(beansf);
-            cachedDeserFactories.add(beandf);
+        qName = new javax.xml.namespace.QName("http://russianpost.org/operationhistory/data", "UpdateOperationRequest");
+        cachedSerQNames.add(qName);
+        cls = UpdateOperationRequest.class;
+        cachedSerClasses.add(cls);
+        cachedSerFactories.add(beansf);
+        cachedDeserFactories.add(beandf);
 
-            qName = new javax.xml.namespace.QName("http://russianpost.org/operationhistory/data", "UserParameters");
-            cachedSerQNames.add(qName);
-            cls = UserParameters.class;
-            cachedSerClasses.add(cls);
-            cachedSerFactories.add(beansf);
-            cachedDeserFactories.add(beandf);
+        qName = new javax.xml.namespace.QName("http://russianpost.org/operationhistory/data", "UserParameters");
+        cachedSerQNames.add(qName);
+        cls = UserParameters.class;
+        cachedSerClasses.add(cls);
+        cachedSerFactories.add(beansf);
+        cachedDeserFactories.add(beandf);
 
-            qName = new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/envelope/", ">mustUnderstand");
-            cachedSerQNames.add(qName);
-            cls = boolean.class;
-            cachedSerClasses.add(cls);
-            cachedSerFactories.add(org.apache.axis.encoding.ser.BaseSerializerFactory.createFactory(org.apache.axis.encoding.ser.SimpleSerializerFactory.class, cls, qName));
-            cachedDeserFactories.add(org.apache.axis.encoding.ser.BaseDeserializerFactory.createFactory(org.apache.axis.encoding.ser.SimpleDeserializerFactory.class, cls, qName));
+        qName = new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/envelope/", ">mustUnderstand");
+        cachedSerQNames.add(qName);
+        cls = boolean.class;
+        cachedSerClasses.add(cls);
+        cachedSerFactories.add(org.apache.axis.encoding.ser.BaseSerializerFactory.createFactory(org.apache.axis.encoding.ser.SimpleSerializerFactory.class, cls, qName));
+        cachedDeserFactories.add(org.apache.axis.encoding.ser.BaseDeserializerFactory.createFactory(org.apache.axis.encoding.ser.SimpleDeserializerFactory.class, cls, qName));
 
     }
 
@@ -266,24 +283,22 @@ public class WebOperationHistoryStub extends org.apache.axis.client.Stub impleme
                         java.lang.Object x = cachedSerFactories.get(i);
                         if (x instanceof Class) {
                             java.lang.Class sf = (java.lang.Class)
-                                 cachedSerFactories.get(i);
+                                    cachedSerFactories.get(i);
                             java.lang.Class df = (java.lang.Class)
-                                 cachedDeserFactories.get(i);
+                                    cachedDeserFactories.get(i);
                             _call.registerTypeMapping(cls, qName, sf, df, false);
-                        }
-                        else if (x instanceof javax.xml.rpc.encoding.SerializerFactory) {
+                        } else if (x instanceof javax.xml.rpc.encoding.SerializerFactory) {
                             org.apache.axis.encoding.SerializerFactory sf = (org.apache.axis.encoding.SerializerFactory)
-                                 cachedSerFactories.get(i);
+                                    cachedSerFactories.get(i);
                             org.apache.axis.encoding.DeserializerFactory df = (org.apache.axis.encoding.DeserializerFactory)
-                                 cachedDeserFactories.get(i);
+                                    cachedDeserFactories.get(i);
                             _call.registerTypeMapping(cls, qName, sf, df, false);
                         }
                     }
                 }
             }
             return _call;
-        }
-        catch (java.lang.Throwable _t) {
+        } catch (java.lang.Throwable _t) {
             throw new org.apache.axis.AxisFault("Failure trying to get the Call object", _t);
         }
     }
@@ -302,33 +317,33 @@ public class WebOperationHistoryStub extends org.apache.axis.client.Stub impleme
 
         setRequestHeaders(_call);
         setAttachments(_call);
- try {        java.lang.Object _resp = _call.invoke(new java.lang.Object[] {historyRequest, authorizationHeader});
+        try {
+            java.lang.Object _resp = _call.invoke(new java.lang.Object[]{historyRequest, authorizationHeader});
 
-        if (_resp instanceof java.rmi.RemoteException) {
-            throw (java.rmi.RemoteException)_resp;
-        }
-        else {
-            extractAttachments(_call);
-            try {
-                return (OperationHistoryRecord[]) _resp;
-            } catch (java.lang.Exception _exception) {
-                return (OperationHistoryRecord[]) org.apache.axis.utils.JavaUtils.convert(_resp, OperationHistoryRecord[].class);
+            if (_resp instanceof java.rmi.RemoteException) {
+                throw (java.rmi.RemoteException) _resp;
+            } else {
+                extractAttachments(_call);
+                try {
+                    return (OperationHistoryRecord[]) _resp;
+                } catch (java.lang.Exception _exception) {
+                    return (OperationHistoryRecord[]) org.apache.axis.utils.JavaUtils.convert(_resp, OperationHistoryRecord[].class);
+                }
             }
+        } catch (org.apache.axis.AxisFault axisFaultException) {
+            if (axisFaultException.detail != null) {
+                if (axisFaultException.detail instanceof java.rmi.RemoteException) {
+                    throw (java.rmi.RemoteException) axisFaultException.detail;
+                }
+                if (axisFaultException.detail instanceof OperationHistoryFault) {
+                    throw (OperationHistoryFault) axisFaultException.detail;
+                }
+                if (axisFaultException.detail instanceof AuthorizationFault) {
+                    throw (AuthorizationFault) axisFaultException.detail;
+                }
+            }
+            throw axisFaultException;
         }
-  } catch (org.apache.axis.AxisFault axisFaultException) {
-    if (axisFaultException.detail != null) {
-        if (axisFaultException.detail instanceof java.rmi.RemoteException) {
-              throw (java.rmi.RemoteException) axisFaultException.detail;
-         }
-        if (axisFaultException.detail instanceof OperationHistoryFault) {
-              throw (OperationHistoryFault) axisFaultException.detail;
-         }
-        if (axisFaultException.detail instanceof AuthorizationFault) {
-              throw (AuthorizationFault) axisFaultException.detail;
-         }
-   }
-  throw axisFaultException;
-}
     }
 
     public OperationHistoryRecord[] updateOperationData(UpdateOperationRequest updateRequest, AuthorizationHeader authorizationHeader) throws java.rmi.RemoteException, OperationHistoryFault, AuthorizationFault {
@@ -345,33 +360,33 @@ public class WebOperationHistoryStub extends org.apache.axis.client.Stub impleme
 
         setRequestHeaders(_call);
         setAttachments(_call);
- try {        java.lang.Object _resp = _call.invoke(new java.lang.Object[] {updateRequest, authorizationHeader});
+        try {
+            java.lang.Object _resp = _call.invoke(new java.lang.Object[]{updateRequest, authorizationHeader});
 
-        if (_resp instanceof java.rmi.RemoteException) {
-            throw (java.rmi.RemoteException)_resp;
-        }
-        else {
-            extractAttachments(_call);
-            try {
-                return (OperationHistoryRecord[]) _resp;
-            } catch (java.lang.Exception _exception) {
-                return (OperationHistoryRecord[]) org.apache.axis.utils.JavaUtils.convert(_resp, OperationHistoryRecord[].class);
+            if (_resp instanceof java.rmi.RemoteException) {
+                throw (java.rmi.RemoteException) _resp;
+            } else {
+                extractAttachments(_call);
+                try {
+                    return (OperationHistoryRecord[]) _resp;
+                } catch (java.lang.Exception _exception) {
+                    return (OperationHistoryRecord[]) org.apache.axis.utils.JavaUtils.convert(_resp, OperationHistoryRecord[].class);
+                }
             }
+        } catch (org.apache.axis.AxisFault axisFaultException) {
+            if (axisFaultException.detail != null) {
+                if (axisFaultException.detail instanceof java.rmi.RemoteException) {
+                    throw (java.rmi.RemoteException) axisFaultException.detail;
+                }
+                if (axisFaultException.detail instanceof OperationHistoryFault) {
+                    throw (OperationHistoryFault) axisFaultException.detail;
+                }
+                if (axisFaultException.detail instanceof AuthorizationFault) {
+                    throw (AuthorizationFault) axisFaultException.detail;
+                }
+            }
+            throw axisFaultException;
         }
-  } catch (org.apache.axis.AxisFault axisFaultException) {
-    if (axisFaultException.detail != null) {
-        if (axisFaultException.detail instanceof java.rmi.RemoteException) {
-              throw (java.rmi.RemoteException) axisFaultException.detail;
-         }
-        if (axisFaultException.detail instanceof OperationHistoryFault) {
-              throw (OperationHistoryFault) axisFaultException.detail;
-         }
-        if (axisFaultException.detail instanceof AuthorizationFault) {
-              throw (AuthorizationFault) axisFaultException.detail;
-         }
-   }
-  throw axisFaultException;
-}
     }
 
 }

@@ -1,7 +1,25 @@
+/*
+ * The MIT License
+ *
+ * Copyright (c) 2014.  schors (https://github.com/flicus)
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
+ * documentation files (the "Software"), to deal in the Software without restriction, including without limitation
+ * the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,
+ * and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED
+ * TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+ * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
+ * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
+
 package org.schors.evlampia;
 
 import com.google.gson.Gson;
-import org.joda.time.*;
+import org.joda.time.DateTime;
+import org.joda.time.Period;
 import org.joda.time.format.PeriodFormatter;
 import org.joda.time.format.PeriodFormatterBuilder;
 import org.schors.evlampia.core.FedexTracker;
@@ -16,8 +34,8 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
-import java.sql.*;
-import java.util.*;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -78,9 +96,6 @@ public class Test {
         System.out.println(new Period(start, end).toString(pf));
 
 
-
-
-
         //{"TrackPackagesRequest":{"appType":"wtrk","uniqueKey":"","processingParameters":{"anonymousTransaction":true,"clientId":"WTRK","returnDetailedErrors":true,"returnLocalizedDateTime":false},"trackingInfoList":[{"trackNumberInfo":{"trackingNumber":"799408958110","trackingQualifier":"","trackingCarrier":""}}]}}
         //{"trackPackagesRequest":{"appType":"wtrk","uniqueKey":"","processingParameters":{"anonymousTransaction":true,"clientId":"WTRK","returnDetailedErrors":true,"returnLocalizedDateTime":false},"trackingInfoList":[{"trackNumberInfo":{"trackingNumber":"799408958110","trackingQualifier":"","trackingCarrier":""}}]}}
         //{"TrackPackagesResponse":{"successful":true,"passedLoggedInCheck":false,"errorList":[{"code":"0","message":"Request was successfully processed.","source":null}],"packageList":[{"trackingNbr":"799408958110","trackingQualifier":"2456384000\x7e799408958110\x7eFX","trackingCarrierCd":"FDXE","trackingCarrierDesc":"FedEx Express","displayTrackingNbr":"799408958110","shipperCmpnyName":"","shipperName":"","shipperAddr1":"","shipperAddr2":"","shipperCity":"ANDHERI \x28E\x29","shipperStateCD":"MH","shipperZip":"","shipperCntryCD":"IN","shipperPhoneNbr":"","shippedBy":"","recipientCmpnyName":"","recipientName":"","recipientAddr1":"","recipientAddr2":"","recipientCity":"MOSCOW","recipientStateCD":"","recipientZip":"","recipientCntryCD":"RU","recipientPhoneNbr":"","shippedTo":"","keyStatus":"In transit","keyStatusCD":"IT","lastScanStatus":"","lastScanDateTime":"","receivedByNm":"","subStatus":"MUMBAI, MH","mainStatus":"","statusBarCD":"IT","shortStatus":"","shortStatusCD":"","statusLocationAddr1":"","statusLocationAddr2":"","statusLocationCity":"MUMBAI","statusLocationStateCD":"MH","statusLocationZip":"","statusLocationCntryCD":"IN","statusWithDetails":"In transit\x3b MUMBAI, IN","shipDt":"2013\x2d04\x2d01T19\x3a55\x3a00\x2b05\x3a30","displayShipDt":"4\x2f01\x2f2013","displayShipTm":"7\x3a55 pm","displayShipDateTime":"4\x2f01\x2f2013 7\x3a55 pm","pickupDt":"2013\x2d04\x2d01T19\x3a55\x3a00\x2b05\x3a30","displayPickupDt":"4\x2f01\x2f2013","displayPickupTm":"7\x3a55 pm","displayPickupDateTime":"4\x2f01\x2f2013 7\x3a55 pm","estDeliveryDt":"2013\x2d04\x2d05T18\x3a00\x3a00\x2b04\x3a00","estDeliveryTm":"180000","displayEstDeliveryDt":"4\x2f05\x2f2013","displayEstDeliveryTm":"6\x3a00 pm","displayEstDeliveryDateTime":"4\x2f05\x2f2013 6\x3a00 pm","actDeliveryDt":"","displayActDeliveryDt":"","displayActDeliveryTm":"","displayActDeliveryDateTime":"","nickName":"","note":"","matchedAccountList":[""],"fxfAdvanceETA":"","fxfAdvanceReason":"","fxfAdvanceStatusCode":"","fxfAdvanceStatusDesc":"","destLink":"","originLink":"","hasBillOfLadingImage":false,"hasBillPresentment":false,"signatureRequired":0,"totalKgsWgt":"1.0","displayTotalKgsWgt":"1 kgs","totalLbsWgt":"2.2","displayTotalLbsWgt":"2.2 lbs","displayTotalWgt":"2.2 lbs \x2f 1 kgs","pkgKgsWgt":"1.0","displayPkgKgsWgt":"1 kgs","pkgLbsWgt":"0.5","displayPkgLbsWgt":"0.5 lbs","displayPkgWgt":"0.5 lbs \x2f 1 kgs","dimensions":"","masterTrackingNbr":"","masterQualifier":"","masterCarrierCD":"","originalOutboundTrackingNbr":null,"originalOutboundQualifier":"","originalOutboundCarrierCD":"","invoiceNbrList":[""],"referenceList":[""],"doorTagNbrList":[""],"referenceDescList":[""],"purchaseOrderNbrList":[""],"billofLadingNbrList":[""],"shipperRefList":[""],"rmaList":[""],"deptNbrList":[""],"shipmentIdList":[""],"tcnList":[""],"partnerCarrierNbrList":[""],"hasAssociatedShipments":false,"hasAssociatedReturnShipments":false,"assocShpGrp":0,"drTgGrp":["0"],"associationInfoList":[{"trackingNumberInfo":{"trackingNumber":"","trackingQualifier":"","trackingCarrier":"","processingParameters":null},"associatedType":""}],"returnReason":"","returnRelationship":null,"skuItemUpcCdList":[""],"receiveQtyList":[""],"itemDescList":[""],"partNbrList":[""],"serviceCD":"INTERNATIONAL\x5fPRIORITY","serviceDesc":"FedEx International Priority","serviceShortDesc":"IP","packageType":"","packaging":"FedEx Pak","clearanceDetailLink":"","showClearanceDetailLink":false,"manufactureCountryCDList":[null],"commodityCDList":[""],"commodityDescList":[""],"cerNbrList":[""],"cerComplaintCDList":[""],"cerComplaintDescList":[""],"cerEventDateList":[""],"displayCerEventDateList":[""],"totalPieces":"1","specialHandlingServicesList":["Deliver Weekday"],"shipmentType":"","pkgContentDesc1":"","pkgContentDesc2":"","docAWBNbr":"","originalCharges":"","transportationCD":"","transportationDesc":"","dutiesAndTaxesCD":"","dutiesAndTaxesDesc":"","origPieceCount":"","destPieceCount":"","goodsClassificationCD":"","receipientAddrQty":"0","deliveryAttempt":"0","codReturnTrackNbr":"","scanEventList":[{"date":"2013\x2d04\x2d02","time":"10\x3a33\x3a00","gmtOffset":"\x2b05\x3a30","status":"In transit","statusCD":"IT","scanLocation":"MUMBAI IN","scanDetails":"","scanDetailsHtml":"","rtrnShprTrkNbr":"","isDelException":false,"isClearanceDelay":false,"isException":false,"isDelivered":false},{"date":"2013\x2d04\x2d02","time":"03\x3a40\x3a00","gmtOffset":"\x2b05\x3a30","status":"In transit","statusCD":"IT","scanLocation":"MUMBAI IN","scanDetails":"","scanDetailsHtml":"","rtrnShprTrkNbr":"","isDelException":false,"isClearanceDelay":false,"isException":false,"isDelivered":false},{"date":"2013\x2d04\x2d01","time":"22\x3a08\x3a00","gmtOffset":"\x2b05\x3a30","status":"Left FedEx origin facility","statusCD":"DP","scanLocation":"MUMBAI IN","scanDetails":"","scanDetailsHtml":"","rtrnShprTrkNbr":"","isDelException":false,"isClearanceDelay":false,"isException":false,"isDelivered":false},{"date":"2013\x2d04\x2d01","time":"19\x3a55\x3a00","gmtOffset":"\x2b05\x3a30","status":"Picked up","statusCD":"PU","scanLocation":"MUMBAI IN","scanDetails":"","scanDetailsHtml":"","rtrnShprTrkNbr":"","isDelException":false,"isClearanceDelay":false,"isException":false,"isDelivered":false},{"date":"2013\x2d04\x2d01","time":"08\x3a27\x3a58","gmtOffset":"\x2d05\x3a00","status":"Shipment information sent to FedEx","statusCD":"OC","scanLocation":"","scanDetails":"","scanDetailsHtml":"","rtrnShprTrkNbr":"","isDelException":false,"isClearanceDelay":false,"isException":false,"isDelivered":false}],"originAddr1":"","originAddr2":"","originCity":"MUMBAI","originStateCD":"MH","originZip":"","originCntryCD":"IN","originLocationID":"","originTermCity":"MUMBAI","originTermStateCD":"MH","destLocationAddr1":"","destLocationAddr2":"","destLocationCity":"MOSCOW","destLocationStateCD":"MC","destLocationZip":"","destLocationCntryCD":"RU","destLocationID":"","destLocationTermCity":"MOSCOW","destLocationTermStateCD":"MC","destAddr1":"","destAddr2":"","destCity":"MOSCOW","destStateCD":"","destZip":"","destCntryCD":"RU","halAddr1":"","halAddr2":"","halCity":"","halStateCD":"","halZipCD":"","halCntryCD":"","actualDelAddrCity":"","actualDelAddrStateCD":"","actualDelAddrZipCD":"","actualDelAddrCntryCD":"","totalTransitMiles":"","excepReasonList":[""],"excepActionList":[""],"exceptionReason":"","exceptionAction":"","statusDetailsList":[""],"trackErrCD":"","destTZ":"\x2b04\x3a00","originTZ":"\x2b05\x3a30","isMultiStat":"0","multiStatList":[{"multiPiec":"","multiTm":"","multiDispTm":"","multiSta":""}],"maskMessage":"","deliveryService":"","milestoDestination":"","terms":"","originUbanizationCode":"","originCountryName":"","isOriginResidential":false,"halUrbanizationCD":"","halCountryName":"","actualDelAddrUrbanizationCD":"","actualDelAddrCountryName":"","destUrbanizationCD":"","destCountryName":"","delToDesc":"","recpShareID":"","shprShareID":"","defaultCDOType":"RTH","mpstype":"","fxfAdvanceNotice":true,"rthavailableCD":"","excepReasonListNoInit":[""],"excepActionListNoInit":[""],"statusDetailsListNoInit":[""],"matched":false,"isSuccessful":true,"errorList":[{"code":"","message":"","source":null}],"isCanceled":false,"isPrePickup":false,"isPickup":false,"isInTransit":true,"isInProgress":true,"isDelException":false,"isClearanceDelay":false,"isException":false,"isDelivered":false,"isHAL":false,"isOnSchedule":false,"isDeliveryToday":false,"isSave":false,"isWatch":false,"isHistorical":false,"isTenderedNotification":false,"isDeliveredNotification":true,"isExceptionNotification":true,"isCurrentStatusNotification":false,"isAnticipatedShipDtLabel":false,"isShipPickupDtLabel":true,"isActualPickupLabel":false,"isOrderReceivedLabel":false,"isEstimatedDeliveryDtLabel":true,"isDeliveryDtLabel":false,"isActualDeliveryDtLabel":false,"isOrderCompleteLabel":false,"isOutboundDirection":false,"isInboundDirection":false,"isThirdpartyDirection":false,"isUnknownDirection":false,"isFSM":false,"isReturn":false,"isOriginalOutBound":false,"isChildPackage":false,"isParentPackage":false,"isReclassifiedAsSingleShipment":false,"isDuplicate":false,"isMaskShipper":false,"isHalEligible":false,"isFedexOfficeOnlineOrders":false,"isFedexOfficeInStoreOrders":false,"isMultipleStop":false,"isCustomCritical":false,"isInvalid":false,"isNotFound":false,"isFreight":false,"isSpod":false,"isSignatureAvailable":false,"isMPS":false,"isGMPS":false,"isResidential":false,"isDestResidential":true,"isHALResidential":false,"isActualDelAddrResidential":false,"isReqEstDelDt":false,"isCDOEligible":false,"CDOInfoList":[{"spclInstructDesc":"","delivOptn":"","delivOptnStatus":"","reqApptWdw":"","reqApptDesc":"","rerouteTRKNbr":"","beginTm":"","endTm":""}],"CDOExists":false,"isMtchdByRecShrID":false,"isMtchdByShiprShrID":false}]}}
@@ -105,15 +120,15 @@ public class Test {
             out.close();
             String html = readStreamToString(conn.getInputStream(), "UTF-8");
             System.out.println(html);
-            FdxResponseWrapper r  = FedexTracker.getInstanse().parseResponse(html);
+            FdxResponseWrapper r = FedexTracker.getInstanse().parseResponse(html);
             if (!r.getTrackPackagesResponse().isSuccessful() && !"0".equals(r.getTrackPackagesResponse().getErrorList().get(0).getCode())) {
                 System.out.println(r.getTrackPackagesResponse().getErrorList().get(0).getMessage());
             }
-            System.out.println(r.getTrackPackagesResponse().getPackageList().get(0).getMainStatus() + ", " +r.getTrackPackagesResponse().getPackageList().get(0).getSubStatus());
+            System.out.println(r.getTrackPackagesResponse().getPackageList().get(0).getMainStatus() + ", " + r.getTrackPackagesResponse().getPackageList().get(0).getSubStatus());
 
         } catch (Exception e) {
             e.printStackTrace();
-       }
+        }
 
 
         FdxRequestWrapper fdxRequestWrapper = new FdxRequestWrapper();
@@ -247,7 +262,6 @@ public class Test {
 //        List<TagItem> list = DAOManager.getInstance().getTags();
 
 
-
 //        String s = "http://yandex.ru/yandsearch?text=regexp%20online&lr=213\n" +
 //                "http://stackoverflow.com/questions/2102727/regular-expression-for-url?lq=1\n" +
 //                "http://wiki.apache.org/lucene-java/ImproveSearchingSpeed\n" +
@@ -281,7 +295,7 @@ public class Test {
         InputStreamReader r = new InputStreamReader(in, encoding);
         int c;
         while ((c = r.read()) != -1) {
-            b.append((char)c);
+            b.append((char) c);
         }
         return b.toString();
     }

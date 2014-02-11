@@ -1,3 +1,20 @@
+/*
+ * The MIT License
+ *
+ * Copyright (c) 2014.  schors (https://github.com/flicus)
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
+ * documentation files (the "Software"), to deal in the Software without restriction, including without limitation
+ * the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,
+ * and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED
+ * TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+ * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
+ * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
+
 /**
  * AddressParameters.java
  *
@@ -7,7 +24,7 @@
 
 package org.schors.evlampia.rupost.wsdl.axis;
 
-public class AddressParameters  implements java.io.Serializable {
+public class AddressParameters implements java.io.Serializable {
     private Address destinationAddress;
 
     private Address operationAddress;
@@ -22,22 +39,22 @@ public class AddressParameters  implements java.io.Serializable {
     }
 
     public AddressParameters(
-           Address destinationAddress,
-           Address operationAddress,
-           Country mailDirect,
-           Country countryFrom,
-           Country countryOper) {
-           this.destinationAddress = destinationAddress;
-           this.operationAddress = operationAddress;
-           this.mailDirect = mailDirect;
-           this.countryFrom = countryFrom;
-           this.countryOper = countryOper;
+            Address destinationAddress,
+            Address operationAddress,
+            Country mailDirect,
+            Country countryFrom,
+            Country countryOper) {
+        this.destinationAddress = destinationAddress;
+        this.operationAddress = operationAddress;
+        this.mailDirect = mailDirect;
+        this.countryFrom = countryFrom;
+        this.countryOper = countryOper;
     }
 
 
     /**
      * Gets the destinationAddress value for this AddressParameters.
-     * 
+     *
      * @return destinationAddress
      */
     public Address getDestinationAddress() {
@@ -47,7 +64,7 @@ public class AddressParameters  implements java.io.Serializable {
 
     /**
      * Sets the destinationAddress value for this AddressParameters.
-     * 
+     *
      * @param destinationAddress
      */
     public void setDestinationAddress(Address destinationAddress) {
@@ -57,7 +74,7 @@ public class AddressParameters  implements java.io.Serializable {
 
     /**
      * Gets the operationAddress value for this AddressParameters.
-     * 
+     *
      * @return operationAddress
      */
     public Address getOperationAddress() {
@@ -67,7 +84,7 @@ public class AddressParameters  implements java.io.Serializable {
 
     /**
      * Sets the operationAddress value for this AddressParameters.
-     * 
+     *
      * @param operationAddress
      */
     public void setOperationAddress(Address operationAddress) {
@@ -77,7 +94,7 @@ public class AddressParameters  implements java.io.Serializable {
 
     /**
      * Gets the mailDirect value for this AddressParameters.
-     * 
+     *
      * @return mailDirect
      */
     public Country getMailDirect() {
@@ -87,7 +104,7 @@ public class AddressParameters  implements java.io.Serializable {
 
     /**
      * Sets the mailDirect value for this AddressParameters.
-     * 
+     *
      * @param mailDirect
      */
     public void setMailDirect(Country mailDirect) {
@@ -97,7 +114,7 @@ public class AddressParameters  implements java.io.Serializable {
 
     /**
      * Gets the countryFrom value for this AddressParameters.
-     * 
+     *
      * @return countryFrom
      */
     public Country getCountryFrom() {
@@ -107,7 +124,7 @@ public class AddressParameters  implements java.io.Serializable {
 
     /**
      * Sets the countryFrom value for this AddressParameters.
-     * 
+     *
      * @param countryFrom
      */
     public void setCountryFrom(Country countryFrom) {
@@ -117,7 +134,7 @@ public class AddressParameters  implements java.io.Serializable {
 
     /**
      * Gets the countryOper value for this AddressParameters.
-     * 
+     *
      * @return countryOper
      */
     public Country getCountryOper() {
@@ -127,7 +144,7 @@ public class AddressParameters  implements java.io.Serializable {
 
     /**
      * Sets the countryOper value for this AddressParameters.
-     * 
+     *
      * @param countryOper
      */
     public void setCountryOper(Country countryOper) {
@@ -135,6 +152,7 @@ public class AddressParameters  implements java.io.Serializable {
     }
 
     private java.lang.Object __equalsCalc = null;
+
     public synchronized boolean equals(java.lang.Object obj) {
         if (!(obj instanceof AddressParameters)) return false;
         AddressParameters other = (AddressParameters) obj;
@@ -146,26 +164,27 @@ public class AddressParameters  implements java.io.Serializable {
         __equalsCalc = obj;
         boolean _equals;
         _equals = true &&
-            ((this.destinationAddress==null && other.getDestinationAddress()==null) ||
-             (this.destinationAddress!=null &&
-              this.destinationAddress.equals(other.getDestinationAddress()))) &&
-            ((this.operationAddress==null && other.getOperationAddress()==null) ||
-             (this.operationAddress!=null &&
-              this.operationAddress.equals(other.getOperationAddress()))) &&
-            ((this.mailDirect==null && other.getMailDirect()==null) ||
-             (this.mailDirect!=null &&
-              this.mailDirect.equals(other.getMailDirect()))) &&
-            ((this.countryFrom==null && other.getCountryFrom()==null) ||
-             (this.countryFrom!=null &&
-              this.countryFrom.equals(other.getCountryFrom()))) &&
-            ((this.countryOper==null && other.getCountryOper()==null) ||
-             (this.countryOper!=null &&
-              this.countryOper.equals(other.getCountryOper())));
+                ((this.destinationAddress == null && other.getDestinationAddress() == null) ||
+                        (this.destinationAddress != null &&
+                                this.destinationAddress.equals(other.getDestinationAddress()))) &&
+                ((this.operationAddress == null && other.getOperationAddress() == null) ||
+                        (this.operationAddress != null &&
+                                this.operationAddress.equals(other.getOperationAddress()))) &&
+                ((this.mailDirect == null && other.getMailDirect() == null) ||
+                        (this.mailDirect != null &&
+                                this.mailDirect.equals(other.getMailDirect()))) &&
+                ((this.countryFrom == null && other.getCountryFrom() == null) ||
+                        (this.countryFrom != null &&
+                                this.countryFrom.equals(other.getCountryFrom()))) &&
+                ((this.countryOper == null && other.getCountryOper() == null) ||
+                        (this.countryOper != null &&
+                                this.countryOper.equals(other.getCountryOper())));
         __equalsCalc = null;
         return _equals;
     }
 
     private boolean __hashCodeCalc = false;
+
     public synchronized int hashCode() {
         if (__hashCodeCalc) {
             return 0;
@@ -193,7 +212,7 @@ public class AddressParameters  implements java.io.Serializable {
 
     // Type metadata
     private static org.apache.axis.description.TypeDesc typeDesc =
-        new org.apache.axis.description.TypeDesc(AddressParameters.class, true);
+            new org.apache.axis.description.TypeDesc(AddressParameters.class, true);
 
     static {
         typeDesc.setXmlType(new javax.xml.namespace.QName("http://russianpost.org/operationhistory/data", "AddressParameters"));
@@ -240,24 +259,24 @@ public class AddressParameters  implements java.io.Serializable {
      * Get Custom Serializer
      */
     public static org.apache.axis.encoding.Serializer getSerializer(
-           java.lang.String mechType,
-           java.lang.Class _javaType,
-           javax.xml.namespace.QName _xmlType) {
+            java.lang.String mechType,
+            java.lang.Class _javaType,
+            javax.xml.namespace.QName _xmlType) {
         return
-          new  org.apache.axis.encoding.ser.BeanSerializer(
-            _javaType, _xmlType, typeDesc);
+                new org.apache.axis.encoding.ser.BeanSerializer(
+                        _javaType, _xmlType, typeDesc);
     }
 
     /**
      * Get Custom Deserializer
      */
     public static org.apache.axis.encoding.Deserializer getDeserializer(
-           java.lang.String mechType,
-           java.lang.Class _javaType,
-           javax.xml.namespace.QName _xmlType) {
-        return 
-          new  org.apache.axis.encoding.ser.BeanDeserializer(
-            _javaType, _xmlType, typeDesc);
+            java.lang.String mechType,
+            java.lang.Class _javaType,
+            javax.xml.namespace.QName _xmlType) {
+        return
+                new org.apache.axis.encoding.ser.BeanDeserializer(
+                        _javaType, _xmlType, typeDesc);
     }
 
 }

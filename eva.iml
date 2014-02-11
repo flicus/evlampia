@@ -16,7 +16,6 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="postgresql-9.1-901.jdbc4" level="application" />
     <orderEntry type="module-library">
       <library name="IvyIDEA-eva-default">
         <CLASSES>
@@ -25,7 +24,7 @@
           <root url="jar://$USER_HOME$/.ivy2/cache/javax.mail/mail/jars/mail-1.4.3.jar!/" />
           <root url="jar://$USER_HOME$/.ivy2/cache/javax.activation/activation/jars/activation-1.1.jar!/" />
           <root url="jar://$USER_HOME$/.ivy2/cache/org.apache.geronimo.specs/geronimo-jms_1.1_spec/jars/geronimo-jms_1.1_spec-1.0.jar!/" />
-          <root url="jar://$USER_HOME$/.ivy2/cache/com.thoughtworks.xstream/xstream/jars/xstream-1.4.5.jar!/" />
+          <root url="jar://$USER_HOME$/.ivy2/cache/com.thoughtworks.xstream/xstream/jars/xstream-1.4.7.jar!/" />
           <root url="jar://$USER_HOME$/.ivy2/cache/xmlpull/xmlpull/jars/xmlpull-1.1.3.1.jar!/" />
           <root url="jar://$USER_HOME$/.ivy2/cache/xpp3/xpp3_min/jars/xpp3_min-1.1.4c.jar!/" />
           <root url="jar://$USER_HOME$/.ivy2/cache/dom4j/dom4j/jars/dom4j-1.6.1.jar!/" />
@@ -65,7 +64,7 @@
         </CLASSES>
         <JAVADOC>
           <root url="jar://$USER_HOME$/.ivy2/cache/log4j/log4j/javadocs/log4j-1.2.17-javadoc.jar!/" />
-          <root url="jar://$USER_HOME$/.ivy2/cache/com.thoughtworks.xstream/xstream/javadocs/xstream-1.4.5-javadoc.jar!/" />
+          <root url="jar://$USER_HOME$/.ivy2/cache/com.thoughtworks.xstream/xstream/javadocs/xstream-1.4.7-javadoc.jar!/" />
           <root url="jar://$USER_HOME$/.ivy2/cache/org.igniterealtime.smack/smack/javadocs/smack-3.2.1-javadoc.jar!/" />
           <root url="jar://$USER_HOME$/.ivy2/cache/org.igniterealtime.smack/smackx/javadocs/smackx-3.2.1-javadoc.jar!/" />
           <root url="jar://$USER_HOME$/.ivy2/cache/org.apache.lucene/lucene-core/javadocs/lucene-core-3.6.2-javadoc.jar!/" />
@@ -81,7 +80,7 @@
         </JAVADOC>
         <SOURCES>
           <root url="jar://$USER_HOME$/.ivy2/cache/log4j/log4j/sources/log4j-1.2.17-sources.jar!/" />
-          <root url="jar://$USER_HOME$/.ivy2/cache/com.thoughtworks.xstream/xstream/sources/xstream-1.4.5-sources.jar!/" />
+          <root url="jar://$USER_HOME$/.ivy2/cache/com.thoughtworks.xstream/xstream/sources/xstream-1.4.7-sources.jar!/" />
           <root url="jar://$USER_HOME$/.ivy2/cache/org.igniterealtime.smack/smack/sources/smack-3.2.1-sources.jar!/" />
           <root url="jar://$USER_HOME$/.ivy2/cache/org.igniterealtime.smack/smackx/sources/smackx-3.2.1-sources.jar!/" />
           <root url="jar://$USER_HOME$/.ivy2/cache/org.apache.axis/axis/sources/axis-1.4-sources.jar!/" />

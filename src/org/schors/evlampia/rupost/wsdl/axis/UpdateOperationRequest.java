@@ -1,3 +1,20 @@
+/*
+ * The MIT License
+ *
+ * Copyright (c) 2014.  schors (https://github.com/flicus)
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
+ * documentation files (the "Software"), to deal in the Software without restriction, including without limitation
+ * the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,
+ * and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED
+ * TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+ * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
+ * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
+
 /**
  * UpdateOperationRequest.java
  *
@@ -7,7 +24,7 @@
 
 package org.schors.evlampia.rupost.wsdl.axis;
 
-public class UpdateOperationRequest  implements java.io.Serializable {
+public class UpdateOperationRequest implements java.io.Serializable {
     private RequestType requestType;
 
     private OperationHistoryRecord sourceOperation;
@@ -24,18 +41,18 @@ public class UpdateOperationRequest  implements java.io.Serializable {
     }
 
     public UpdateOperationRequest(
-           RequestType requestType,
-           OperationHistoryRecord sourceOperation,
-           OperationHistoryRecord targetOperation,
-           java.lang.String reasonDescription,
-           java.math.BigInteger initiatorDepartment,
-           java.lang.String executorIP) {
-           this.requestType = requestType;
-           this.sourceOperation = sourceOperation;
-           this.targetOperation = targetOperation;
-           this.reasonDescription = reasonDescription;
-           this.initiatorDepartment = initiatorDepartment;
-           this.executorIP = executorIP;
+            RequestType requestType,
+            OperationHistoryRecord sourceOperation,
+            OperationHistoryRecord targetOperation,
+            java.lang.String reasonDescription,
+            java.math.BigInteger initiatorDepartment,
+            java.lang.String executorIP) {
+        this.requestType = requestType;
+        this.sourceOperation = sourceOperation;
+        this.targetOperation = targetOperation;
+        this.reasonDescription = reasonDescription;
+        this.initiatorDepartment = initiatorDepartment;
+        this.executorIP = executorIP;
     }
 
 
@@ -159,6 +176,7 @@ public class UpdateOperationRequest  implements java.io.Serializable {
     }
 
     private java.lang.Object __equalsCalc = null;
+
     public synchronized boolean equals(java.lang.Object obj) {
         if (!(obj instanceof UpdateOperationRequest)) return false;
         UpdateOperationRequest other = (UpdateOperationRequest) obj;
@@ -170,29 +188,30 @@ public class UpdateOperationRequest  implements java.io.Serializable {
         __equalsCalc = obj;
         boolean _equals;
         _equals = true &&
-            ((this.requestType==null && other.getRequestType()==null) ||
-             (this.requestType!=null &&
-              this.requestType.equals(other.getRequestType()))) &&
-            ((this.sourceOperation==null && other.getSourceOperation()==null) ||
-             (this.sourceOperation!=null &&
-              this.sourceOperation.equals(other.getSourceOperation()))) &&
-            ((this.targetOperation==null && other.getTargetOperation()==null) ||
-             (this.targetOperation!=null &&
-              this.targetOperation.equals(other.getTargetOperation()))) &&
-            ((this.reasonDescription==null && other.getReasonDescription()==null) ||
-             (this.reasonDescription!=null &&
-              this.reasonDescription.equals(other.getReasonDescription()))) &&
-            ((this.initiatorDepartment==null && other.getInitiatorDepartment()==null) ||
-             (this.initiatorDepartment!=null &&
-              this.initiatorDepartment.equals(other.getInitiatorDepartment()))) &&
-            ((this.executorIP==null && other.getExecutorIP()==null) ||
-             (this.executorIP!=null &&
-              this.executorIP.equals(other.getExecutorIP())));
+                ((this.requestType == null && other.getRequestType() == null) ||
+                        (this.requestType != null &&
+                                this.requestType.equals(other.getRequestType()))) &&
+                ((this.sourceOperation == null && other.getSourceOperation() == null) ||
+                        (this.sourceOperation != null &&
+                                this.sourceOperation.equals(other.getSourceOperation()))) &&
+                ((this.targetOperation == null && other.getTargetOperation() == null) ||
+                        (this.targetOperation != null &&
+                                this.targetOperation.equals(other.getTargetOperation()))) &&
+                ((this.reasonDescription == null && other.getReasonDescription() == null) ||
+                        (this.reasonDescription != null &&
+                                this.reasonDescription.equals(other.getReasonDescription()))) &&
+                ((this.initiatorDepartment == null && other.getInitiatorDepartment() == null) ||
+                        (this.initiatorDepartment != null &&
+                                this.initiatorDepartment.equals(other.getInitiatorDepartment()))) &&
+                ((this.executorIP == null && other.getExecutorIP() == null) ||
+                        (this.executorIP != null &&
+                                this.executorIP.equals(other.getExecutorIP())));
         __equalsCalc = null;
         return _equals;
     }
 
     private boolean __hashCodeCalc = false;
+
     public synchronized int hashCode() {
         if (__hashCodeCalc) {
             return 0;
@@ -223,7 +242,7 @@ public class UpdateOperationRequest  implements java.io.Serializable {
 
     // Type metadata
     private static org.apache.axis.description.TypeDesc typeDesc =
-        new org.apache.axis.description.TypeDesc(UpdateOperationRequest.class, true);
+            new org.apache.axis.description.TypeDesc(UpdateOperationRequest.class, true);
 
     static {
         typeDesc.setXmlType(new javax.xml.namespace.QName("http://russianpost.org/operationhistory/data", "UpdateOperationRequest"));
@@ -277,24 +296,24 @@ public class UpdateOperationRequest  implements java.io.Serializable {
      * Get Custom Serializer
      */
     public static org.apache.axis.encoding.Serializer getSerializer(
-           java.lang.String mechType,
-           java.lang.Class _javaType,
-           javax.xml.namespace.QName _xmlType) {
+            java.lang.String mechType,
+            java.lang.Class _javaType,
+            javax.xml.namespace.QName _xmlType) {
         return
-          new  org.apache.axis.encoding.ser.BeanSerializer(
-            _javaType, _xmlType, typeDesc);
+                new org.apache.axis.encoding.ser.BeanSerializer(
+                        _javaType, _xmlType, typeDesc);
     }
 
     /**
      * Get Custom Deserializer
      */
     public static org.apache.axis.encoding.Deserializer getDeserializer(
-           java.lang.String mechType,
-           java.lang.Class _javaType,
-           javax.xml.namespace.QName _xmlType) {
-        return 
-          new  org.apache.axis.encoding.ser.BeanDeserializer(
-            _javaType, _xmlType, typeDesc);
+            java.lang.String mechType,
+            java.lang.Class _javaType,
+            javax.xml.namespace.QName _xmlType) {
+        return
+                new org.apache.axis.encoding.ser.BeanDeserializer(
+                        _javaType, _xmlType, typeDesc);
     }
 
 }

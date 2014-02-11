@@ -1,3 +1,20 @@
+/*
+ * The MIT License
+ *
+ * Copyright (c) 2014.  schors (https://github.com/flicus)
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
+ * documentation files (the "Software"), to deal in the Software without restriction, including without limitation
+ * the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,
+ * and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED
+ * TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+ * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
+ * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
+
 /**
  * FinanceParameters.java
  *
@@ -7,7 +24,7 @@
 
 package org.schors.evlampia.rupost.wsdl.axis;
 
-public class FinanceParameters  implements java.io.Serializable {
+public class FinanceParameters implements java.io.Serializable {
     private java.math.BigInteger payment;
 
     private java.math.BigInteger value;
@@ -24,24 +41,24 @@ public class FinanceParameters  implements java.io.Serializable {
     }
 
     public FinanceParameters(
-           java.math.BigInteger payment,
-           java.math.BigInteger value,
-           java.math.BigInteger massRate,
-           java.math.BigInteger insrRate,
-           java.math.BigInteger airRate,
-           java.math.BigInteger rate) {
-           this.payment = payment;
-           this.value = value;
-           this.massRate = massRate;
-           this.insrRate = insrRate;
-           this.airRate = airRate;
-           this.rate = rate;
+            java.math.BigInteger payment,
+            java.math.BigInteger value,
+            java.math.BigInteger massRate,
+            java.math.BigInteger insrRate,
+            java.math.BigInteger airRate,
+            java.math.BigInteger rate) {
+        this.payment = payment;
+        this.value = value;
+        this.massRate = massRate;
+        this.insrRate = insrRate;
+        this.airRate = airRate;
+        this.rate = rate;
     }
 
 
     /**
      * Gets the payment value for this FinanceParameters.
-     * 
+     *
      * @return payment
      */
     public java.math.BigInteger getPayment() {
@@ -51,7 +68,7 @@ public class FinanceParameters  implements java.io.Serializable {
 
     /**
      * Sets the payment value for this FinanceParameters.
-     * 
+     *
      * @param payment
      */
     public void setPayment(java.math.BigInteger payment) {
@@ -61,7 +78,7 @@ public class FinanceParameters  implements java.io.Serializable {
 
     /**
      * Gets the value value for this FinanceParameters.
-     * 
+     *
      * @return value
      */
     public java.math.BigInteger getValue() {
@@ -71,7 +88,7 @@ public class FinanceParameters  implements java.io.Serializable {
 
     /**
      * Sets the value value for this FinanceParameters.
-     * 
+     *
      * @param value
      */
     public void setValue(java.math.BigInteger value) {
@@ -81,7 +98,7 @@ public class FinanceParameters  implements java.io.Serializable {
 
     /**
      * Gets the massRate value for this FinanceParameters.
-     * 
+     *
      * @return massRate
      */
     public java.math.BigInteger getMassRate() {
@@ -91,7 +108,7 @@ public class FinanceParameters  implements java.io.Serializable {
 
     /**
      * Sets the massRate value for this FinanceParameters.
-     * 
+     *
      * @param massRate
      */
     public void setMassRate(java.math.BigInteger massRate) {
@@ -101,7 +118,7 @@ public class FinanceParameters  implements java.io.Serializable {
 
     /**
      * Gets the insrRate value for this FinanceParameters.
-     * 
+     *
      * @return insrRate
      */
     public java.math.BigInteger getInsrRate() {
@@ -111,7 +128,7 @@ public class FinanceParameters  implements java.io.Serializable {
 
     /**
      * Sets the insrRate value for this FinanceParameters.
-     * 
+     *
      * @param insrRate
      */
     public void setInsrRate(java.math.BigInteger insrRate) {
@@ -121,7 +138,7 @@ public class FinanceParameters  implements java.io.Serializable {
 
     /**
      * Gets the airRate value for this FinanceParameters.
-     * 
+     *
      * @return airRate
      */
     public java.math.BigInteger getAirRate() {
@@ -131,7 +148,7 @@ public class FinanceParameters  implements java.io.Serializable {
 
     /**
      * Sets the airRate value for this FinanceParameters.
-     * 
+     *
      * @param airRate
      */
     public void setAirRate(java.math.BigInteger airRate) {
@@ -141,7 +158,7 @@ public class FinanceParameters  implements java.io.Serializable {
 
     /**
      * Gets the rate value for this FinanceParameters.
-     * 
+     *
      * @return rate
      */
     public java.math.BigInteger getRate() {
@@ -151,7 +168,7 @@ public class FinanceParameters  implements java.io.Serializable {
 
     /**
      * Sets the rate value for this FinanceParameters.
-     * 
+     *
      * @param rate
      */
     public void setRate(java.math.BigInteger rate) {
@@ -159,6 +176,7 @@ public class FinanceParameters  implements java.io.Serializable {
     }
 
     private java.lang.Object __equalsCalc = null;
+
     public synchronized boolean equals(java.lang.Object obj) {
         if (!(obj instanceof FinanceParameters)) return false;
         FinanceParameters other = (FinanceParameters) obj;
@@ -170,29 +188,30 @@ public class FinanceParameters  implements java.io.Serializable {
         __equalsCalc = obj;
         boolean _equals;
         _equals = true &&
-            ((this.payment==null && other.getPayment()==null) ||
-             (this.payment!=null &&
-              this.payment.equals(other.getPayment()))) &&
-            ((this.value==null && other.getValue()==null) ||
-             (this.value!=null &&
-              this.value.equals(other.getValue()))) &&
-            ((this.massRate==null && other.getMassRate()==null) ||
-             (this.massRate!=null &&
-              this.massRate.equals(other.getMassRate()))) &&
-            ((this.insrRate==null && other.getInsrRate()==null) ||
-             (this.insrRate!=null &&
-              this.insrRate.equals(other.getInsrRate()))) &&
-            ((this.airRate==null && other.getAirRate()==null) ||
-             (this.airRate!=null &&
-              this.airRate.equals(other.getAirRate()))) &&
-            ((this.rate==null && other.getRate()==null) ||
-             (this.rate!=null &&
-              this.rate.equals(other.getRate())));
+                ((this.payment == null && other.getPayment() == null) ||
+                        (this.payment != null &&
+                                this.payment.equals(other.getPayment()))) &&
+                ((this.value == null && other.getValue() == null) ||
+                        (this.value != null &&
+                                this.value.equals(other.getValue()))) &&
+                ((this.massRate == null && other.getMassRate() == null) ||
+                        (this.massRate != null &&
+                                this.massRate.equals(other.getMassRate()))) &&
+                ((this.insrRate == null && other.getInsrRate() == null) ||
+                        (this.insrRate != null &&
+                                this.insrRate.equals(other.getInsrRate()))) &&
+                ((this.airRate == null && other.getAirRate() == null) ||
+                        (this.airRate != null &&
+                                this.airRate.equals(other.getAirRate()))) &&
+                ((this.rate == null && other.getRate() == null) ||
+                        (this.rate != null &&
+                                this.rate.equals(other.getRate())));
         __equalsCalc = null;
         return _equals;
     }
 
     private boolean __hashCodeCalc = false;
+
     public synchronized int hashCode() {
         if (__hashCodeCalc) {
             return 0;
@@ -223,7 +242,7 @@ public class FinanceParameters  implements java.io.Serializable {
 
     // Type metadata
     private static org.apache.axis.description.TypeDesc typeDesc =
-        new org.apache.axis.description.TypeDesc(FinanceParameters.class, true);
+            new org.apache.axis.description.TypeDesc(FinanceParameters.class, true);
 
     static {
         typeDesc.setXmlType(new javax.xml.namespace.QName("http://russianpost.org/operationhistory/data", "FinanceParameters"));
@@ -276,24 +295,24 @@ public class FinanceParameters  implements java.io.Serializable {
      * Get Custom Serializer
      */
     public static org.apache.axis.encoding.Serializer getSerializer(
-           java.lang.String mechType,
-           java.lang.Class _javaType,
-           javax.xml.namespace.QName _xmlType) {
+            java.lang.String mechType,
+            java.lang.Class _javaType,
+            javax.xml.namespace.QName _xmlType) {
         return
-          new  org.apache.axis.encoding.ser.BeanSerializer(
-            _javaType, _xmlType, typeDesc);
+                new org.apache.axis.encoding.ser.BeanSerializer(
+                        _javaType, _xmlType, typeDesc);
     }
 
     /**
      * Get Custom Deserializer
      */
     public static org.apache.axis.encoding.Deserializer getDeserializer(
-           java.lang.String mechType,
-           java.lang.Class _javaType,
-           javax.xml.namespace.QName _xmlType) {
-        return 
-          new  org.apache.axis.encoding.ser.BeanDeserializer(
-            _javaType, _xmlType, typeDesc);
+            java.lang.String mechType,
+            java.lang.Class _javaType,
+            javax.xml.namespace.QName _xmlType) {
+        return
+                new org.apache.axis.encoding.ser.BeanDeserializer(
+                        _javaType, _xmlType, typeDesc);
     }
 
 }

@@ -15,26 +15,59 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package org.schors.evlampia.json.fedex;
+package org.schors.evlampia;
 
-public class FdxRequestWrapper {
-    private TrackPackagesRequest TrackPackagesRequest;
+import java.io.Serializable;
 
-    public FdxRequestWrapper() {
+public class Feed implements Serializable {
+    private String title;
+    private String link;
+
+    public Feed(String title, String link) {
+        this.link = link;
+        this.title = title;
     }
 
-    public TrackPackagesRequest getTrackPackagesRequest() {
-        return TrackPackagesRequest;
+    public String getLink() {
+        return link;
     }
 
-    public void setTrackPackagesRequest(TrackPackagesRequest trackPackagesRequest) {
-        this.TrackPackagesRequest = trackPackagesRequest;
+    public void setLink(String link) {
+        this.link = link;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Feed feed = (Feed) o;
+
+        if (link != null ? !link.equals(feed.link) : feed.link != null) return false;
+        if (title != null ? !title.equals(feed.title) : feed.title != null) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = title != null ? title.hashCode() : 0;
+        result = 31 * result + (link != null ? link.hashCode() : 0);
+        return result;
     }
 
     @Override
     public String toString() {
-        return "FdxRequestWrapper{" +
-                "TrackPackagesRequest=" + TrackPackagesRequest +
-                '}';
+        return "Feed{" + "title=" + title + ", link=" + link + '}';
     }
+
+
 }

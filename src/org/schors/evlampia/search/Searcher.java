@@ -1,7 +1,23 @@
+/*
+ * The MIT License
+ *
+ * Copyright (c) 2014.  schors (https://github.com/flicus)
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
+ * documentation files (the "Software"), to deal in the Software without restriction, including without limitation
+ * the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,
+ * and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED
+ * TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+ * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
+ * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
+
 package org.schors.evlampia.search;
 
 import org.apache.log4j.Logger;
-import org.apache.lucene.analysis.ru.RussianAnalyzer;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.queryParser.MultiFieldQueryParser;
 import org.apache.lucene.queryParser.QueryParser;
@@ -36,7 +52,7 @@ public class Searcher<T, A extends Aggregator<T>> implements SearchResult.IResul
     public Searcher(Directory directory, Class<A> classA, boolean docsScoreInOrder) throws Exception {
         this.classA = classA;
         this.docsScoreInOrder = docsScoreInOrder;
-        
+
         parser.setDefaultOperator(QueryParser.AND_OPERATOR);
         parser.setAllowLeadingWildcard(true);
         parser.setMultiTermRewriteMethod(MultiTermQuery.SCORING_BOOLEAN_QUERY_REWRITE);
@@ -53,7 +69,7 @@ public class Searcher<T, A extends Aggregator<T>> implements SearchResult.IResul
 
     public SearchResult<T> Result(String story, int count, int start) throws Exception {
         int nDocs = start + count;
-        
+
         //Query query = parser.parse(QueryParser.escape(story));
         Query query = parser.parse(story);
         TopScoreDocCollector collector = TopScoreDocCollector.create(Math.max(nDocs, 1), docsScoreInOrder);
@@ -89,6 +105,14 @@ public class Searcher<T, A extends Aggregator<T>> implements SearchResult.IResul
             log.error(ex, ex);
         }
         return s;
+    }
+
+    public void reopenIndex() {
+        try {
+            indexReader.reopen();
+        } catch (IOException e) {
+            log.error(e, e);
+        }
     }
 
     public void shutDown() {

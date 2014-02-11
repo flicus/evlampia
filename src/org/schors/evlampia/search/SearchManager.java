@@ -1,14 +1,28 @@
+/*
+ * The MIT License
+ *
+ * Copyright (c) 2014.  schors (https://github.com/flicus)
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
+ * documentation files (the "Software"), to deal in the Software without restriction, including without limitation
+ * the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,
+ * and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED
+ * TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+ * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
+ * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
+
 package org.schors.evlampia.search;
 
 import org.apache.log4j.Logger;
 import org.apache.lucene.store.Directory;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeFieldType;
-import org.joda.time.JodaTimePermission;
 import org.schors.evlampia.ConfigurationManager;
 import org.schors.evlampia.EvaExecutors;
-import org.schors.evlampia.commands.UpdateIndexCmd;
-import org.schors.evlampia.core.CommandManagerImpl;
 import org.schors.evlampia.vbotDAOHTMLImplementation;
 
 import java.io.File;
@@ -23,6 +37,10 @@ public class SearchManager {
     private Directory directory;
 
     public SearchManager() {
+    }
+
+    public static SearchManager getInstanse() {
+        return Singleton.instanse;
     }
 
     public void init(Directory d) {
@@ -43,7 +61,7 @@ public class SearchManager {
                     log.error(e, e);
                 }
             }
-        }, 24-hours, 24, TimeUnit.HOURS);
+        }, 24 - hours, 24, TimeUnit.HOURS);
     }
 
     public void updateIndex(boolean recreate) throws IOException {
@@ -68,6 +86,7 @@ public class SearchManager {
             }
         } finally {
             indexer.close();
+            searcher.reopenIndex();
         }
     }
 
@@ -93,9 +112,5 @@ public class SearchManager {
 
     private static class Singleton {
         public static SearchManager instanse = new SearchManager();
-    }
-
-    public static SearchManager getInstanse() {
-        return Singleton.instanse;
     }
 }

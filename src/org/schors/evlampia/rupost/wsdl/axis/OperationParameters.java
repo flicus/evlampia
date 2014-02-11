@@ -1,3 +1,20 @@
+/*
+ * The MIT License
+ *
+ * Copyright (c) 2014.  schors (https://github.com/flicus)
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
+ * documentation files (the "Software"), to deal in the Software without restriction, including without limitation
+ * the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,
+ * and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED
+ * TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+ * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
+ * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
+
 /**
  * OperationParameters.java
  *
@@ -7,7 +24,7 @@
 
 package org.schors.evlampia.rupost.wsdl.axis;
 
-public class OperationParameters  implements java.io.Serializable {
+public class OperationParameters implements java.io.Serializable {
     private Rtm02Parameter operType;
 
     private Rtm02Parameter operAttr;
@@ -18,18 +35,18 @@ public class OperationParameters  implements java.io.Serializable {
     }
 
     public OperationParameters(
-           Rtm02Parameter operType,
-           Rtm02Parameter operAttr,
-           java.util.Calendar operDate) {
-           this.operType = operType;
-           this.operAttr = operAttr;
-           this.operDate = operDate;
+            Rtm02Parameter operType,
+            Rtm02Parameter operAttr,
+            java.util.Calendar operDate) {
+        this.operType = operType;
+        this.operAttr = operAttr;
+        this.operDate = operDate;
     }
 
 
     /**
      * Gets the operType value for this OperationParameters.
-     * 
+     *
      * @return operType
      */
     public Rtm02Parameter getOperType() {
@@ -39,7 +56,7 @@ public class OperationParameters  implements java.io.Serializable {
 
     /**
      * Sets the operType value for this OperationParameters.
-     * 
+     *
      * @param operType
      */
     public void setOperType(Rtm02Parameter operType) {
@@ -49,7 +66,7 @@ public class OperationParameters  implements java.io.Serializable {
 
     /**
      * Gets the operAttr value for this OperationParameters.
-     * 
+     *
      * @return operAttr
      */
     public Rtm02Parameter getOperAttr() {
@@ -59,7 +76,7 @@ public class OperationParameters  implements java.io.Serializable {
 
     /**
      * Sets the operAttr value for this OperationParameters.
-     * 
+     *
      * @param operAttr
      */
     public void setOperAttr(Rtm02Parameter operAttr) {
@@ -69,7 +86,7 @@ public class OperationParameters  implements java.io.Serializable {
 
     /**
      * Gets the operDate value for this OperationParameters.
-     * 
+     *
      * @return operDate
      */
     public java.util.Calendar getOperDate() {
@@ -79,7 +96,7 @@ public class OperationParameters  implements java.io.Serializable {
 
     /**
      * Sets the operDate value for this OperationParameters.
-     * 
+     *
      * @param operDate
      */
     public void setOperDate(java.util.Calendar operDate) {
@@ -87,6 +104,7 @@ public class OperationParameters  implements java.io.Serializable {
     }
 
     private java.lang.Object __equalsCalc = null;
+
     public synchronized boolean equals(java.lang.Object obj) {
         if (!(obj instanceof OperationParameters)) return false;
         OperationParameters other = (OperationParameters) obj;
@@ -98,20 +116,21 @@ public class OperationParameters  implements java.io.Serializable {
         __equalsCalc = obj;
         boolean _equals;
         _equals = true &&
-            ((this.operType==null && other.getOperType()==null) ||
-             (this.operType!=null &&
-              this.operType.equals(other.getOperType()))) &&
-            ((this.operAttr==null && other.getOperAttr()==null) ||
-             (this.operAttr!=null &&
-              this.operAttr.equals(other.getOperAttr()))) &&
-            ((this.operDate==null && other.getOperDate()==null) ||
-             (this.operDate!=null &&
-              this.operDate.equals(other.getOperDate())));
+                ((this.operType == null && other.getOperType() == null) ||
+                        (this.operType != null &&
+                                this.operType.equals(other.getOperType()))) &&
+                ((this.operAttr == null && other.getOperAttr() == null) ||
+                        (this.operAttr != null &&
+                                this.operAttr.equals(other.getOperAttr()))) &&
+                ((this.operDate == null && other.getOperDate() == null) ||
+                        (this.operDate != null &&
+                                this.operDate.equals(other.getOperDate())));
         __equalsCalc = null;
         return _equals;
     }
 
     private boolean __hashCodeCalc = false;
+
     public synchronized int hashCode() {
         if (__hashCodeCalc) {
             return 0;
@@ -133,7 +152,7 @@ public class OperationParameters  implements java.io.Serializable {
 
     // Type metadata
     private static org.apache.axis.description.TypeDesc typeDesc =
-        new org.apache.axis.description.TypeDesc(OperationParameters.class, true);
+            new org.apache.axis.description.TypeDesc(OperationParameters.class, true);
 
     static {
         typeDesc.setXmlType(new javax.xml.namespace.QName("http://russianpost.org/operationhistory/data", "OperationParameters"));
@@ -168,24 +187,24 @@ public class OperationParameters  implements java.io.Serializable {
      * Get Custom Serializer
      */
     public static org.apache.axis.encoding.Serializer getSerializer(
-           java.lang.String mechType,
-           java.lang.Class _javaType,
-           javax.xml.namespace.QName _xmlType) {
+            java.lang.String mechType,
+            java.lang.Class _javaType,
+            javax.xml.namespace.QName _xmlType) {
         return
-          new  org.apache.axis.encoding.ser.BeanSerializer(
-            _javaType, _xmlType, typeDesc);
+                new org.apache.axis.encoding.ser.BeanSerializer(
+                        _javaType, _xmlType, typeDesc);
     }
 
     /**
      * Get Custom Deserializer
      */
     public static org.apache.axis.encoding.Deserializer getDeserializer(
-           java.lang.String mechType,
-           java.lang.Class _javaType,
-           javax.xml.namespace.QName _xmlType) {
-        return 
-          new  org.apache.axis.encoding.ser.BeanDeserializer(
-            _javaType, _xmlType, typeDesc);
+            java.lang.String mechType,
+            java.lang.Class _javaType,
+            javax.xml.namespace.QName _xmlType) {
+        return
+                new org.apache.axis.encoding.ser.BeanDeserializer(
+                        _javaType, _xmlType, typeDesc);
     }
 
 }

@@ -1,3 +1,20 @@
+/*
+ * The MIT License
+ *
+ * Copyright (c) 2014.  schors (https://github.com/flicus)
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
+ * documentation files (the "Software"), to deal in the Software without restriction, including without limitation
+ * the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,
+ * and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED
+ * TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+ * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
+ * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
+
 /**
  * OperationHistoryRecord.java
  *
@@ -7,7 +24,7 @@
 
 package org.schors.evlampia.rupost.wsdl.axis;
 
-public class OperationHistoryRecord  implements java.io.Serializable {
+public class OperationHistoryRecord implements java.io.Serializable {
     private AddressParameters addressParameters;
 
     private FinanceParameters financeParameters;
@@ -22,22 +39,22 @@ public class OperationHistoryRecord  implements java.io.Serializable {
     }
 
     public OperationHistoryRecord(
-           AddressParameters addressParameters,
-           FinanceParameters financeParameters,
-           ItemParameters itemParameters,
-           OperationParameters operationParameters,
-           UserParameters userParameters) {
-           this.addressParameters = addressParameters;
-           this.financeParameters = financeParameters;
-           this.itemParameters = itemParameters;
-           this.operationParameters = operationParameters;
-           this.userParameters = userParameters;
+            AddressParameters addressParameters,
+            FinanceParameters financeParameters,
+            ItemParameters itemParameters,
+            OperationParameters operationParameters,
+            UserParameters userParameters) {
+        this.addressParameters = addressParameters;
+        this.financeParameters = financeParameters;
+        this.itemParameters = itemParameters;
+        this.operationParameters = operationParameters;
+        this.userParameters = userParameters;
     }
 
 
     /**
      * Gets the addressParameters value for this OperationHistoryRecord.
-     * 
+     *
      * @return addressParameters
      */
     public AddressParameters getAddressParameters() {
@@ -47,7 +64,7 @@ public class OperationHistoryRecord  implements java.io.Serializable {
 
     /**
      * Sets the addressParameters value for this OperationHistoryRecord.
-     * 
+     *
      * @param addressParameters
      */
     public void setAddressParameters(AddressParameters addressParameters) {
@@ -57,7 +74,7 @@ public class OperationHistoryRecord  implements java.io.Serializable {
 
     /**
      * Gets the financeParameters value for this OperationHistoryRecord.
-     * 
+     *
      * @return financeParameters
      */
     public FinanceParameters getFinanceParameters() {
@@ -67,7 +84,7 @@ public class OperationHistoryRecord  implements java.io.Serializable {
 
     /**
      * Sets the financeParameters value for this OperationHistoryRecord.
-     * 
+     *
      * @param financeParameters
      */
     public void setFinanceParameters(FinanceParameters financeParameters) {
@@ -77,7 +94,7 @@ public class OperationHistoryRecord  implements java.io.Serializable {
 
     /**
      * Gets the itemParameters value for this OperationHistoryRecord.
-     * 
+     *
      * @return itemParameters
      */
     public ItemParameters getItemParameters() {
@@ -87,7 +104,7 @@ public class OperationHistoryRecord  implements java.io.Serializable {
 
     /**
      * Sets the itemParameters value for this OperationHistoryRecord.
-     * 
+     *
      * @param itemParameters
      */
     public void setItemParameters(ItemParameters itemParameters) {
@@ -97,7 +114,7 @@ public class OperationHistoryRecord  implements java.io.Serializable {
 
     /**
      * Gets the operationParameters value for this OperationHistoryRecord.
-     * 
+     *
      * @return operationParameters
      */
     public OperationParameters getOperationParameters() {
@@ -107,7 +124,7 @@ public class OperationHistoryRecord  implements java.io.Serializable {
 
     /**
      * Sets the operationParameters value for this OperationHistoryRecord.
-     * 
+     *
      * @param operationParameters
      */
     public void setOperationParameters(OperationParameters operationParameters) {
@@ -117,7 +134,7 @@ public class OperationHistoryRecord  implements java.io.Serializable {
 
     /**
      * Gets the userParameters value for this OperationHistoryRecord.
-     * 
+     *
      * @return userParameters
      */
     public UserParameters getUserParameters() {
@@ -127,7 +144,7 @@ public class OperationHistoryRecord  implements java.io.Serializable {
 
     /**
      * Sets the userParameters value for this OperationHistoryRecord.
-     * 
+     *
      * @param userParameters
      */
     public void setUserParameters(UserParameters userParameters) {
@@ -135,6 +152,7 @@ public class OperationHistoryRecord  implements java.io.Serializable {
     }
 
     private java.lang.Object __equalsCalc = null;
+
     public synchronized boolean equals(java.lang.Object obj) {
         if (!(obj instanceof OperationHistoryRecord)) return false;
         OperationHistoryRecord other = (OperationHistoryRecord) obj;
@@ -146,26 +164,27 @@ public class OperationHistoryRecord  implements java.io.Serializable {
         __equalsCalc = obj;
         boolean _equals;
         _equals = true &&
-            ((this.addressParameters==null && other.getAddressParameters()==null) ||
-             (this.addressParameters!=null &&
-              this.addressParameters.equals(other.getAddressParameters()))) &&
-            ((this.financeParameters==null && other.getFinanceParameters()==null) ||
-             (this.financeParameters!=null &&
-              this.financeParameters.equals(other.getFinanceParameters()))) &&
-            ((this.itemParameters==null && other.getItemParameters()==null) ||
-             (this.itemParameters!=null &&
-              this.itemParameters.equals(other.getItemParameters()))) &&
-            ((this.operationParameters==null && other.getOperationParameters()==null) ||
-             (this.operationParameters!=null &&
-              this.operationParameters.equals(other.getOperationParameters()))) &&
-            ((this.userParameters==null && other.getUserParameters()==null) ||
-             (this.userParameters!=null &&
-              this.userParameters.equals(other.getUserParameters())));
+                ((this.addressParameters == null && other.getAddressParameters() == null) ||
+                        (this.addressParameters != null &&
+                                this.addressParameters.equals(other.getAddressParameters()))) &&
+                ((this.financeParameters == null && other.getFinanceParameters() == null) ||
+                        (this.financeParameters != null &&
+                                this.financeParameters.equals(other.getFinanceParameters()))) &&
+                ((this.itemParameters == null && other.getItemParameters() == null) ||
+                        (this.itemParameters != null &&
+                                this.itemParameters.equals(other.getItemParameters()))) &&
+                ((this.operationParameters == null && other.getOperationParameters() == null) ||
+                        (this.operationParameters != null &&
+                                this.operationParameters.equals(other.getOperationParameters()))) &&
+                ((this.userParameters == null && other.getUserParameters() == null) ||
+                        (this.userParameters != null &&
+                                this.userParameters.equals(other.getUserParameters())));
         __equalsCalc = null;
         return _equals;
     }
 
     private boolean __hashCodeCalc = false;
+
     public synchronized int hashCode() {
         if (__hashCodeCalc) {
             return 0;
@@ -193,7 +212,7 @@ public class OperationHistoryRecord  implements java.io.Serializable {
 
     // Type metadata
     private static org.apache.axis.description.TypeDesc typeDesc =
-        new org.apache.axis.description.TypeDesc(OperationHistoryRecord.class, true);
+            new org.apache.axis.description.TypeDesc(OperationHistoryRecord.class, true);
 
     static {
         typeDesc.setXmlType(new javax.xml.namespace.QName("http://russianpost.org/operationhistory/data", "OperationHistoryRecord"));
@@ -240,24 +259,24 @@ public class OperationHistoryRecord  implements java.io.Serializable {
      * Get Custom Serializer
      */
     public static org.apache.axis.encoding.Serializer getSerializer(
-           java.lang.String mechType,
-           java.lang.Class _javaType,
-           javax.xml.namespace.QName _xmlType) {
+            java.lang.String mechType,
+            java.lang.Class _javaType,
+            javax.xml.namespace.QName _xmlType) {
         return
-          new  org.apache.axis.encoding.ser.BeanSerializer(
-            _javaType, _xmlType, typeDesc);
+                new org.apache.axis.encoding.ser.BeanSerializer(
+                        _javaType, _xmlType, typeDesc);
     }
 
     /**
      * Get Custom Deserializer
      */
     public static org.apache.axis.encoding.Deserializer getDeserializer(
-           java.lang.String mechType,
-           java.lang.Class _javaType,
-           javax.xml.namespace.QName _xmlType) {
-        return 
-          new  org.apache.axis.encoding.ser.BeanDeserializer(
-            _javaType, _xmlType, typeDesc);
+            java.lang.String mechType,
+            java.lang.Class _javaType,
+            javax.xml.namespace.QName _xmlType) {
+        return
+                new org.apache.axis.encoding.ser.BeanDeserializer(
+                        _javaType, _xmlType, typeDesc);
     }
 
     /*@Override

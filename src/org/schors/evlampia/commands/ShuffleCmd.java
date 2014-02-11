@@ -1,3 +1,20 @@
+/*
+ * The MIT License
+ *
+ * Copyright (c) 2014.  schors (https://github.com/flicus)
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
+ * documentation files (the "Software"), to deal in the Software without restriction, including without limitation
+ * the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,
+ * and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED
+ * TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+ * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
+ * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
+
 package org.schors.evlampia.commands;
 
 import org.jivesoftware.smackx.muc.MultiUserChat;
@@ -6,23 +23,6 @@ import org.schors.evlampia.core.CommandContext;
 import org.schors.evlampia.core.Jbot;
 
 import java.util.Random;
-
-/**
- * Copyright (c) 2013 Amdocs jNetX.
- * http://www.amdocs.com
- * All rights reserved.
- * <p/>
- * This software is the confidential and proprietary information of
- * Amdocs jNetX. You shall not disclose such Confidential Information and
- * shall use it only in accordance with the terms of the license
- * agreement you entered into with Amdocs jNetX.
- * <p/>
- * User: Sergey Skoptsov (sskoptsov@amdocs.com)
- * Date: 25.11.13
- * Time: 17:55
- * <p/>
- * $Id:
- */
 
 public class ShuffleCmd extends Command {
 
@@ -36,7 +36,7 @@ public class ShuffleCmd extends Command {
         random.setSeed(System.currentTimeMillis());
         String rest = getWithoutPrefix(context.getBody());
         if (rest != null) {
-            String[] words  = rest.trim().split(" ");
+            String[] words = rest.trim().split(" ");
             StringBuilder sb = new StringBuilder();
             for (String item : words) {
                 if (item.length() < 4) {

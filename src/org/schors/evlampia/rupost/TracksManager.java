@@ -1,3 +1,20 @@
+/*
+ * The MIT License
+ *
+ * Copyright (c) 2014.  schors (https://github.com/flicus)
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
+ * documentation files (the "Software"), to deal in the Software without restriction, including without limitation
+ * the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,
+ * and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED
+ * TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+ * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
+ * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
+
 package org.schors.evlampia.rupost;
 
 import org.apache.log4j.Logger;
@@ -130,7 +147,7 @@ public class TracksManager {
             sb.append(entry.getKey()).append(" : ").append(entry.getValue().toString()).append(", ");
         }
         sb.append("}");
-        log.debug("### Loaded list: "+sb.toString());
+        log.debug("### Loaded list: " + sb.toString());
     }
 
     public void addTrack(String listName, String newTrackId, String newTrackName) {
@@ -236,17 +253,17 @@ public class TracksManager {
                 out.flush();
                 out.close();
                 String html = readStreamToString(conn.getInputStream(), "UTF-8");
-                FdxResponseWrapper r  = FedexTracker.getInstanse().parseResponse(html);
+                FdxResponseWrapper r = FedexTracker.getInstanse().parseResponse(html);
 
                 if (!r.getTrackPackagesResponse().isSuccessful() && !"0".equals(r.getTrackPackagesResponse().getErrorList().get(0).getCode())) {
                     track.setStatus(r.getTrackPackagesResponse().getErrorList().get(0).getMessage());
                 } else track.setStatus(r.getTrackPackagesResponse().getPackageList().get(0).getMainStatus()
-                        +" | "
-                        +r.getTrackPackagesResponse().getPackageList().get(0).getKeyStatus()
-                        +" | "+r.getTrackPackagesResponse().getPackageList().get(0).getSubStatus());
+                        + " | "
+                        + r.getTrackPackagesResponse().getPackageList().get(0).getKeyStatus()
+                        + " | " + r.getTrackPackagesResponse().getPackageList().get(0).getSubStatus());
 
             } catch (Exception e) {
-                log.error(e,e);
+                log.error(e, e);
             }
         }
     }
@@ -257,7 +274,7 @@ public class TracksManager {
         InputStreamReader r = new InputStreamReader(in, encoding);
         int c;
         while ((c = r.read()) != -1) {
-            b.append((char)c);
+            b.append((char) c);
         }
         return b.toString();
     }

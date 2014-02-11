@@ -1,8 +1,31 @@
-<?xml version='1.0' encoding='UTF-8'?><!-- Published by JAX-WS RI at http://jax-ws.dev.java.net. RI's version is Metro/2.1.1-b09 (branches/2.1-6834; 2011-07-16T17:14:48+0000) JAXWS-RI/2.2.5-promoted-b04 JAXWS/2.2. --><definitions xmlns:tns="http://russianpost.org/operationhistory" xmlns:msg="http://russianpost.org/operationhistory/data" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://schemas.xmlsoap.org/wsdl/" name="OperationHistory" targetNamespace="http://russianpost.org/operationhistory">
+<?xml version='1.0' encoding='UTF-8'?><!--
+  ~ The MIT License
+  ~
+  ~ Copyright (c) 2014.  schors (https://github.com/flicus)
+  ~ Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
+  ~ documentation files (the "Software"), to deal in the Software without restriction, including without limitation
+  ~ the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,
+  ~ and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+  ~
+  ~ The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+  ~
+  ~ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED
+  ~ TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+  ~ THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
+  ~ CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+  -->
+
+<!-- Published by JAX-WS RI at http://jax-ws.dev.java.net. RI's version is Metro/2.1.1-b09 (branches/2.1-6834; 2011-07-16T17:14:48+0000) JAXWS-RI/2.2.5-promoted-b04 JAXWS/2.2. -->
+<definitions xmlns:tns="http://russianpost.org/operationhistory"
+             xmlns:msg="http://russianpost.org/operationhistory/data" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://schemas.xmlsoap.org/wsdl/"
+             name="OperationHistory" targetNamespace="http://russianpost.org/operationhistory">
 
     <types>
         <xsd:schema>
-            <xsd:import schemaLocation="http://voh.russianpost.ru:8080/niips-operationhistory-web/OperationHistory?xsd=1" namespace="http://russianpost.org/operationhistory/data"/>
+            <xsd:import
+                    schemaLocation="http://voh.russianpost.ru:8080/niips-operationhistory-web/OperationHistory?xsd=1"
+                    namespace="http://russianpost.org/operationhistory/data"/>
         </xsd:schema>
     </types>
 
@@ -24,14 +47,14 @@
     </message>
 
     <message name="UpdateOperationDataRequest">
-    	<part name="UpdateRequest" element="msg:UpdateOperationRequest"/>
-    	<part name="AuthorizationHeader" element="msg:AuthorizationHeader"/>
+        <part name="UpdateRequest" element="msg:UpdateOperationRequest"/>
+        <part name="AuthorizationHeader" element="msg:AuthorizationHeader"/>
     </message>
-    
+
     <message name="UpdateOperationDataResponse">
-    	<part name="messagePart" element="msg:OperationHistoryData"/>
+        <part name="messagePart" element="msg:OperationHistoryData"/>
     </message>
-    
+
     <portType name="OperationHistoryInterface">
         <operation name="GetOperationHistory">
             <input message="tns:getOperationHistoryIn"/>
@@ -40,10 +63,10 @@
             <fault name="OperationHistoryFault" message="tns:OperationHistoryFault"/>
         </operation>
         <operation name="UpdateOperationData">
-        	<input message="tns:UpdateOperationDataRequest"/>
-        	<output message="tns:UpdateOperationDataResponse"/>
- 			<fault name="AuthorizationFault" message="tns:AuthorizationFault"/>	
-            <fault name="OperationHistoryFault" message="tns:OperationHistoryFault"/>        	
+            <input message="tns:UpdateOperationDataRequest"/>
+            <output message="tns:UpdateOperationDataResponse"/>
+            <fault name="AuthorizationFault" message="tns:AuthorizationFault"/>
+            <fault name="OperationHistoryFault" message="tns:OperationHistoryFault"/>
         </operation>
     </portType>
 
@@ -80,7 +103,7 @@
             <fault name="OperationHistoryFault">
                 <soap:fault name="OperationHistoryFault" use="literal"/>
             </fault>
-        </operation>        
+        </operation>
     </binding>
 
     <service name="OperationHistory">

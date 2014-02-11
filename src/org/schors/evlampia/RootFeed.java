@@ -15,56 +15,40 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package org.schors.evlampia.rupost;
+package org.schors.evlampia;
 
 import java.io.Serializable;
 
-public class Track implements Serializable {
-    private static final long serialVersionUID = -2677270519135325733L;
-    private String name;
-    private String id;
-    private String status;
+public class RootFeed implements Serializable {
 
-    public Track() {
-        this.status = "unknown";
-    }
+    private String title;
+    private String link;
+    private int id;
 
-    public Track(String name, String id) {
-        this.name = name;
+    RootFeed(String title, String link, int id) {
+        this.title = title;
+        this.link = link;
         this.id = id;
-        this.status = "unknown";
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public String getTitle() {
+        return title;
     }
 
-    public String getStatus() {
-        return status;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
+    public String getLink() {
+        return link;
     }
 
-    @Override
-    public String toString() {
-        return "Track{" +
-                "name='" + name + '\'' +
-                ", id='" + id + '\'' +
-                '}';
+    public void setLink(String link) {
+        this.link = link;
     }
 
     @Override
@@ -72,20 +56,26 @@ public class Track implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        Track track = (Track) o;
+        RootFeed rootFeed = (RootFeed) o;
 
-        if (id != null ? !id.equals(track.id) : track.id != null) return false;
-        if (name != null ? !name.equals(track.name) : track.name != null) return false;
-        if (status != null ? !status.equals(track.status) : track.status != null) return false;
+        if (link != null ? !link.equals(rootFeed.link) : rootFeed.link != null) return false;
+        if (title != null ? !title.equals(rootFeed.title) : rootFeed.title != null) return false;
 
         return true;
     }
 
     @Override
     public int hashCode() {
-        int result = name != null ? name.hashCode() : 0;
-        result = 31 * result + (id != null ? id.hashCode() : 0);
-        result = 31 * result + (status != null ? status.hashCode() : 0);
+        int result = title != null ? title.hashCode() : 0;
+        result = 31 * result + (link != null ? link.hashCode() : 0);
         return result;
+    }
+
+    @Override
+    public String toString() {
+        return "RootFeed{" +
+                "title='" + title + '\'' +
+                ", link='" + link + '\'' +
+                '}';
     }
 }
