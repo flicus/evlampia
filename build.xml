@@ -100,4 +100,8 @@
         <ivy:cleancache/>
     </target>
 
+    <target name="test">
+
+    </target>
+
 </project>
