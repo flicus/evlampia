@@ -100,7 +100,7 @@
         <ivy:cleancache/>
     </target>
 
-    <target name="test">
+    <target name="test" depends="pack">
 
     </target>
 
