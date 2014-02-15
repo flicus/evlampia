@@ -3,5 +3,5 @@ build/*
 .idea/*
 out/*
 ivy/*
-eva.iml
+*.iml
 ant.log

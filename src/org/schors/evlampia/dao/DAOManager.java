@@ -17,119 +17,110 @@
 
 package org.schors.evlampia.dao;
 
+import com.google.gson.Gson;
 import org.apache.log4j.Logger;
-import org.postgresql.ds.PGPoolingDataSource;
-import org.schors.evlampia.core.ConfigurationManager;
-import org.schors.evlampia.model.DataBaseConfig;
 import org.schors.evlampia.model.TagItem;
+import org.schors.evlampia.rss.Feed;
+import org.schors.evlampia.rss.RootFeed;
+import org.schors.evlampia.tracker.NamedTrackList;
+import redis.clients.jedis.Jedis;
+import redis.clients.jedis.Tuple;
 
-import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class DAOManager {
 
     private static final Logger log = Logger.getLogger(DAOManager.class);
-
-    private PGPoolingDataSource ds;
+    private Jedis jedis = new Jedis("localhost");
+    private Gson gson = new Gson();
 
     public DAOManager() {
 
-        DataBaseConfig cfg = ConfigurationManager.getInstance().getConfiguration().getDataBaseConfig();
-        try {
-            Class.forName(cfg.getDriver());
-        } catch (ClassNotFoundException e) {
-            log.error(e, e);
-        }
-
-        ds = new PGPoolingDataSource();
-        ds.setServerName(cfg.getHost());
-        ds.setDatabaseName(cfg.getDatabase());
-        ds.setUser(cfg.getUser());
-        ds.setPassword(cfg.getPassword());
-        ds.setMaxConnections(cfg.getMaxConnections());
-    }
-
-    public Connection getConnection() throws SQLException {
-        return ds.getConnection();
-    }
-
-    public void shutDown() {
-        ds.close();
-    }
-
-    public void updateTag(String tagName) {
-        try (Connection conn = getConnection()) {
-            conn.setAutoCommit(false);
-            Savepoint sp1 = conn.setSavepoint("sp1");
-            try (PreparedStatement stmt = conn.prepareStatement("INSERT INTO cloud VALUES(?, 1);")) {
-                stmt.setString(1, tagName);
-                int inserted = stmt.executeUpdate();
-            } catch (Exception e) {
-                log.error(e, e);
-                conn.rollback(sp1);
-                try (PreparedStatement stmt2 = conn.prepareStatement("UPDATE cloud SET count = count + 1 WHERE tag = ?;")) {
-                    stmt2.setString(1, tagName);
-                    int updated = stmt2.executeUpdate();
-                } catch (Exception ee) {
-                    log.error(ee, ee);
-                }
-            }
-            conn.commit();
-        } catch (SQLException e) {
-            log.error(e, e);
-        }
-    }
-
-    public List<TagItem> getTags() {
-
-        List<TagItem> result = new ArrayList<>();
-        try (Connection conn = getConnection();
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery("select tag, count from cloud order by count desc limit 50;")) {
-
-            while (rs.next()) {
-                result.add(new TagItem(rs.getString(1), rs.getInt(2)));
-            }
-        } catch (SQLException e) {
-            log.error(e, e);
-        }
-        return result;
-    }
-
-    public long getLastId() {
-        long result = 0;
-        try (Connection conn = getConnection();
-             Statement statement = conn.createStatement();
-             ResultSet rs = statement.executeQuery("select twLastId from settings where id=0");) {
-
-            if (rs.next()) {
-                result = rs.getLong(1);
-            }
-
-        } catch (SQLException e) {
-            log.error(e, e);
-        }
-        return result;
-    }
-
-    public void updateLastId(long lastId) {
-        try (Connection conn = getConnection();
-             PreparedStatement statement = conn.prepareStatement("update settings set twLastId = ? where id=0");) {
-            statement.setLong(1, lastId);
-            statement.executeUpdate();
-
-        } catch (SQLException e) {
-            log.error(e, e);
-        }
-    }
-
-
-    private static class Singleton {
-        public static final DAOManager instance = new DAOManager();
     }
 
     public static DAOManager getInstance() {
         return Singleton.instance;
+    }
+
+    public void shutDown() {
+//        ds.close();
+    }
+
+    public void updateTag(String tagName) {
+        jedis.zincrby("tags", 1, tagName);
+    }
+
+    public List<TagItem> getTags() {
+        Set<Tuple> tuples = jedis.zrevrangeWithScores("tags", 0, 50);
+        List<TagItem> list = new ArrayList<>();
+        for (Tuple entry : tuples) {
+            list.add(new TagItem(entry.getElement(), Math.round(entry.getScore())));
+        }
+        return list;
+    }
+
+    public void saveTrackList(String listName, Map<String, NamedTrackList> list) {
+        try {
+            String json = gson.toJson(list);
+            jedis.hset("tracks", listName, json);
+        } catch (Exception e) {
+            log.error(e, e);
+        }
+    }
+
+    public void loadTrackList(String listName, Map<String, NamedTrackList> list) {
+        list.clear();
+        try {
+            String json = jedis.hget("tracks", listName);
+            Map<String, NamedTrackList> res = gson.fromJson(json, Map.class);
+            list.putAll(res);
+        } catch (Exception e) {
+            log.error(e, e);
+        }
+    }
+
+    public void saveFeeds(ConcurrentHashMap<RootFeed, ConcurrentLinkedQueue<Feed>> feeds) {
+        try {
+            String json = gson.toJson(feeds);
+            jedis.set("feeds", json);
+        } catch (Exception e) {
+            log.error(e, e);
+        }
+    }
+
+    public void loadFeeds(ConcurrentHashMap<RootFeed, ConcurrentLinkedQueue<Feed>> feeds) {
+        feeds.clear();
+        try {
+            String json = jedis.get("feeds");
+            ConcurrentHashMap<RootFeed, ConcurrentLinkedQueue<Feed>> res = gson.fromJson(json, ConcurrentHashMap.class);
+            feeds.putAll(res);
+        } catch (Exception e) {
+            log.error(e, e);
+        }
+    }
+
+    public void saveCount(AtomicInteger count) {
+        jedis.set("feedCount", String.valueOf(count));
+    }
+
+    public AtomicInteger loadCount() {
+        int resInt = 0;
+        try {
+            String res = jedis.get("feedCount");
+            resInt = Integer.parseInt(res);
+        } catch (Exception e) {
+            resInt = 0;
+        }
+        return new AtomicInteger(resInt);
+    }
+
+    private static class Singleton {
+        public static final DAOManager instance = new DAOManager();
     }
 }

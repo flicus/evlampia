@@ -29,11 +29,15 @@ import com.sun.syndication.io.XmlReader;
 import org.apache.log4j.Logger;
 import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.schors.evlampia.core.EvaExecutors;
+import org.schors.evlampia.dao.DAOManager;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.Serializable;
 import java.net.URL;
+import java.net.URLConnection;
 import java.net.URLDecoder;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -70,7 +74,9 @@ public class FeedReader implements Serializable {
         String res = null;
         try {
             RootFeed rootFeed = new RootFeed("", url, idGen.incrementAndGet());
-            SyndFeed feed = new SyndFeedInput().build(new XmlReader(new URL(rootFeed.getLink())));
+            URLConnection urlc = new URL(rootFeed.getLink()).openConnection();
+            urlc.addRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/32.0.1700.68 YaBrowser/14.2.1700.9977 Safari/537.36");
+            SyndFeed feed = new SyndFeedInput().build(new XmlReader(urlc));
             rootFeed.setTitle(feed.getTitle());
             if (feeds.get(rootFeed) == null) {
                 ConcurrentLinkedQueue<Feed> rssFeeds = new ConcurrentLinkedQueue<>();
@@ -110,26 +116,31 @@ public class FeedReader implements Serializable {
     }
 
     public synchronized void save() {
-        ObjectOutputStream oos = null;
-        try {
-            oos = new ObjectOutputStream(new FileOutputStream(fileName));
-            oos.writeObject(feeds);
-            oos.flush();
-            oos.close();
-        } catch (IOException e) {
-            log.error(e, e);
-        }
+        DAOManager.getInstance().saveFeeds(feeds);
+        DAOManager.getInstance().saveCount(idGen);
+//        ObjectOutputStream oos = null;
+//        try {
+//            oos = new ObjectOutputStream(new FileOutputStream(fileName));
+//            oos.writeObject(feeds);
+//            oos.flush();
+//            oos.close();
+//        } catch (IOException e) {
+//            log.error(e, e);
+//        }
     }
 
     public synchronized void load() {
-        ObjectInputStream ois = null;
-        try {
-            ois = new ObjectInputStream(new FileInputStream(fileName));
-            feeds = (ConcurrentHashMap<RootFeed, ConcurrentLinkedQueue<Feed>>) ois.readObject();
-        } catch (Exception e) {
-            log.error(e, e);
-            feeds = new ConcurrentHashMap<>();
-        }
+        idGen = DAOManager.getInstance().loadCount();
+        DAOManager.getInstance().loadFeeds(feeds);
+
+//        ObjectInputStream ois = null;
+//        try {
+//            ois = new ObjectInputStream(new FileInputStream(fileName));
+//            feeds = (ConcurrentHashMap<RootFeed, ConcurrentLinkedQueue<Feed>>) ois.readObject();
+//        } catch (Exception e) {
+//            log.error(e, e);
+//            feeds = new ConcurrentHashMap<>();
+//        }
 
         StringBuilder sb = new StringBuilder();
         sb.append("{");
@@ -146,12 +157,12 @@ public class FeedReader implements Serializable {
 
     public void start() {
         log.debug("Start feed reader");
-        EvaExecutors.getInstance().getScheduler().scheduleAtFixedRate(new FeedsReader(), 1, 20, TimeUnit.MINUTES);
+        EvaExecutors.getInstance().getScheduler().scheduleAtFixedRate(new FeedsUpdater(), 2, 40, TimeUnit.MINUTES);
     }
 
-    private class FeedsReader implements Runnable {
+    private class FeedsUpdater implements Runnable {
 
-        public FeedsReader() {
+        public FeedsUpdater() {
 
         }
 
@@ -160,9 +171,12 @@ public class FeedReader implements Serializable {
             log.debug("Start work unit");
             if (silent) return;
             try {
-                while (feeds.entrySet().iterator().hasNext()) {
-                    Map.Entry<RootFeed, ConcurrentLinkedQueue<Feed>> mapEntry = feeds.entrySet().iterator().next();
-                    SyndFeed feed = new SyndFeedInput().build(new XmlReader(new URL(mapEntry.getKey().getLink())));
+                Iterator<Map.Entry<RootFeed, ConcurrentLinkedQueue<Feed>>> it = feeds.entrySet().iterator();
+                while (it.hasNext()) {
+                    Map.Entry<RootFeed, ConcurrentLinkedQueue<Feed>> mapEntry = it.next();
+                    URLConnection urlc = new URL(mapEntry.getKey().getLink()).openConnection();
+                    urlc.addRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/32.0.1700.68 YaBrowser/14.2.1700.9977 Safari/537.36");
+                    SyndFeed feed = new SyndFeedInput().build(new XmlReader(urlc));
                     int i = 0;
                     for (Object object : feed.getEntries()) {
                         if (i++ == 10) break;

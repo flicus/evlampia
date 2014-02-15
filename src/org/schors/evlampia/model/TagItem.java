@@ -18,11 +18,11 @@
 package org.schors.evlampia.model;
 
 
-public class TagItem {
+public class TagItem implements Comparable<TagItem> {
     private String text;
-    private int weight;
+    private long weight;
 
-    public TagItem(String text, int weight) {
+    public TagItem(String text, long weight) {
         this.text = text;
         this.weight = weight;
     }
@@ -38,7 +38,7 @@ public class TagItem {
         this.text = text;
     }
 
-    public int getWeight() {
+    public long getWeight() {
         return weight;
     }
 
@@ -52,5 +52,12 @@ public class TagItem {
                 "text='" + text + '\'' +
                 ", weight=" + weight +
                 '}';
+    }
+
+    @Override
+    public int compareTo(TagItem o) {
+        if (this.weight == o.weight) return 0;
+        if (this.weight < o.weight) return 1;
+        return -1;
     }
 }

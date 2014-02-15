@@ -19,11 +19,15 @@ package org.schors.evlampia.tracker;
 
 import org.apache.log4j.Logger;
 import org.schors.evlampia.core.EvaExecutors;
+import org.schors.evlampia.dao.DAOManager;
 import org.schors.evlampia.json.fedex.FdxResponseWrapper;
 import org.schors.evlampia.tracker.wsdl.axis.*;
 
 import javax.xml.rpc.ServiceException;
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.net.URL;
 import java.net.URLConnection;
 import java.rmi.RemoteException;
@@ -42,7 +46,7 @@ public class TracksManager {
     //RC213094378HK
     private static final Pattern pattern = Pattern.compile("\\D{2}\\d{9}\\D{2}");
 
-    private Map<String, NamedTrackList> list;
+    private Map<String, NamedTrackList> list = new ConcurrentHashMap<String, NamedTrackList>();
     private WebOperationHistoryStub binding = null;
     private String fileName;
 
@@ -119,26 +123,28 @@ public class TracksManager {
     }
 
     public void save() {
-        ObjectOutputStream oos = null;
-        try {
-            oos = new ObjectOutputStream(new FileOutputStream(fileName));
-            oos.writeObject(list);
-            oos.flush();
-            oos.close();
-        } catch (IOException e) {
-            log.error(e, e);
-        }
+        DAOManager.getInstance().saveTrackList(fileName, list);
+//        ObjectOutputStream oos = null;
+//        try {
+//            oos = new ObjectOutputStream(new FileOutputStream(fileName));
+//            oos.writeObject(list);
+//            oos.flush();
+//            oos.close();
+//        } catch (IOException e) {
+//            log.error(e, e);
+//        }
     }
 
     public void load() {
-        ObjectInputStream ois = null;
-        try {
-            ois = new ObjectInputStream(new FileInputStream(fileName));
-            list = (ConcurrentHashMap<String, NamedTrackList>) ois.readObject();
-        } catch (Exception e) {
-            log.error(e, e);
-            list = new ConcurrentHashMap<String, NamedTrackList>();
-        }
+        DAOManager.getInstance().loadTrackList(fileName, list);
+//        ObjectInputStream ois = null;
+//        try {
+//            ois = new ObjectInputStream(new FileInputStream(fileName));
+//            list = (ConcurrentHashMap<String, NamedTrackList>) ois.readObject();
+//        } catch (Exception e) {
+//            log.error(e, e);
+//            list = new ConcurrentHashMap<String, NamedTrackList>();
+//        }
 
         StringBuilder sb = new StringBuilder();
         sb.append("{");
