@@ -23,14 +23,31 @@ import org.schors.evlampia.core.CommandContext;
 import org.schors.evlampia.core.Jbot;
 import org.schors.evlampia.dao.vbotDAOInterface;
 
+import java.util.Calendar;
+
 public class FlushLogCmd extends Command {
     @Override
     public void execute(CommandContext context) throws Exception {
+        //http://0xffff.net/logs/vnations@conference.jabber.ru/2014/08/
+
         vbotDAOInterface dao = (vbotDAOInterface) context.getFacilities().get(Jbot.F_DAO);
         dao.flush();
         MultiUserChat muc = (MultiUserChat) context.getFacilities().get(Jbot.F_MUC);
         if (muc != null) {
-            muc.sendMessage("Логи чата: http://0xffff.net/logs");
+            Calendar calendar = (Calendar) context.getFacilities().get(Jbot.F_CALENDAR);
+            calendar.setTimeInMillis(System.currentTimeMillis());
+            int year = calendar.get(Calendar.YEAR);
+            int month = calendar.get(Calendar.MONTH) + 1;
+            StringBuilder sb = new StringBuilder();
+            sb
+                    .append("Логи чата: http://0xffff.net/logs/")
+                    .append(muc.getRoom())
+                    .append("/")
+                    .append(String.valueOf(year))
+                    .append("/")
+                    .append(month < 10 ? "0" : "")
+                    .append(String.valueOf(month));
+            muc.sendMessage(sb.toString());
         }
     }
 }
