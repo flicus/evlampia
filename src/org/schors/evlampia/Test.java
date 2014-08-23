@@ -18,13 +18,17 @@
 package org.schors.evlampia;
 
 import org.jivesoftware.smackx.muc.MultiUserChat;
+import org.schors.evlampia.dao.DAOManager;
 import org.schors.evlampia.rss.FeedReader;
+import org.schors.evlampia.tracker.NamedTrackList;
+import org.schors.evlampia.tracker.Track;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 public class Test {
@@ -38,30 +42,32 @@ public class Test {
         reader.addFeed("http://proriv.ru/news_rss.xml");
         reader.addFeed("http://shpilenok.livejournal.com/data/rss");
         reader.addFeed("http://1chan.ru/news/rss.xml");
-        reader.start();
 
-        synchronized (Thread.currentThread()) {
-            try {
-                Thread.currentThread().wait();
-            } catch (InterruptedException e) {
-                System.out.println(e);
-            }
-        }
+        reader.save();
+        reader.load();
+//
+//        synchronized (Thread.currentThread()) {
+//            try {
+//                Thread.currentThread().wait();
+//            } catch (InterruptedException e) {
+//                System.out.println(e);
+//            }
+//        }
 
-//        Map<String, NamedTrackList> list = new HashMap<>();
-//        NamedTrackList n1 = new NamedTrackList("name1");
-//        n1.addTrack(new Track("tr11","trid11"));
-//        n1.addTrack(new Track("tr12","trid12"));
-//        n1.addTrack(new Track("tr13","trid13"));
-//        list.put("list1", n1);
-//        NamedTrackList n2 = new NamedTrackList("name2");
-//        n1.addTrack(new Track("tr21","trid21"));
-//        n1.addTrack(new Track("tr22","trid22"));
-//        n1.addTrack(new Track("tr23","trid23"));
-//        list.put("list2", n2);
-//        DAOManager.getInstance().saveTrackList("private", list);
-//        list.clear();
-//        DAOManager.getInstance().loadTrackList("private", list);
+        Map<String, NamedTrackList> list = new HashMap<>();
+        NamedTrackList n1 = new NamedTrackList("name1");
+        n1.addTrack(new Track("tr11", "trid11"));
+        n1.addTrack(new Track("tr12", "trid12"));
+        n1.addTrack(new Track("tr13", "trid13"));
+        list.put("list1", n1);
+        NamedTrackList n2 = new NamedTrackList("name2");
+        n1.addTrack(new Track("tr21", "trid21"));
+        n1.addTrack(new Track("tr22", "trid22"));
+        n1.addTrack(new Track("tr23", "trid23"));
+        list.put("list2", n2);
+        DAOManager.getInstance().saveTrackList("private", list);
+        list.clear();
+        DAOManager.getInstance().loadTrackList("private", list);
 //
 //
 //        DAOManager.getInstance().updateTag("tag1");

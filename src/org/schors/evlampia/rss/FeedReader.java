@@ -50,7 +50,6 @@ public class FeedReader implements Serializable {
     private ConcurrentHashMap<RootFeed, ConcurrentLinkedQueue<Feed>> feeds = new ConcurrentHashMap<>();
     private Map<String, MultiUserChat> rooms = new HashMap<String, MultiUserChat>();
     private AtomicInteger idGen = new AtomicInteger();
-
     private String fileName;
     private boolean silent = false;
 
@@ -115,6 +114,10 @@ public class FeedReader implements Serializable {
         return silent;
     }
 
+    public void setSilent(boolean silent) {
+        this.silent = silent;
+    }
+
     public synchronized void save() {
         DAOManager.getInstance().saveFeeds(feeds);
         DAOManager.getInstance().saveCount(idGen);
@@ -151,10 +154,6 @@ public class FeedReader implements Serializable {
         log.debug("### Loaded list: " + sb.toString());
     }
 
-    public void setSilent(boolean silent) {
-        this.silent = silent;
-    }
-
     public void start() {
         log.debug("Start feed reader");
         EvaExecutors.getInstance().getScheduler().scheduleAtFixedRate(new FeedsUpdater(), 2, 40, TimeUnit.MINUTES);
@@ -170,32 +169,38 @@ public class FeedReader implements Serializable {
         public void run() {
             log.debug("Start work unit");
             if (silent) return;
-            try {
-                Iterator<Map.Entry<RootFeed, ConcurrentLinkedQueue<Feed>>> it = feeds.entrySet().iterator();
-                while (it.hasNext()) {
+
+            Iterator<Map.Entry<RootFeed, ConcurrentLinkedQueue<Feed>>> it = feeds.entrySet().iterator();
+            while (it.hasNext()) {
+                try {
                     Map.Entry<RootFeed, ConcurrentLinkedQueue<Feed>> mapEntry = it.next();
                     URLConnection urlc = new URL(mapEntry.getKey().getLink()).openConnection();
                     urlc.addRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/32.0.1700.68 YaBrowser/14.2.1700.9977 Safari/537.36");
                     SyndFeed feed = new SyndFeedInput().build(new XmlReader(urlc));
                     int i = 0;
                     for (Object object : feed.getEntries()) {
+                        try {
+                            SyndEntry entry = (SyndEntry) object;
+                            Feed f = new Feed(URLDecoder.decode(entry.getTitle(), "UTF-8"), URLDecoder.decode(entry.getLink(), "UTF-8"));
+                            if (!mapEntry.getValue().contains(f)) {
+                                if (mapEntry.getValue().size() == 20) mapEntry.getValue().poll();
+                                mapEntry.getValue().offer(f);
+                                for (Map.Entry<String, MultiUserChat> room : rooms.entrySet()) {
+                                    log.debug("Send message to room: " + room.getKey());
+                                    room.getValue().sendMessage(f.getTitle() + ", " + f.getLink());
+                                    Thread.sleep(400);
+                                }
+                            }//fghbjhb77
+                        } catch (Exception e) {
+                            log.error(e, e);
+                        }
                         if (i++ == 10) break;
-                        SyndEntry entry = (SyndEntry) object;
-                        Feed f = new Feed(URLDecoder.decode(entry.getTitle(), "UTF-8"), URLDecoder.decode(entry.getLink(), "UTF-8"));
-                        if (!mapEntry.getValue().contains(f)) {
-                            if (mapEntry.getValue().size() == 20) mapEntry.getValue().poll();
-                            mapEntry.getValue().offer(f);
-                            for (Map.Entry<String, MultiUserChat> room : rooms.entrySet()) {
-                                log.debug("Send message to room: " + room.getKey());
-                                room.getValue().sendMessage(f.getTitle() + ", " + f.getLink());
-                                Thread.sleep(400);
-                            }
-                        }//fghbjhb77
                     }
+                } catch (Exception e) {
+                    log.error(e, e);
                 }
-            } catch (Exception e) {
-                log.error(e, e);
             }
+
         }
     }
 }

@@ -30,6 +30,7 @@ import org.jivesoftware.smackx.ServiceDiscoveryManager;
 import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.jivesoftware.smackx.muc.SubjectUpdatedListener;
 import org.jivesoftware.smackx.packet.VCard;
+import org.schors.evlampia.Twittor;
 import org.schors.evlampia.commands.HelpCmd;
 import org.schors.evlampia.dao.vbotDAOHTMLImplementation;
 import org.schors.evlampia.dao.vbotDAOInterface;
@@ -51,6 +52,7 @@ public class Jbot implements PacketListener, ConnectionListener {
     public static final String F_XMPP_CONNECTION = "xmppConnection";
     public static final String F_RANDOM = "random";
     public static final String F_MUC = "muc";
+    public static final String F_TWIT = "twittor";
 
 
     public static String newline = System.getProperty("line.separator");
@@ -61,6 +63,7 @@ public class Jbot implements PacketListener, ConnectionListener {
     private vbotDAOInterface dao;
     private FeedReader feedReader;
     private TracksManager privateTrackManager;
+    private Twittor twittor = new Twittor();
     private File hostFile;
     private Random random = new Random(System.currentTimeMillis());
     private CommandManager commandManager = new CommandManagerImpl();
@@ -83,6 +86,8 @@ public class Jbot implements PacketListener, ConnectionListener {
             }
         });
         privateTrackManager.load();
+        twittor.init(rooms);
+        twittor.start();
         feedReader = new FeedReader(rooms);
         feedReader.setFileName("feeds.list");
         feedReader.load();
@@ -92,6 +97,7 @@ public class Jbot implements PacketListener, ConnectionListener {
         facilities.put(F_FEED_READER, feedReader);
         facilities.put(F_XMPP_CONNECTION, conn);
         facilities.put(F_RANDOM, random);
+        facilities.put(F_TWIT, twittor);
 
         commandManager.registerCommands(ConfigurationManager.getInstance().getConfiguration());
         commandManager.registerCommand(new HelpCmd(commandManager));

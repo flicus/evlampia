@@ -18,18 +18,17 @@
 package org.schors.evlampia.dao;
 
 import com.google.gson.Gson;
+import com.google.gson.internal.StringMap;
 import org.apache.log4j.Logger;
 import org.schors.evlampia.model.TagItem;
 import org.schors.evlampia.rss.Feed;
 import org.schors.evlampia.rss.RootFeed;
 import org.schors.evlampia.tracker.NamedTrackList;
+import org.schors.evlampia.tracker.Track;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.Tuple;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -56,6 +55,18 @@ public class DAOManager {
         jedis.zincrby("tags", 1, tagName);
     }
 
+    public void updateTwit(String name, String id) {
+        jedis.hset("twitter", name, id);
+    }
+
+    public void deleteTwit(String name) {
+        jedis.hdel("twitter", name);
+    }
+
+    public Map<String, String> getTwits() {
+        return jedis.hgetAll("twitter");
+    }
+
     public List<TagItem> getTags() {
         Set<Tuple> tuples = jedis.zrevrangeWithScores("tags", 0, 50);
         List<TagItem> list = new ArrayList<>();
@@ -78,7 +89,20 @@ public class DAOManager {
         list.clear();
         try {
             String json = jedis.hget("tracks", listName);
-            Map<String, NamedTrackList> res = gson.fromJson(json, Map.class);
+            Map<String, StringMap> _res = gson.fromJson(json, Map.class);
+            Map<String, NamedTrackList> res = new HashMap<>();
+            for (Map.Entry<String, StringMap> entry : _res.entrySet()) {
+                NamedTrackList namedTrackList = new NamedTrackList(entry.getKey());
+                res.put(entry.getKey(), namedTrackList);
+
+                StringMap map = (StringMap) entry.getValue().get("tracks");
+                for (Object _trackEntry : map.entrySet()) {
+                    Map.Entry trackEntry = (Map.Entry) _trackEntry;
+                    String n1 = (String) trackEntry.getKey();
+                    StringMap bean = (StringMap) trackEntry.getValue();
+                    namedTrackList.addTrack(new Track((String) bean.get("name"), (String) bean.get("id")));
+                }
+            }
             list.putAll(res);
         } catch (Exception e) {
             log.error(e, e);
@@ -98,8 +122,15 @@ public class DAOManager {
         feeds.clear();
         try {
             String json = jedis.get("feeds");
-            ConcurrentHashMap<RootFeed, ConcurrentLinkedQueue<Feed>> res = gson.fromJson(json, ConcurrentHashMap.class);
-            feeds.putAll(res);
+            HashMap<String, ArrayList<Feed>> res = gson.fromJson(json, HashMap.class);
+            ConcurrentHashMap<RootFeed, ConcurrentLinkedQueue<Feed>> _res = new ConcurrentHashMap<>();
+            for (Map.Entry<String, ArrayList<Feed>> entry : res.entrySet()) {
+                ConcurrentLinkedQueue<Feed> q = new ConcurrentLinkedQueue<>(entry.getValue());
+                String aaa = entry.getKey().substring(8);
+                RootFeed rf = gson.fromJson(aaa, RootFeed.class);
+                _res.put(rf, q);
+            }
+            feeds.putAll(_res);
         } catch (Exception e) {
             log.error(e, e);
         }
