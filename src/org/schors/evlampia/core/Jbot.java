@@ -39,10 +39,7 @@ import org.schors.evlampia.rss.FeedReader;
 import org.schors.evlampia.tracker.TracksManager;
 
 import java.io.File;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 public class Jbot implements PacketListener, ConnectionListener {
 
@@ -53,6 +50,7 @@ public class Jbot implements PacketListener, ConnectionListener {
     public static final String F_RANDOM = "random";
     public static final String F_MUC = "muc";
     public static final String F_TWIT = "twittor";
+    public static final String F_CALENDAR = "calendar";
 
 
     public static String newline = System.getProperty("line.separator");
@@ -98,6 +96,7 @@ public class Jbot implements PacketListener, ConnectionListener {
         facilities.put(F_XMPP_CONNECTION, conn);
         facilities.put(F_RANDOM, random);
         facilities.put(F_TWIT, twittor);
+        facilities.put(F_CALENDAR, Calendar.getInstance(TimeZone.getDefault()));
 
         commandManager.registerCommands(ConfigurationManager.getInstance().getConfiguration());
         commandManager.registerCommand(new HelpCmd(commandManager));
