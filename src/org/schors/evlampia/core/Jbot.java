@@ -215,6 +215,14 @@ public class Jbot implements PacketListener, ConnectionListener {
                             log.error(e, e);
                         }
                     }
+                } else if (commands[0].startsWith("!k") && commands.length > 1) {
+                    for (MultiUserChat tmpMuc : rooms.values()) {
+                        try {
+                            tmpMuc.kickParticipant(commands[1], "Убирайся, гадкий либераст!");
+                        } catch (XMPPException e) {
+                            log.error(e, e);
+                        }
+                    }
                 }
             }
         }
