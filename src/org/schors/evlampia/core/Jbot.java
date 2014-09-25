@@ -30,6 +30,7 @@ import org.jivesoftware.smackx.ServiceDiscoveryManager;
 import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.jivesoftware.smackx.muc.SubjectUpdatedListener;
 import org.jivesoftware.smackx.packet.VCard;
+import org.schors.evlampia.Twittor;
 import org.schors.evlampia.commands.HelpCmd;
 import org.schors.evlampia.dao.vbotDAOHTMLImplementation;
 import org.schors.evlampia.dao.vbotDAOInterface;
@@ -48,6 +49,7 @@ public class Jbot implements PacketListener, ConnectionListener {
     public static final String F_XMPP_CONNECTION = "xmppConnection";
     public static final String F_RANDOM = "random";
     public static final String F_MUC = "muc";
+    public static final String F_TWIT = "twittor";
     public static final String F_CALENDAR = "calendar";
 
 
@@ -59,6 +61,7 @@ public class Jbot implements PacketListener, ConnectionListener {
     private vbotDAOInterface dao;
     private FeedReader feedReader;
     private TracksManager privateTrackManager;
+    private Twittor twittor = new Twittor();
     private File hostFile;
     private Random random = new Random(System.currentTimeMillis());
     private CommandManager commandManager = new CommandManagerImpl();
@@ -81,6 +84,8 @@ public class Jbot implements PacketListener, ConnectionListener {
             }
         });
         privateTrackManager.load();
+        twittor.init(rooms);
+        twittor.start();
         feedReader = new FeedReader(rooms);
         feedReader.setFileName("feeds.list");
         feedReader.load();
@@ -90,6 +95,7 @@ public class Jbot implements PacketListener, ConnectionListener {
         facilities.put(F_FEED_READER, feedReader);
         facilities.put(F_XMPP_CONNECTION, conn);
         facilities.put(F_RANDOM, random);
+        facilities.put(F_TWIT, twittor);
         facilities.put(F_CALENDAR, Calendar.getInstance(TimeZone.getDefault()));
 
         commandManager.registerCommands(ConfigurationManager.getInstance().getConfiguration());
@@ -205,6 +211,14 @@ public class Jbot implements PacketListener, ConnectionListener {
                     for (MultiUserChat tmpMuc : rooms.values()) {
                         try {
                             tmpMuc.sendMessage(toSay);
+                        } catch (XMPPException e) {
+                            log.error(e, e);
+                        }
+                    }
+                } else if (commands[0].startsWith("!k") && commands.length > 1) {
+                    for (MultiUserChat tmpMuc : rooms.values()) {
+                        try {
+                            tmpMuc.kickParticipant(commands[1], "Убирайся, гадкий либераст!");
                         } catch (XMPPException e) {
                             log.error(e, e);
                         }
