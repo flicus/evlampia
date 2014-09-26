@@ -3,12 +3,24 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <title>vnations@conference.jabber.ru - 29 Август 2011, понедельник</title>
+    <link href="css/jquery.datepick.css" rel="stylesheet">
+    <script src="js/jquery-1.9.1.js"></script>
+    <script src="js/jquery.datepick.js"></script>
+    <script src="js/jquery.datepick-ru.js"></script>
+    <script src="js/dp.js"></script>
     <style type="text/css">
         @font-face {
             font-family: 'Input';
             src: url('fonts/InputMono/InputMono/InputMono-Regular.ttf') format('truetype');
             font-weight: normal;
             font-style: normal
+        }
+
+        .datepick {
+            box-shadow: 0 1px 4px rgba(0, 0, 0, .3),
+            -23px 0 20px -23px rgba(0, 0, 0, .8),
+            23px 0 20px -23px rgba(0, 0, 0, .8),
+            0 0 40px rgba(0, 0, 0, .1) inset;
         }
 
         .header {
@@ -90,6 +102,7 @@
     </style>
 </head>
 <body>
+<div style="position: absolute;left: -10000px" id="listRender"></div>
 <div class="mark">Записки Евлампии</div>
 <div class="header">
     <div class="left">29 Август 2011, понедельник</div>

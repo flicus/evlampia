@@ -38,5 +38,6 @@
         <dependency org="org.twitter4j" name="twitter4j-core" rev="3.0.3"/>
         <!--<dependency org="org.teleal.cling" name="cling-core" rev="latest.integration"/>-->
         <!--<dependency org="org.teleal" name="teleal-common" rev="latest.integration"/>-->
+        <dependency org="com.fasterxml" name="aalto-xml" rev="0.9.8"/>
     </dependencies>
 </ivy-module>

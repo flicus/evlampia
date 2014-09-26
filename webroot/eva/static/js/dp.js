@@ -22,6 +22,18 @@ $(document).ready(function () {
             }
         });
 
+    $('#listRender').mouseleave(function () {
+        $('#listRender').css({left: -10000});
+    });
+
+    $(".header").mouseenter(function (event) {
+        var calendar = $('#listRender');
+        var left = event.pageX - calendar.width() / 2 > 0 ? event.pageX - calendar.width() / 2 : 0;
+        calendar.css({
+            left: left + 'px'
+        });
+    });
+
 });
 
 

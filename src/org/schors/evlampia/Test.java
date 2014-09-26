@@ -17,25 +17,183 @@
 
 package org.schors.evlampia;
 
+import org.jdom2.Attribute;
+import org.jdom2.JDOMException;
+import org.jdom2.output.XMLOutputter;
 import org.jivesoftware.smackx.muc.MultiUserChat;
+import org.schors.evlampia.convertor.Body;
+import org.schors.evlampia.convertor.Head;
+import org.schors.evlampia.convertor.Html;
+import org.schors.evlampia.convertor.Record;
 import org.schors.evlampia.dao.DAOManager;
 import org.schors.evlampia.rss.FeedReader;
 import org.schors.evlampia.tracker.NamedTrackList;
 import org.schors.evlampia.tracker.Track;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import javax.xml.stream.XMLStreamException;
+import java.io.*;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Test {
 
     private final static Pattern pattern = Pattern.compile("\\b((?:[a-z][\\w-]+:(?:\\/{1,3}|[a-z0-9%])|www\\d{0,3}[.])(?:[^\\s()<>]+|\\([^\\s()<>]+\\))+(?:\\([^\\s()<>]+\\)|[^`!()\\[\\]{};:'\".,<>?«»“”‘’\\s]))");
 
-    public static void main(String[] args) throws SQLException, IOException, InterruptedException {
+    private static final String style = "@font-face {\n" +
+            "            font-family: 'Input';\n" +
+            "            src: url('fonts/InputMono/InputMono/InputMono-Regular.ttf') format('truetype');\n" +
+            "            font-weight: normal;\n" +
+            "            font-style: normal\n" +
+            "        }\n" +
+            "\n" +
+            "        .datepick {\n" +
+            "            box-shadow: 0 1px 4px rgba(0, 0, 0, .3),\n" +
+            "            -23px 0 20px -23px rgba(0, 0, 0, .8),\n" +
+            "            23px 0 20px -23px rgba(0, 0, 0, .8),\n" +
+            "            0 0 40px rgba(0, 0, 0, .1) inset;\n" +
+            "        }\n" +
+            "\n" +
+            "        .header {\n" +
+            "            border-bottom: #246 solid 1pt;\n" +
+            "            letter-spacing: 2px;\n" +
+            "            margin-left: 20pt;\n" +
+            "            letter-spacing: 2px;\n" +
+            "            font-size: larger;\n" +
+            "            font-weight: bold;\n" +
+            "            padding-bottom: 2em;\n" +
+            "        }\n" +
+            "\n" +
+            "        .left {\n" +
+            "            color: #6c71c4;\n" +
+            "            float: left;\n" +
+            "        }\n" +
+            "\n" +
+            "        .right {\n" +
+            "            color: #6c71c4;\n" +
+            "            float: right;\n" +
+            "        }\n" +
+            "\n" +
+            "        .clear {\n" +
+            "            clear: both;\n" +
+            "        }\n" +
+            "\n" +
+            "        .log {\n" +
+            "            padding-top: 2em;\n" +
+            "        }\n" +
+            "\n" +
+            "        .mark {\n" +
+            "            color: #aaa;\n" +
+            "            text-align: right;\n" +
+            "            font-family: monospace;\n" +
+            "            letter-spacing: 3px\n" +
+            "        }\n" +
+            "\n" +
+            "        .timestamp {\n" +
+            "            font-size: small;\n" +
+            "            color: #839496;;\n" +
+            "        }\n" +
+            "\n" +
+            "        .timestamp a {\n" +
+            "            text-decoration: none;\n" +
+            "            color: #839496;;\n" +
+            "        }\n" +
+            "\n" +
+            "        .nickname {\n" +
+            "            color: #b58900;\n" +
+            "        }\n" +
+            "\n" +
+            "        .lampa {\n" +
+            "            color: #cb4b16;\n" +
+            "        }\n" +
+            "\n" +
+            "        body {\n" +
+            "            font: normal normal normal 14px/1 Input;\n" +
+            "            font-size: inherit;\n" +
+            "            text-rendering: auto;\n" +
+            "            -webkit-font-smoothing: antialiased;\n" +
+            "            -moz-osx-font-smoothing: grayscale;\n" +
+            "            background-color: #fdf6e3;\n" +
+            "            color: #657b83;\n" +
+            "        }\n" +
+            "\n" +
+            "        ::selection {\n" +
+            "            background: #FF5E99;\n" +
+            "            color: #fff;\n" +
+            "            text-shadow: none;\n" +
+            "        }\n" +
+            "\n" +
+            "        p {\n" +
+            "            display: block;\n" +
+            "            -webkit-margin-before: 0.5em;\n" +
+            "            -webkit-margin-after: 0.5em;\n" +
+            "            -webkit-margin-start: 0px;\n" +
+            "            -webkit-margin-end: 0px;\n" +
+            "        }";
+
+    public static String readFile(String fileName) throws IOException {
+        BufferedReader reader = new BufferedReader(new FileReader(fileName));
+        StringBuilder sb = new StringBuilder();
+        while (reader.ready()) {
+            sb.append(reader.readLine());
+        }
+        return sb.toString();
+    }
+
+    public static void main(String[] args) throws SQLException, IOException, InterruptedException, JDOMException, XMLStreamException {
+
+        Head head = new Head();
+        Body body = new Body();
+        Html html = new Html(head, body);
+
+        Pattern patternLeft = Pattern.compile("<div\\s+class=\"left\">(.*?)</div>");
+        Pattern patternRight = Pattern.compile("<div\\s+class=\"right\">(.*?)</div>");
+        Pattern pattern3 = Pattern.compile("<a\\s+id=\"(.+?)\"\\s*href=\".+?\">\\[(.+?)\\]</a></span>\\s*<span\\s+class=\"(.+?)\">(.+?)</span>(.*?)<br/>", Pattern.MULTILINE);
+        String file = readFile("C:\\Users\\sskoptsov\\IdeaProjects\\eva\\webroot\\eva\\static\\oldlog.htm");
+        Matcher m = patternLeft.matcher(file);
+        StringBuilder title = new StringBuilder();
+        if (m.find()) {
+            body.setLeft(m.group(1));
+            title.append(m.group(1));
+        }
+        m = patternRight.matcher(file);
+        if (m.find()) {
+            body.setRight(m.group(1));
+            title.append(" - ").append(m.group(1));
+        }
+        head.setTitle(title.toString());
+
+        head.getMeta().add(new Attribute("http-equiv", "Content-Type"));
+        head.getMeta().add(new Attribute("content", "text/html; charset=UTF-8"));
+
+        head.getLinks().add("css/jquery.datepick.css");
+
+        head.getScripts().add("js/jquery-1.9.1.js");
+        head.getScripts().add("js/jquery.datepick.js");
+        head.getScripts().add("js/jquery.datepick-ru.js");
+        head.getScripts().add("js/dp.js");
+
+        head.getStyles().add(style);
+
+        m = pattern3.matcher(file);
+        while (m.find()) {
+            String record = m.group(0);
+            System.out.println(record);
+            System.out.println(String.format("%s, %s, %s, %s, %s", m.group(1), m.group(2), m.group(3), m.group(4), m.group(5)));
+            Record r = new Record(m.group(1), m.group(2), m.group(3), m.group(4), m.group(5));
+            body.getRecords().add(r);
+        }
+
+        XMLOutputter op = new XMLOutputter();
+        FileWriter writer = new FileWriter("C:\\Users\\sskoptsov\\IdeaProjects\\eva\\webroot\\eva\\static\\newlog.html");
+        op.output(html.toElement(), writer);
+
+
+//        SAXBuilder builder = new SAXBuilder(XMLReaders.NONVALIDATING);
+//        Document jdom = builder.build(new File("C:\\Users\\sskoptsov\\IdeaProjects\\eva\\webroot\\eva\\static\\oldlog.htm"));
+//        jdom.getContent();
 
 
         FeedReader reader = new FeedReader(new HashMap<String, MultiUserChat>());
