@@ -18,14 +18,14 @@
 package org.schors.evlampia.core;
 
 
+//import sun.misc.BASE64Decoder;
+//import sun.misc.BASE64Encoder;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
-
-//import sun.misc.BASE64Decoder;
-//import sun.misc.BASE64Encoder;
 
 public class TokenManager {
 

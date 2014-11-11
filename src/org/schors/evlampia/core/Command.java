@@ -17,52 +17,19 @@
 
 package org.schors.evlampia.core;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-public abstract class Command {
+@Target(value = ElementType.TYPE)
+@Retention(value = RetentionPolicy.RUNTIME)
+public @interface Command {
+    String[] prefix();
 
-    private Set<String> prefixes = new HashSet<>();
-    private String shortDescription;
-    private String longDescription;
+    String shortDescription();
 
-    public abstract void execute(CommandContext context) throws Exception;
-
-    public String getPrefix(String body) {
-        int firstSpace = body.indexOf(" ");
-        return body.substring(0, firstSpace);
-    }
-
-    public String getWithoutPrefix(String body) {
-        int firstSpace = body.indexOf(" ");
-        return firstSpace > 0 ? body.substring(firstSpace) : null;
-    }
-
-    public void setPrefixes(Set<String> prefixes) {
-        this.prefixes = prefixes;
-    }
-
-    public void setShortDescription(String shortDescription) {
-        this.shortDescription = shortDescription;
-    }
-
-    public void setLongDescription(String longDescription) {
-        this.longDescription = longDescription;
-    }
-
-    public Set<String> getPrefixes() {
-        return prefixes;
-    }
-
-    public String getShortDescription() {
-        return shortDescription;
-    }
-
-    public String getLongDescription() {
-        return longDescription;
-    }
-
-    public boolean isApply(String prefix) {
-        return prefixes.contains(prefix);
-    }
+    String longDescription();
 }
+
+

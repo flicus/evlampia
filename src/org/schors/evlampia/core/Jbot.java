@@ -35,6 +35,9 @@ import org.schors.evlampia.dao.vbotDAOHTMLImplementation;
 import org.schors.evlampia.dao.vbotDAOInterface;
 import org.schors.evlampia.model.Room;
 import org.schors.evlampia.rss.FeedReader;
+import org.schors.evlampia.search.LogEntry;
+import org.schors.evlampia.search.SearchManager;
+import org.schors.evlampia.search.SearchResult;
 import org.schors.evlampia.tracker.TracksManager;
 
 import java.io.File;
@@ -388,6 +391,27 @@ public class Jbot implements PacketListener, ConnectionListener {
 
             if (body.startsWith(". ")) {
                 body = " <совершенно секретно>";
+            }
+
+            //suddenly response
+            if (!from.equals(muc.getRoom() + "/" + muc.getNickname())) {
+                Random r = (Random) roomFacilities.get(F_RANDOM);
+                r.setSeed(System.currentTimeMillis());
+                if (r.nextInt(100) > 95) {
+                    String toSearch = commands[r.nextInt(body.length())];
+                    SearchResult<LogEntry> result = SearchManager.getInstanse().search(toSearch, 1, 0);
+                    if (result.hits > 0) {
+                        String searchResult = result.getItems().iterator().next().getMessage();
+                        if (searchResult != null) {
+                            searchResult = searchResult.replace("<span class='highlighted'>", "").replace("</span>", "");
+                        }
+                        try {
+                            muc.sendMessage(searchResult);
+                        } catch (XMPPException e) {
+                            log.error(e, e);
+                        }
+                    }
+                }
             }
 
             String mType = org.schors.evlampia.model.Message.t_normal;

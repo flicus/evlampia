@@ -15,25 +15,14 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package org.schors.evlampia.commands;
+package org.schors.evlampia.core;
 
-import org.schors.evlampia.core.Command;
-import org.schors.evlampia.core.CommandContext;
-import org.schors.evlampia.core.EntryPoint;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-@Command(
-        prefix = "!гд",
-        shortDescription = "",
-        longDescription = ""
-)
-public class AddQuestion {
-
-    // !гд опрос1 о ! [24:00:00] .?.что сделать из нижеперечисленного?.?. .1+overmind88.отоварить рыбой овермайнда, чему служит плюс и его ник в варианте.1+overmind88. .2-leopardus.кикнуть леопардуса чему соотв. служит минус и ник.2-leopardus. .3.просто сообщить что победил вариант 3 в случае оного.3. .4.ну или вариант 4 для объёма.4.
-
-    //!гд опрос1 ${} ${1} ${2} ${3}
-
-    @EntryPoint
-    public void execute(CommandContext context) throws Exception {
-
-    }
+@Target(value = ElementType.METHOD)
+@Retention(value = RetentionPolicy.RUNTIME)
+public @interface EntryPoint {
 }

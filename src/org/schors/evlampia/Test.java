@@ -42,96 +42,7 @@ public class Test {
 
     private final static Pattern pattern = Pattern.compile("\\b((?:[a-z][\\w-]+:(?:\\/{1,3}|[a-z0-9%])|www\\d{0,3}[.])(?:[^\\s()<>]+|\\([^\\s()<>]+\\))+(?:\\([^\\s()<>]+\\)|[^`!()\\[\\]{};:'\".,<>?«»“”‘’\\s]))");
 
-    private static final String style = "@font-face {\n" +
-            "            font-family: 'Input';\n" +
-            "            src: url('fonts/InputMono/InputMono/InputMono-Regular.ttf') format('truetype');\n" +
-            "            font-weight: normal;\n" +
-            "            font-style: normal\n" +
-            "        }\n" +
-            "\n" +
-            "        .datepick {\n" +
-            "            box-shadow: 0 1px 4px rgba(0, 0, 0, .3),\n" +
-            "            -23px 0 20px -23px rgba(0, 0, 0, .8),\n" +
-            "            23px 0 20px -23px rgba(0, 0, 0, .8),\n" +
-            "            0 0 40px rgba(0, 0, 0, .1) inset;\n" +
-            "        }\n" +
-            "\n" +
-            "        .header {\n" +
-            "            border-bottom: #246 solid 1pt;\n" +
-            "            letter-spacing: 2px;\n" +
-            "            margin-left: 20pt;\n" +
-            "            letter-spacing: 2px;\n" +
-            "            font-size: larger;\n" +
-            "            font-weight: bold;\n" +
-            "            padding-bottom: 2em;\n" +
-            "        }\n" +
-            "\n" +
-            "        .left {\n" +
-            "            color: #6c71c4;\n" +
-            "            float: left;\n" +
-            "        }\n" +
-            "\n" +
-            "        .right {\n" +
-            "            color: #6c71c4;\n" +
-            "            float: right;\n" +
-            "        }\n" +
-            "\n" +
-            "        .clear {\n" +
-            "            clear: both;\n" +
-            "        }\n" +
-            "\n" +
-            "        .log {\n" +
-            "            padding-top: 2em;\n" +
-            "        }\n" +
-            "\n" +
-            "        .mark {\n" +
-            "            color: #aaa;\n" +
-            "            text-align: right;\n" +
-            "            font-family: monospace;\n" +
-            "            letter-spacing: 3px\n" +
-            "        }\n" +
-            "\n" +
-            "        .timestamp {\n" +
-            "            font-size: small;\n" +
-            "            color: #839496;;\n" +
-            "        }\n" +
-            "\n" +
-            "        .timestamp a {\n" +
-            "            text-decoration: none;\n" +
-            "            color: #839496;;\n" +
-            "        }\n" +
-            "\n" +
-            "        .nickname {\n" +
-            "            color: #b58900;\n" +
-            "        }\n" +
-            "\n" +
-            "        .lampa {\n" +
-            "            color: #cb4b16;\n" +
-            "        }\n" +
-            "\n" +
-            "        body {\n" +
-            "            font: normal normal normal 14px/1 Input;\n" +
-            "            font-size: inherit;\n" +
-            "            text-rendering: auto;\n" +
-            "            -webkit-font-smoothing: antialiased;\n" +
-            "            -moz-osx-font-smoothing: grayscale;\n" +
-            "            background-color: #fdf6e3;\n" +
-            "            color: #657b83;\n" +
-            "        }\n" +
-            "\n" +
-            "        ::selection {\n" +
-            "            background: #FF5E99;\n" +
-            "            color: #fff;\n" +
-            "            text-shadow: none;\n" +
-            "        }\n" +
-            "\n" +
-            "        p {\n" +
-            "            display: block;\n" +
-            "            -webkit-margin-before: 0.5em;\n" +
-            "            -webkit-margin-after: 0.5em;\n" +
-            "            -webkit-margin-start: 0px;\n" +
-            "            -webkit-margin-end: 0px;\n" +
-            "        }";
+    private static final String style = "@font-face{font-family:'Input';src:url('fonts/InputMono/InputMono/InputMono-Regular.ttf') format('truetype');font-weight:normal;font-style:normal}.datepick{box-shadow:0 1px 4px rgba(0, 0, 0, .3),-23px 0 20px -23px rgba(0, 0, 0, .8),23px 0 20px -23px rgba(0, 0, 0, .8),0 0 40px rgba(0, 0, 0, .1) inset;}.header{border-bottom:#246 solid 1pt;letter-spacing:2px;margin-left:20pt;letter-spacing:2px;font-size:larger;font-weight:bold;padding-bottom:2em;}.left{color:#6c71c4;float:left;}.right{color:#6c71c4;float:right;}.clear{clear:both;}.log{padding-top:2em;}.mark{color:#aaa;text-align:right;font-family:monospace;letter-spacing:3px}.timestamp{font-size:small;color:#839496;}.timestamp a{text-decoration:none;color:#839496;}.nickname{color:#b58900;}.lampa{color:#cb4b16;}body{font:normal normal normal 14px/1 Input;font-size:inherit;text-rendering:auto;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;background-color:#fdf6e3;color:#657b83;} ::selection{background:#FF5E99;color:#fff;text-shadow:none;}p{display:block;-webkit-margin-before:0.5em;-webkit-margin-after:0.5em;-webkit-margin-start:0px;-webkit-margin-end:0px;}html a{color:#b58900;}html a:hover, html.light a:hover{background-color:#eee8d5;}";
 
     public static String readFile(String fileName) throws IOException {
         BufferedReader reader = new BufferedReader(new FileReader(fileName));
@@ -148,22 +59,18 @@ public class Test {
         Body body = new Body();
         Html html = new Html(head, body);
 
-        Pattern patternLeft = Pattern.compile("<div\\s+class=\"left\">(.*?)</div>");
-        Pattern patternRight = Pattern.compile("<div\\s+class=\"right\">(.*?)</div>");
+        Pattern patternTitle = Pattern.compile("<title>(.*?)</title>");
         Pattern pattern3 = Pattern.compile("<a\\s+id=\"(.+?)\"\\s*href=\".+?\">\\[(.+?)\\]</a></span>\\s*<span\\s+class=\"(.+?)\">(.+?)</span>(.*?)<br/>", Pattern.MULTILINE);
-        String file = readFile("C:\\Users\\sskoptsov\\IdeaProjects\\eva\\webroot\\eva\\static\\oldlog.htm");
-        Matcher m = patternLeft.matcher(file);
-        StringBuilder title = new StringBuilder();
+        //String file = readFile("C:\\Users\\sskoptsov\\IdeaProjects\\eva\\webroot\\eva\\static\\oldlog.htm");
+        String file = readFile("d:\\java\\eva\\webroot\\eva\\static\\oldlog.htm");
+        Matcher m = patternTitle.matcher(file);
         if (m.find()) {
-            body.setLeft(m.group(1));
-            title.append(m.group(1));
+            head.setTitle(m.group(1));
+            String[] items = m.group(1).split(" - ");
+            body.setLeft(items[1]);
+            body.setRight(items[0]);
         }
-        m = patternRight.matcher(file);
-        if (m.find()) {
-            body.setRight(m.group(1));
-            title.append(" - ").append(m.group(1));
-        }
-        head.setTitle(title.toString());
+
 
         head.getMeta().add(new Attribute("http-equiv", "Content-Type"));
         head.getMeta().add(new Attribute("content", "text/html; charset=UTF-8"));
@@ -187,7 +94,7 @@ public class Test {
         }
 
         XMLOutputter op = new XMLOutputter();
-        FileWriter writer = new FileWriter("C:\\Users\\sskoptsov\\IdeaProjects\\eva\\webroot\\eva\\static\\newlog.html");
+        FileWriter writer = new FileWriter("d:\\java\\eva\\webroot\\eva\\static\\newlog.html");
         op.output(html.toElement(), writer);
 
 
