@@ -17,15 +17,9 @@
 
 package org.schors.evlampia.commands;
 
-import org.schors.evlampia.core.Command;
 import org.schors.evlampia.core.CommandContext;
 import org.schors.evlampia.core.EntryPoint;
 
-@Command(
-        prefix = "!гд",
-        shortDescription = "",
-        longDescription = ""
-)
 public class AddQuestion {
 
     // !гд опрос1 о ! [24:00:00] .?.что сделать из нижеперечисленного?.?. .1+overmind88.отоварить рыбой овермайнда, чему служит плюс и его ник в варианте.1+overmind88. .2-leopardus.кикнуть леопардуса чему соотв. служит минус и ник.2-leopardus. .3.просто сообщить что победил вариант 3 в случае оного.3. .4.ну или вариант 4 для объёма.4.
