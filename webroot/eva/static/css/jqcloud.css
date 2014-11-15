@@ -1,53 +1,149 @@
+/*
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2014 schors
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
 /* fonts */
 
 div.jqcloud {
-  font-family: "Helvetica", "Arial", sans-serif;
-  font-size: 10px;
-  line-height: normal;
+    font-family: "Helvetica", "Arial", sans-serif;
+    font-size: 10px;
+    line-height: normal;
 }
 
 div.jqcloud a {
-  font-size: inherit;
-  text-decoration: none;
+    font-size: inherit;
+    text-decoration: none;
 }
 
 div.jqcloud span {
     cursor: pointer;
 }
 
-div.jqcloud span.w10 { font-size: 550%; }
-div.jqcloud span.w9 { font-size: 500%; }
-div.jqcloud span.w8 { font-size: 450%; }
-div.jqcloud span.w7 { font-size: 400%; }
-div.jqcloud span.w6 { font-size: 350%; }
-div.jqcloud span.w5 { font-size: 300%; }
-div.jqcloud span.w4 { font-size: 250%; }
-div.jqcloud span.w3 { font-size: 200%; }
-div.jqcloud span.w2 { font-size: 150%; }
-div.jqcloud span.w1 { font-size: 100%; }
+div.jqcloud span.w10 {
+    font-size: 550%;
+}
+
+div.jqcloud span.w9 {
+    font-size: 500%;
+}
+
+div.jqcloud span.w8 {
+    font-size: 450%;
+}
+
+div.jqcloud span.w7 {
+    font-size: 400%;
+}
+
+div.jqcloud span.w6 {
+    font-size: 350%;
+}
+
+div.jqcloud span.w5 {
+    font-size: 300%;
+}
+
+div.jqcloud span.w4 {
+    font-size: 250%;
+}
+
+div.jqcloud span.w3 {
+    font-size: 200%;
+}
+
+div.jqcloud span.w2 {
+    font-size: 150%;
+}
+
+div.jqcloud span.w1 {
+    font-size: 100%;
+}
 
 /* colors */
 
-div.jqcloud { color: #09f; }
-div.jqcloud a { color: inherit; }
-div.jqcloud a:hover { color: #0df; }
-div.jqcloud a:hover { color: #0cf; }
-div.jqcloud span.w10 { color: #0cf; }
-div.jqcloud span.w9 { color: #0cf; }
-div.jqcloud span.w8 { color: #0cf; }
-div.jqcloud span.w7 { color: #39d; }
-div.jqcloud span.w6 { color: #90c5f0; }
-div.jqcloud span.w5 { color: #90a0dd; }
-div.jqcloud span.w4 { color: #90c5f0; }
-div.jqcloud span.w3 { color: #a0ddff; }
-div.jqcloud span.w2 { color: #99ccee; }
-div.jqcloud span.w1 { color: #aab5f0; }
+div.jqcloud {
+    color: #09f;
+}
+
+div.jqcloud a {
+    color: inherit;
+}
+
+div.jqcloud a:hover {
+    color: #0df;
+}
+
+div.jqcloud a:hover {
+    color: #0cf;
+}
+
+div.jqcloud span.w10 {
+    color: #0cf;
+}
+
+div.jqcloud span.w9 {
+    color: #0cf;
+}
+
+div.jqcloud span.w8 {
+    color: #0cf;
+}
+
+div.jqcloud span.w7 {
+    color: #39d;
+}
+
+div.jqcloud span.w6 {
+    color: #90c5f0;
+}
+
+div.jqcloud span.w5 {
+    color: #90a0dd;
+}
+
+div.jqcloud span.w4 {
+    color: #90c5f0;
+}
+
+div.jqcloud span.w3 {
+    color: #a0ddff;
+}
+
+div.jqcloud span.w2 {
+    color: #99ccee;
+}
+
+div.jqcloud span.w1 {
+    color: #aab5f0;
+}
 
 /* layout */
 
 div.jqcloud {
-  overflow: hidden;
-  position: relative;
+    overflow: hidden;
+    position: relative;
 }
 
-div.jqcloud span { padding: 0; }
+div.jqcloud span {
+    padding: 0;
+}

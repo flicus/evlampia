@@ -1,18 +1,25 @@
 /*
- * The MIT License
+ * The MIT License (MIT)
  *
- * Copyright (c) 2014.  schors (https://github.com/flicus)
- * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
- * documentation files (the "Software"), to deal in the Software without restriction, including without limitation
- * the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,
- * and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+ * Copyright (c) 2014 schors
  *
- * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
  *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED
- * TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
- * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
- * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
  */
 
 /**
@@ -25,76 +32,15 @@
 package org.schors.evlampia.tracker.wsdl.axis;
 
 public class WebOperationHistoryStub extends org.apache.axis.client.Stub implements OperationHistoryInterface {
-    private java.util.Vector cachedSerClasses = new java.util.Vector();
-    private java.util.Vector cachedSerQNames = new java.util.Vector();
-    private java.util.Vector cachedSerFactories = new java.util.Vector();
-    private java.util.Vector cachedDeserFactories = new java.util.Vector();
-
     static org.apache.axis.description.OperationDesc[] _operations;
-
     static {
         _operations = new org.apache.axis.description.OperationDesc[2];
         _initOperationDesc1();
     }
-
-    private static void _initOperationDesc1() {
-        org.apache.axis.description.OperationDesc oper;
-        org.apache.axis.description.ParameterDesc param;
-        oper = new org.apache.axis.description.OperationDesc();
-        oper.setName("GetOperationHistory");
-        param = new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("http://russianpost.org/operationhistory/data", "OperationHistoryRequest"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("http://russianpost.org/operationhistory/data", ">OperationHistoryRequest"), OperationHistoryRequest.class, false, false);
-        oper.addParameter(param);
-        param = new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("http://russianpost.org/operationhistory/data", "AuthorizationHeader"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("http://russianpost.org/operationhistory/data", ">AuthorizationHeader"), AuthorizationHeader.class, true, false);
-        oper.addParameter(param);
-        oper.setReturnType(new javax.xml.namespace.QName("http://russianpost.org/operationhistory/data", ">OperationHistoryData"));
-        oper.setReturnClass(OperationHistoryRecord[].class);
-        oper.setReturnQName(new javax.xml.namespace.QName("http://russianpost.org/operationhistory/data", "OperationHistoryData"));
-        param = oper.getReturnParamDesc();
-        param.setItemQName(new javax.xml.namespace.QName("http://russianpost.org/operationhistory/data", "historyRecord"));
-        oper.setStyle(org.apache.axis.constants.Style.DOCUMENT);
-        oper.setUse(org.apache.axis.constants.Use.LITERAL);
-        oper.addFault(new org.apache.axis.description.FaultDesc(
-                new javax.xml.namespace.QName("http://russianpost.org/operationhistory/data", "OperationHistoryFaultReason"),
-                "org.evlampia.post.wsdl.axis.OperationHistoryFault",
-                new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"),
-                false
-        ));
-        oper.addFault(new org.apache.axis.description.FaultDesc(
-                new javax.xml.namespace.QName("http://russianpost.org/operationhistory/data", "AuthorizationFaultReason"),
-                "org.evlampia.post.wsdl.axis.AuthorizationFault",
-                new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"),
-                false
-        ));
-        _operations[0] = oper;
-
-        oper = new org.apache.axis.description.OperationDesc();
-        oper.setName("UpdateOperationData");
-        param = new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("http://russianpost.org/operationhistory/data", "UpdateOperationRequest"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("http://russianpost.org/operationhistory/data", "UpdateOperationRequest"), UpdateOperationRequest.class, false, false);
-        oper.addParameter(param);
-        param = new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("http://russianpost.org/operationhistory/data", "AuthorizationHeader"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("http://russianpost.org/operationhistory/data", ">AuthorizationHeader"), AuthorizationHeader.class, true, false);
-        oper.addParameter(param);
-        oper.setReturnType(new javax.xml.namespace.QName("http://russianpost.org/operationhistory/data", ">OperationHistoryData"));
-        oper.setReturnClass(OperationHistoryRecord[].class);
-        oper.setReturnQName(new javax.xml.namespace.QName("http://russianpost.org/operationhistory/data", "OperationHistoryData"));
-        param = oper.getReturnParamDesc();
-        param.setItemQName(new javax.xml.namespace.QName("http://russianpost.org/operationhistory/data", "historyRecord"));
-        oper.setStyle(org.apache.axis.constants.Style.DOCUMENT);
-        oper.setUse(org.apache.axis.constants.Use.LITERAL);
-        oper.addFault(new org.apache.axis.description.FaultDesc(
-                new javax.xml.namespace.QName("http://russianpost.org/operationhistory/data", "OperationHistoryFaultReason"),
-                "org.evlampia.post.wsdl.axis.OperationHistoryFault",
-                new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"),
-                false
-        ));
-        oper.addFault(new org.apache.axis.description.FaultDesc(
-                new javax.xml.namespace.QName("http://russianpost.org/operationhistory/data", "AuthorizationFaultReason"),
-                "org.evlampia.post.wsdl.axis.AuthorizationFault",
-                new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"),
-                false
-        ));
-        _operations[1] = oper;
-
-    }
+    private java.util.Vector cachedSerClasses = new java.util.Vector();
+    private java.util.Vector cachedSerQNames = new java.util.Vector();
+    private java.util.Vector cachedSerFactories = new java.util.Vector();
+    private java.util.Vector cachedDeserFactories = new java.util.Vector();
 
     public WebOperationHistoryStub() throws org.apache.axis.AxisFault {
         this(null);
@@ -238,6 +184,65 @@ public class WebOperationHistoryStub extends org.apache.axis.client.Stub impleme
         cachedSerClasses.add(cls);
         cachedSerFactories.add(org.apache.axis.encoding.ser.BaseSerializerFactory.createFactory(org.apache.axis.encoding.ser.SimpleSerializerFactory.class, cls, qName));
         cachedDeserFactories.add(org.apache.axis.encoding.ser.BaseDeserializerFactory.createFactory(org.apache.axis.encoding.ser.SimpleDeserializerFactory.class, cls, qName));
+
+    }
+
+    private static void _initOperationDesc1() {
+        org.apache.axis.description.OperationDesc oper;
+        org.apache.axis.description.ParameterDesc param;
+        oper = new org.apache.axis.description.OperationDesc();
+        oper.setName("GetOperationHistory");
+        param = new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("http://russianpost.org/operationhistory/data", "OperationHistoryRequest"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("http://russianpost.org/operationhistory/data", ">OperationHistoryRequest"), OperationHistoryRequest.class, false, false);
+        oper.addParameter(param);
+        param = new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("http://russianpost.org/operationhistory/data", "AuthorizationHeader"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("http://russianpost.org/operationhistory/data", ">AuthorizationHeader"), AuthorizationHeader.class, true, false);
+        oper.addParameter(param);
+        oper.setReturnType(new javax.xml.namespace.QName("http://russianpost.org/operationhistory/data", ">OperationHistoryData"));
+        oper.setReturnClass(OperationHistoryRecord[].class);
+        oper.setReturnQName(new javax.xml.namespace.QName("http://russianpost.org/operationhistory/data", "OperationHistoryData"));
+        param = oper.getReturnParamDesc();
+        param.setItemQName(new javax.xml.namespace.QName("http://russianpost.org/operationhistory/data", "historyRecord"));
+        oper.setStyle(org.apache.axis.constants.Style.DOCUMENT);
+        oper.setUse(org.apache.axis.constants.Use.LITERAL);
+        oper.addFault(new org.apache.axis.description.FaultDesc(
+                new javax.xml.namespace.QName("http://russianpost.org/operationhistory/data", "OperationHistoryFaultReason"),
+                "org.evlampia.post.wsdl.axis.OperationHistoryFault",
+                new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"),
+                false
+        ));
+        oper.addFault(new org.apache.axis.description.FaultDesc(
+                new javax.xml.namespace.QName("http://russianpost.org/operationhistory/data", "AuthorizationFaultReason"),
+                "org.evlampia.post.wsdl.axis.AuthorizationFault",
+                new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"),
+                false
+        ));
+        _operations[0] = oper;
+
+        oper = new org.apache.axis.description.OperationDesc();
+        oper.setName("UpdateOperationData");
+        param = new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("http://russianpost.org/operationhistory/data", "UpdateOperationRequest"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("http://russianpost.org/operationhistory/data", "UpdateOperationRequest"), UpdateOperationRequest.class, false, false);
+        oper.addParameter(param);
+        param = new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("http://russianpost.org/operationhistory/data", "AuthorizationHeader"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("http://russianpost.org/operationhistory/data", ">AuthorizationHeader"), AuthorizationHeader.class, true, false);
+        oper.addParameter(param);
+        oper.setReturnType(new javax.xml.namespace.QName("http://russianpost.org/operationhistory/data", ">OperationHistoryData"));
+        oper.setReturnClass(OperationHistoryRecord[].class);
+        oper.setReturnQName(new javax.xml.namespace.QName("http://russianpost.org/operationhistory/data", "OperationHistoryData"));
+        param = oper.getReturnParamDesc();
+        param.setItemQName(new javax.xml.namespace.QName("http://russianpost.org/operationhistory/data", "historyRecord"));
+        oper.setStyle(org.apache.axis.constants.Style.DOCUMENT);
+        oper.setUse(org.apache.axis.constants.Use.LITERAL);
+        oper.addFault(new org.apache.axis.description.FaultDesc(
+                new javax.xml.namespace.QName("http://russianpost.org/operationhistory/data", "OperationHistoryFaultReason"),
+                "org.evlampia.post.wsdl.axis.OperationHistoryFault",
+                new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"),
+                false
+        ));
+        oper.addFault(new org.apache.axis.description.FaultDesc(
+                new javax.xml.namespace.QName("http://russianpost.org/operationhistory/data", "AuthorizationFaultReason"),
+                "org.evlampia.post.wsdl.axis.AuthorizationFault",
+                new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"),
+                false
+        ));
+        _operations[1] = oper;
 
     }
 

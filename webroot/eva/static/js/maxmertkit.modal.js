@@ -1,301 +1,308 @@
-;(function ( $, window, document, undefined ) {
-	var _name = 'modal'
-	,	_defaults = {
-			autoOpen: false
-		,	onlyOne: true
-		,	shaderClass: '-shader'
-		,	closerClass: '-closer'
+/*
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2014 schors
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
 
-		,	beforeOpen: $.noop()
-		,	open: $.noop()
-		,	ifOpenedOrNot: $.noop()
-		,	ifNotOpened: $.noop()
-		,	beforeClose: $.noop()
-		,	close: $.noop()
-		,	ifClosedOrNot: $.noop()
-		,	ifNotClosed: $.noop()
-	}
+;
+(function ($, window, document, undefined) {
+    var _name = 'modal'
+        , _defaults = {
+            autoOpen: false, onlyOne: true, shaderClass: '-shader', closerClass: '-closer', beforeOpen: $.noop(), open: $.noop(), ifOpenedOrNot: $.noop(), ifNotOpened: $.noop(), beforeClose: $.noop(), close: $.noop(), ifClosedOrNot: $.noop(), ifNotClosed: $.noop()
+        }
 
-	Modal = function( element_, options_ ) {
-		this.element = element_;
-		this.name = _name;
-		this.options = $.extend( {}, this.options, _defaults, options_ );
-		this._setOptions( this.options );
+    Modal = function (element_, options_) {
+        this.element = element_;
+        this.name = _name;
+        this.options = $.extend({}, this.options, _defaults, options_);
+        this._setOptions(this.options);
 
-		if( typeof $.modal === 'undefined' )
-			$.modal = [];
-		if( this.element !== 'undefined' )
-			$.modal.push( this.element );
+        if (typeof $.modal === 'undefined')
+            $.modal = [];
+        if (this.element !== 'undefined')
+            $.modal.push(this.element);
 
-		$(this.element).css({
-			display: 'none'
-		,	left: '50%'
-		,	top: '50%'
-		,	position: 'fixed'
-		});
+        $(this.element).css({
+            display: 'none', left: '50%', top: '50%', position: 'fixed'
+        });
 
-		var me = this;
-		$(this.element).find( '.' + me.options.closerClass ).on( 'click', function() {
-			me.close();
-		})
+        var me = this;
+        $(this.element).find('.' + me.options.closerClass).on('click', function () {
+            me.close();
+        })
 
-		this.init();
-	}
+        this.init();
+    }
 
-	Modal.prototype = new $.kit();
-	Modal.prototype.constructor = Modal;
+    Modal.prototype = new $.kit();
+    Modal.prototype.constructor = Modal;
 
-	Modal.prototype.__setOption = function( key_, value_ ) {
-		var me  = this
-		,	$me = $(me.element);
-		
-		switch( key_ ) {
-			case 'animation':
-				if( $.easing === undefined || !(value_ in $.easing) )
-					switch( value_ ) {
-						case 'scaleIn':
-							$me.addClass('-mx-scaleIn');
-						break;
+    Modal.prototype.__setOption = function (key_, value_) {
+        var me = this
+            , $me = $(me.element);
 
-						case 'growUp':
-							$me.addClass('-mx-growUp');
-						break;
+        switch (key_) {
+            case 'animation':
+                if ($.easing === undefined || !(value_ in $.easing))
+                    switch (value_) {
+                        case 'scaleIn':
+                            $me.addClass('-mx-scaleIn');
+                            break;
 
-						case 'rotateIn':
-							$me.addClass('-mx-rotateIn');
-						break;
+                        case 'growUp':
+                            $me.addClass('-mx-growUp');
+                            break;
 
-						case 'dropIn':
-							$me.addClass('-mx-dropIn');
-						break;
-					}
+                        case 'rotateIn':
+                            $me.addClass('-mx-rotateIn');
+                            break;
 
-			break;
+                        case 'dropIn':
+                            $me.addClass('-mx-dropIn');
+                            break;
+                    }
 
-			case 'theme':
-				$me.addClass( '-' + value_ + '-' );
-			break;
-		}
+                break;
 
-		me.options[ key_ ] = value_;
-	}
+            case 'theme':
+                $me.addClass('-' + value_ + '-');
+                break;
+        }
 
-	Modal.prototype.init = function() {
-		var me  = this;
+        me.options[ key_ ] = value_;
+    }
 
-		if( me.options.autoOpen )
-			me.open();
-	}
+    Modal.prototype.init = function () {
+        var me = this;
 
-	Modal.prototype._setPosition = function() {
-		var me  = this
-		,	$me = $(me.element)
-		,	width = $me.outerWidth()
-		,	height = $me.outerHeight();
+        if (me.options.autoOpen)
+            me.open();
+    }
 
-		$me.css({
-			marginLeft: Math.round(-width / 2),
-			marginTop: Math.round(-height / 2)
-		});
-	}
+    Modal.prototype._setPosition = function () {
+        var me = this
+            , $me = $(me.element)
+            , width = $me.outerWidth()
+            , height = $me.outerHeight();
 
-	Modal.prototype.open = function() {
-		var me  = this
-		,	$me = $(me.element);
+        $me.css({
+            marginLeft: Math.round(-width / 2),
+            marginTop: Math.round(-height / 2)
+        });
+    }
 
-		if( me.options.enabled === true && me.state !== 'opened' ) {
-			
-			me._openShader();
-			me.state = 'in';
+    Modal.prototype.open = function () {
+        var me = this
+            , $me = $(me.element);
 
-			if( me.options.beforeOpen !== 'undefined' && (typeof me.options.beforeOpen === 'object' || typeof me.options.beforeOpen === 'function' )) {
-				
-				try {
-					var deferred = me.options.beforeOpen.call( $me );
-					deferred
-						.done(function(){
-							me._open();
-						})
-						.fail(function(){
-							me._closeShader();
-							me.state = 'closed';
-							$me.trigger('ifNotOpened.' + me.name);
-							$me.trigger('ifOpenedOrNot.' + me.name);
-						})
-				} catch( e ) {
-					me._open();
-				}
-				
-			}
-			else {
-				me._open();
-			}
-		}
-	}
+        if (me.options.enabled === true && me.state !== 'opened') {
 
-	Modal.prototype._open = function() {
-		var me  = this;
-		var $me = $(me.element);
+            me._openShader();
+            me.state = 'in';
 
-		if( me.state === 'in' ) {
-			
-			if( me.options.onlyOne )
-				
-				$.each( me._getOtherInstanses( $.modal ), function() {
-					if( $.data( this, 'kit-' + me.name ).getState() === 'opened' )
-						$.data( this, 'kit-' + me.name ).close();
-				});
+            if (me.options.beforeOpen !== 'undefined' && (typeof me.options.beforeOpen === 'object' || typeof me.options.beforeOpen === 'function' )) {
 
-			me._setPosition();
-			
-			if( me.options.animation !== null && me.options.animation !== false )
-			{	
-				me._openAnimation();
-			}
-			else
-			{
-				$me.css({opacity:1}).show();
-			}
-			
-			me.state = 'opened';
-			$me.trigger('open.' + me.name);
-		}
+                try {
+                    var deferred = me.options.beforeOpen.call($me);
+                    deferred
+                        .done(function () {
+                            me._open();
+                        })
+                        .fail(function () {
+                            me._closeShader();
+                            me.state = 'closed';
+                            $me.trigger('ifNotOpened.' + me.name);
+                            $me.trigger('ifOpenedOrNot.' + me.name);
+                        })
+                } catch (e) {
+                    me._open();
+                }
 
-		$me.trigger('ifOpenedOrNot.' + me.name);
-	}
+            }
+            else {
+                me._open();
+            }
+        }
+    }
 
-	Modal.prototype._openAnimation = function() {
-		var me  = this;
-		var $me = $(me.element);
+    Modal.prototype._open = function () {
+        var me = this;
+        var $me = $(me.element);
 
-		$('html').addClass( '-mx-shader' );
+        if (me.state === 'in') {
 
-		if( $.easing !== 'undefined' && (me.options.animation.split(/[ ,]+/)[1] in $.easing || me.options.animation.split(/[ ,]+/)[0] in $.easing) ) {
-			me.element.css({opacity:1}).slideDown({
-				duration: me.options.animationDuration,
-				easing: me.options.animation.split(/[ ,]+/)[0]
-			});
-		}
-		else {
-			$me.show();
-			$me.addClass('-mx-start');
-		}
-	}
+            if (me.options.onlyOne)
 
-	Modal.prototype.close = function() {
-		var me  = this;
-		var $me = $(me.element);
+                $.each(me._getOtherInstanses($.modal), function () {
+                    if ($.data(this, 'kit-' + me.name).getState() === 'opened')
+                        $.data(this, 'kit-' + me.name).close();
+                });
 
-		if( me.options.enabled === true && me.state !== 'closed' ) {
+            me._setPosition();
 
-			me.state = 'out';
+            if (me.options.animation !== null && me.options.animation !== false) {
+                me._openAnimation();
+            }
+            else {
+                $me.css({opacity: 1}).show();
+            }
 
-			if( me.options.beforeClose != 'undefined' && (typeof me.options.beforeClose === 'object' || typeof me.options.beforeClose === 'function' ))
-			{
-				
-				try {
-					var deferred = me.options.beforeClose.call( $me );
-					deferred
-						.done(function(){
-							me._close();
-						})
-						.fail(function(){
-							me._closeShader();
-							$me.trigger('ifNotClosed.' + me.name);
-							$me.trigger('ifClosedOrNot.' + me.name);
-							me.state = 'opened';
-						})
-				} catch( e ) {
-					me._close();
-				}
-				
-			}
-			else {
-				me._close();
-			}
-		}
-	}
+            me.state = 'opened';
+            $me.trigger('open.' + me.name);
+        }
 
-	Modal.prototype._close = function() {
-		var me  = this;
-		var $me = $(me.element);
+        $me.trigger('ifOpenedOrNot.' + me.name);
+    }
 
-		me._closeShader();
-		if( me.state === 'out' ) {
-			
-			if( me.options.animation === null )
-				$me.hide();
-			else {
-				me._closeAnimation();
-			}
-			me.state = 'closed';
+    Modal.prototype._openAnimation = function () {
+        var me = this;
+        var $me = $(me.element);
 
-			$me.trigger('close');	
-		}
-		
-		$me.trigger('ifClosedOrNot.' + me.name);
-	}
+        $('html').addClass('-mx-shader');
 
-	Modal.prototype._closeAnimation = function() {
-		var me  = this;
-		var $me = $(me.element);
+        if ($.easing !== 'undefined' && (me.options.animation.split(/[ ,]+/)[1] in $.easing || me.options.animation.split(/[ ,]+/)[0] in $.easing)) {
+            me.element.css({opacity: 1}).slideDown({
+                duration: me.options.animationDuration,
+                easing: me.options.animation.split(/[ ,]+/)[0]
+            });
+        }
+        else {
+            $me.show();
+            $me.addClass('-mx-start');
+        }
+    }
 
-		$('html').removeClass( '-mx-shader' );
+    Modal.prototype.close = function () {
+        var me = this;
+        var $me = $(me.element);
 
-		if( $.easing !== 'undefined' && (me.options.animation.split(/[ ,]+/)[1] in $.easing || me.options.animation.split(/[ ,]+/)[0] in $.easing) ) {
-			$me.slideUp({
-				duration: me.options.animationDuration,
-				easing: me.options.animation.split(/[ ,]+/)[1] !== 'undefined' ? me.options.animation.split(/[ ,]+/)[1] : me.options.animation
-			});
-		}
-		else {
-			$me.removeClass('-mx-start');
-			$me.hide();
-		}
-	}
+        if (me.options.enabled === true && me.state !== 'closed') {
 
-	Modal.prototype._openShader = function() {
-		var me  = this
-		,	$me = $(me.element);
+            me.state = 'out';
 
-		if( $.shader === undefined ) {
-			$.shader = $('<div class="' + me.options.shaderClass + '"></div>');
-			$('body').append( $.shader );
-		}
+            if (me.options.beforeClose != 'undefined' && (typeof me.options.beforeClose === 'object' || typeof me.options.beforeClose === 'function' )) {
 
-		if( me.options.animation !== null || me.options.animation !== undefined )
-			$.shader.fadeIn(150);
-		else
-			$.shader.css({ opacity: 1 }).show();
+                try {
+                    var deferred = me.options.beforeClose.call($me);
+                    deferred
+                        .done(function () {
+                            me._close();
+                        })
+                        .fail(function () {
+                            me._closeShader();
+                            $me.trigger('ifNotClosed.' + me.name);
+                            $me.trigger('ifClosedOrNot.' + me.name);
+                            me.state = 'opened';
+                        })
+                } catch (e) {
+                    me._close();
+                }
 
-	}
+            }
+            else {
+                me._close();
+            }
+        }
+    }
 
-	Modal.prototype._closeShader = function() {
-		var me  = this
-		,	$me = $(me.element);
+    Modal.prototype._close = function () {
+        var me = this;
+        var $me = $(me.element);
 
-		if( $.shader === undefined ) {
-			$.shader = '<div class="' + me.options.shaderClass + '"></div>';
-			$(document).append( $.shader );
-		}
+        me._closeShader();
+        if (me.state === 'out') {
 
-		if( me.options.animation !== null || me.options.animation !== undefined )
-			$.shader.fadeOut(350);
-		else
-			$.shader.css({ opacity: 0 }).hide();
+            if (me.options.animation === null)
+                $me.hide();
+            else {
+                me._closeAnimation();
+            }
+            me.state = 'closed';
 
-	}
+            $me.trigger('close');
+        }
 
-	$.fn[_name] = function( options_ ) {
-		return this.each(function() {
-			if( ! $.data( this, 'kit-' + _name ) ) {
-				$.data( this, 'kit-' + _name, new Modal( this, options_ ) );
-			}
-			else {
-				typeof options_ === 'object' ? $.data( this, 'kit-' + _name )._setOptions( options_ ) :
-					typeof options_ === 'string' && options_.charAt(0) !== '_' ? $.data( this, 'kit-' + _name )[ options_ ] : $.error( 'What do you want to do?' );
-			}
-		});
-	}
+        $me.trigger('ifClosedOrNot.' + me.name);
+    }
 
-})( jQuery, window, document );
+    Modal.prototype._closeAnimation = function () {
+        var me = this;
+        var $me = $(me.element);
+
+        $('html').removeClass('-mx-shader');
+
+        if ($.easing !== 'undefined' && (me.options.animation.split(/[ ,]+/)[1] in $.easing || me.options.animation.split(/[ ,]+/)[0] in $.easing)) {
+            $me.slideUp({
+                duration: me.options.animationDuration,
+                easing: me.options.animation.split(/[ ,]+/)[1] !== 'undefined' ? me.options.animation.split(/[ ,]+/)[1] : me.options.animation
+            });
+        }
+        else {
+            $me.removeClass('-mx-start');
+            $me.hide();
+        }
+    }
+
+    Modal.prototype._openShader = function () {
+        var me = this
+            , $me = $(me.element);
+
+        if ($.shader === undefined) {
+            $.shader = $('<div class="' + me.options.shaderClass + '"></div>');
+            $('body').append($.shader);
+        }
+
+        if (me.options.animation !== null || me.options.animation !== undefined)
+            $.shader.fadeIn(150);
+        else
+            $.shader.css({ opacity: 1 }).show();
+
+    }
+
+    Modal.prototype._closeShader = function () {
+        var me = this
+            , $me = $(me.element);
+
+        if ($.shader === undefined) {
+            $.shader = '<div class="' + me.options.shaderClass + '"></div>';
+            $(document).append($.shader);
+        }
+
+        if (me.options.animation !== null || me.options.animation !== undefined)
+            $.shader.fadeOut(350);
+        else
+            $.shader.css({ opacity: 0 }).hide();
+
+    }
+
+    $.fn[_name] = function (options_) {
+        return this.each(function () {
+            if (!$.data(this, 'kit-' + _name)) {
+                $.data(this, 'kit-' + _name, new Modal(this, options_));
+            }
+            else {
+                typeof options_ === 'object' ? $.data(this, 'kit-' + _name)._setOptions(options_) :
+                        typeof options_ === 'string' && options_.charAt(0) !== '_' ? $.data(this, 'kit-' + _name)[ options_ ] : $.error('What do you want to do?');
+            }
+        });
+    }
+
+})(jQuery, window, document);

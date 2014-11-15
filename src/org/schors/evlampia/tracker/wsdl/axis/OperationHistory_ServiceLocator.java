@@ -1,18 +1,25 @@
 /*
- * The MIT License
+ * The MIT License (MIT)
  *
- * Copyright (c) 2014.  schors (https://github.com/flicus)
- * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
- * documentation files (the "Software"), to deal in the Software without restriction, including without limitation
- * the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,
- * and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+ * Copyright (c) 2014 schors
  *
- * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
  *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED
- * TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
- * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
- * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
  */
 
 /**
@@ -26,9 +33,14 @@ package org.schors.evlampia.tracker.wsdl.axis;
 
 public class OperationHistory_ServiceLocator extends org.apache.axis.client.Service implements OperationHistory_Service {
 
+    // Use to get a proxy class for OperationHistory
+    private java.lang.String OperationHistory_address = "http://voh.russianpost.ru:8080/niips-operationhistory-web/OperationHistory";
+    // The WSDD service name defaults to the port name.
+    private java.lang.String OperationHistoryWSDDServiceName = "OperationHistory";
+    private java.util.HashSet ports = null;
+
     public OperationHistory_ServiceLocator() {
     }
-
 
     public OperationHistory_ServiceLocator(org.apache.axis.EngineConfiguration config) {
         super(config);
@@ -38,15 +50,9 @@ public class OperationHistory_ServiceLocator extends org.apache.axis.client.Serv
         super(wsdlLoc, sName);
     }
 
-    // Use to get a proxy class for OperationHistory
-    private java.lang.String OperationHistory_address = "http://voh.russianpost.ru:8080/niips-operationhistory-web/OperationHistory";
-
     public java.lang.String getOperationHistoryAddress() {
         return OperationHistory_address;
     }
-
-    // The WSDD service name defaults to the port name.
-    private java.lang.String OperationHistoryWSDDServiceName = "OperationHistory";
 
     public java.lang.String getOperationHistoryWSDDServiceName() {
         return OperationHistoryWSDDServiceName;
@@ -120,8 +126,6 @@ public class OperationHistory_ServiceLocator extends org.apache.axis.client.Serv
     public javax.xml.namespace.QName getServiceName() {
         return new javax.xml.namespace.QName("http://russianpost.org/operationhistory", "OperationHistory");
     }
-
-    private java.util.HashSet ports = null;
 
     public java.util.Iterator getPorts() {
         if (ports == null) {

@@ -1,20 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <!--
-  ~ The MIT License
+  ~ The MIT License (MIT)
   ~
-  ~ Copyright (c) 2014.  schors (https://github.com/flicus)
-  ~ Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
-  ~ documentation files (the "Software"), to deal in the Software without restriction, including without limitation
-  ~ the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,
-  ~ and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+  ~ Copyright (c) 2014 schors
   ~
-  ~ The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+  ~ Permission is hereby granted, free of charge, to any person obtaining a copy
+  ~ of this software and associated documentation files (the "Software"), to deal
+  ~ in the Software without restriction, including without limitation the rights
+  ~ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  ~ copies of the Software, and to permit persons to whom the Software is
+  ~ furnished to do so, subject to the following conditions:
   ~
-  ~ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED
-  ~ TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
-  ~ THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
-  ~ CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+  ~ The above copyright notice and this permission notice shall be included in all
+  ~ copies or substantial portions of the Software.
+  ~
+  ~ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  ~ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  ~ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  ~ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  ~ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  ~ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+  ~ SOFTWARE.
   -->
 
 <!--
@@ -96,7 +103,8 @@
         <cmd>
             <cmdClass>org.schors.evlampia.commands.RssShutUpCmd</cmdClass>
             <shortDescription>!з : переключение режима молчания RSS</shortDescription>
-            <longDescription>Переключить режим молчания RSS читалки на противоположный (молчать\не молчать)</longDescription>
+            <longDescription>Переключить режим молчания RSS читалки на противоположный (молчать\не молчать)
+            </longDescription>
             <prefixes>
                 <prefix>!з</prefix>
             </prefixes>
@@ -112,7 +120,9 @@
         <cmd>
             <cmdClass>org.schors.evlampia.commands.GetTockenCmd</cmdClass>
             <shortDescription>!т : получение ключика на сайт</shortDescription>
-            <longDescription>Получить сгенерированый временный ключ для входа на сайт лампы (действует в течении суток)</longDescription>
+            <longDescription>Получить сгенерированый временный ключ для входа на сайт лампы (действует в течении
+                суток)
+            </longDescription>
             <prefixes>
                 <prefix>!т</prefix>
             </prefixes>
@@ -136,7 +146,10 @@
         <cmd>
             <cmdClass>org.schors.evlampia.commands.AddTrackCmd</cmdClass>
             <shortDescription>!а [имяСписка код имяПосылки] : добавить посылку для отслеживания</shortDescription>
-            <longDescription>Добавить в список [имяСписка] новую посылку с кодом [код] для отслеживания. Посылку пометить понятным названием [имяПосылки]. Если такого списка еще нет, он будет создан. Статуст посылки проверяется каждые 2 часа</longDescription>
+            <longDescription>Добавить в список [имяСписка] новую посылку с кодом [код] для отслеживания. Посылку
+                пометить понятным названием [имяПосылки]. Если такого списка еще нет, он будет создан. Статуст посылки
+                проверяется каждые 2 часа
+            </longDescription>
             <prefixes>
                 <prefix>!а</prefix>
             </prefixes>
@@ -144,7 +157,9 @@
         <cmd>
             <cmdClass>org.schors.evlampia.commands.DeleteTrackCmd</cmdClass>
             <shortDescription>!д [имяСписка код] : удалить посылку из списка отслеживаемых</shortDescription>
-            <longDescription>Удалить из списка [имяСписка] посылку с кодом [код] и больше не отслеживать ее статус. Если это была последняя посылка в списке, список тоже будет удален</longDescription>
+            <longDescription>Удалить из списка [имяСписка] посылку с кодом [код] и больше не отслеживать ее статус. Если
+                это была последняя посылка в списке, список тоже будет удален
+            </longDescription>
             <prefixes>
                 <prefix>!д</prefix>
             </prefixes>
@@ -160,7 +175,9 @@
         <cmd>
             <cmdClass>org.schors.evlampia.commands.UpdateIndexCmd</cmdClass>
             <shortDescription>!о, !ои : обновить поисковый индекс</shortDescription>
-            <longDescription>Индекс обновляется автоматически раз в сутки, но этой командой можно принудительно обновить индекс для поиска по логам. </longDescription>
+            <longDescription>Индекс обновляется автоматически раз в сутки, но этой командой можно принудительно обновить
+                индекс для поиска по логам.
+            </longDescription>
             <prefixes>
                 <prefix>!о</prefix>
                 <prefix>!ои</prefix>
@@ -178,7 +195,9 @@
         <cmd>
             <cmdClass>org.schors.evlampia.commands.RemoveFeedCmd</cmdClass>
             <shortDescription>!фу [номер]: удалить RSS фид</shortDescription>
-            <longDescription>Удалить из список отслеживаемых RSS фидов фид с номером [номер]. Номера доступных фидов можно посмотреть командой !фс</longDescription>
+            <longDescription>Удалить из список отслеживаемых RSS фидов фид с номером [номер]. Номера доступных фидов
+                можно посмотреть командой !фс
+            </longDescription>
             <prefixes>
                 <prefix>!фу</prefix>
                 <prefix>!фух</prefix>

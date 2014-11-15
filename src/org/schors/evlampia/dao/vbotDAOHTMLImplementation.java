@@ -1,18 +1,25 @@
 /*
- * The MIT License
+ * The MIT License (MIT)
  *
- * Copyright (c) 2014.  schors (https://github.com/flicus)
- * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
- * documentation files (the "Software"), to deal in the Software without restriction, including without limitation
- * the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,
- * and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+ * Copyright (c) 2014 schors
  *
- * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
  *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED
- * TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
- * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
- * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
  */
 
 /*
@@ -84,12 +91,10 @@ public class vbotDAOHTMLImplementation implements vbotDAOInterface {
 
 
     private static final int roomCacheLimit = 100;
-
-    private Map<String, File> files = new ConcurrentHashMap<String, File>();
-    private Map<String, Queue<Message>> cache = new ConcurrentHashMap<String, Queue<Message>>();
     private final ExecutorService pool = Executors.newFixedThreadPool(10);
     private final ReentrantLock lock = new ReentrantLock();
-
+    private Map<String, File> files = new ConcurrentHashMap<String, File>();
+    private Map<String, Queue<Message>> cache = new ConcurrentHashMap<String, Queue<Message>>();
     private ThreadLocal<Calendar> calendar = new ThreadLocal<Calendar>() {
 
         @Override
@@ -101,10 +106,6 @@ public class vbotDAOHTMLImplementation implements vbotDAOInterface {
 
     private vbotDAOHTMLImplementation() {
 
-    }
-
-    private static class Singleton {
-        public static vbotDAOHTMLImplementation instance = new vbotDAOHTMLImplementation();
     }
 
     public static vbotDAOInterface getInstance() {
@@ -200,9 +201,6 @@ public class vbotDAOHTMLImplementation implements vbotDAOInterface {
         }
     }
 
-    //todo weblinks regexp ((http|https|ftp)://)?(([a-zA-Z0-9])+\.)+[a-zA-Z0-9]{1,3}\S*
-    //\b((?:[a-z][\w-]+:(?:\/{1,3}|[a-z0-9%])|www\d{0,3}[.])(?:[^\s()<>]+|\([^\s()<>]+\))+(?:\([^\s()<>]+\)|[^`!()\[\]{};:'".,<>?«»“”‘’\s]))
-
     private File updateFile(String channel, Message message) {
         calendar.get().setTimeInMillis(message.getTimestamp());
         int year = calendar.get().get(Calendar.YEAR);
@@ -239,6 +237,8 @@ public class vbotDAOHTMLImplementation implements vbotDAOInterface {
         return file;
     }
 
+    //todo weblinks regexp ((http|https|ftp)://)?(([a-zA-Z0-9])+\.)+[a-zA-Z0-9]{1,3}\S*
+    //\b((?:[a-z][\w-]+:(?:\/{1,3}|[a-z0-9%])|www\d{0,3}[.])(?:[^\s()<>]+|\([^\s()<>]+\))+(?:\([^\s()<>]+\)|[^`!()\[\]{};:'".,<>?«»“”‘’\s]))
 
     public void flush() {
         Runnable task = new Runnable() {
@@ -350,6 +350,10 @@ public class vbotDAOHTMLImplementation implements vbotDAOInterface {
         }
 
         return result;
+    }
+
+    private static class Singleton {
+        public static vbotDAOHTMLImplementation instance = new vbotDAOHTMLImplementation();
     }
 
 

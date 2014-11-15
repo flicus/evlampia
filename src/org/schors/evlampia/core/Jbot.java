@@ -1,18 +1,25 @@
 /*
- * The MIT License
+ * The MIT License (MIT)
  *
- * Copyright (c) 2014.  schors (https://github.com/flicus)
- * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
- * documentation files (the "Software"), to deal in the Software without restriction, including without limitation
- * the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,
- * and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+ * Copyright (c) 2014 schors
  *
- * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
  *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED
- * TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
- * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
- * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
  */
 
 package org.schors.evlampia.core;
@@ -55,11 +62,10 @@ public class Jbot implements PacketListener, ConnectionListener {
     public static final String F_MUC = "muc";
     public static final String F_TWIT = "twittor";
     public static final String F_CALENDAR = "calendar";
-
-
+    private static final Logger log = Logger.getLogger(Jbot.class);
     public static String newline = System.getProperty("line.separator");
     public static String fileSeparator = System.getProperty("file.separator");
-    private static final Logger log = Logger.getLogger(Jbot.class);
+    private static Map<String, Object> facilities = new HashMap<>();
     private Connection conn;
     private Map<String, MultiUserChat> rooms = new HashMap<String, MultiUserChat>();
     private vbotDAOInterface dao;
@@ -69,8 +75,6 @@ public class Jbot implements PacketListener, ConnectionListener {
     private File hostFile;
     private Random random = new Random(System.currentTimeMillis());
     private CommandManager commandManager = new CommandManagerImpl();
-
-    private static Map<String, Object> facilities = new HashMap<>();
 
 
     public Jbot() {
@@ -351,6 +355,24 @@ public class Jbot implements PacketListener, ConnectionListener {
         log.warn("Reconnection failed: " + excptn);
     }
 
+    public void shutDown() {
+        if (conn.isConnected()) {
+            for (Map.Entry<String, MultiUserChat> entry : rooms.entrySet()) {
+                if (entry.getValue().isJoined()) {
+                    try {
+                        entry.getValue().sendMessage("/me ушла на обед");
+                    } catch (XMPPException e) {
+                        //booo
+                    }
+                    entry.getValue().leave();
+                }
+            }
+            Presence p = new Presence(Presence.Type.unavailable);
+            p.setStatus("Пака, бугагашечки");
+            conn.disconnect(p);
+        }
+    }
+
     public class RoomListener implements PacketListener {
 
         private MultiUserChat muc;
@@ -417,24 +439,6 @@ public class Jbot implements PacketListener, ConnectionListener {
             String mType = org.schors.evlampia.model.Message.t_normal;
             if (!from.equals(muc.getRoom() + "/" + muc.getNickname())) mType = org.schors.evlampia.model.Message.t_self;
             dao.store(System.currentTimeMillis(), tmp[0], tmp[1], body, mType);
-        }
-    }
-
-    public void shutDown() {
-        if (conn.isConnected()) {
-            for (Map.Entry<String, MultiUserChat> entry : rooms.entrySet()) {
-                if (entry.getValue().isJoined()) {
-                    try {
-                        entry.getValue().sendMessage("/me ушла на обед");
-                    } catch (XMPPException e) {
-                        //booo
-                    }
-                    entry.getValue().leave();
-                }
-            }
-            Presence p = new Presence(Presence.Type.unavailable);
-            p.setStatus("Пака, бугагашечки");
-            conn.disconnect(p);
         }
     }
 }

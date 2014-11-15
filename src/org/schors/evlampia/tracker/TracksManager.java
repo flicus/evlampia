@@ -1,18 +1,25 @@
 /*
- * The MIT License
+ * The MIT License (MIT)
  *
- * Copyright (c) 2014.  schors (https://github.com/flicus)
- * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
- * documentation files (the "Software"), to deal in the Software without restriction, including without limitation
- * the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,
- * and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+ * Copyright (c) 2014 schors
  *
- * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
  *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED
- * TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
- * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
- * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
  */
 
 package org.schors.evlampia.tracker;
@@ -86,40 +93,8 @@ public class TracksManager {
         //executor.shutdown();
     }
 
-    public interface Sender {
-        public void sendMessage(String message, String to);
-    }
-
     public void registerSender(Sender sender) {
         this.sender = sender;
-    }
-
-    private class UpdateTracksTask implements Runnable {
-
-        public void run() {
-            log.debug("Background update");
-            try {
-
-                for (Map.Entry<String, NamedTrackList> entry : list.entrySet()) {
-                    for (Map.Entry<String, Track> trackEntry : entry.getValue().getTracks().entrySet()) {
-                        Track track = trackEntry.getValue();
-                        String oldStatus = track.getStatus();
-                        checkTrack(track);
-                        if (!oldStatus.equals(track.getStatus()) && sender != null) {
-                            sender.sendMessage(new StringBuilder()
-                                    .append(track.getName())
-                                    .append(" | ")
-                                    .append(track.getId())
-                                    .append(" | ")
-                                    .append(track.getStatus()).toString(), trackEntry.getKey());
-                        }
-                    }
-                }
-
-            } catch (Exception e) {
-                log.error(e, e);
-            }
-        }
     }
 
     public void save() {
@@ -282,5 +257,37 @@ public class TracksManager {
             b.append((char) c);
         }
         return b.toString();
+    }
+
+    public interface Sender {
+        public void sendMessage(String message, String to);
+    }
+
+    private class UpdateTracksTask implements Runnable {
+
+        public void run() {
+            log.debug("Background update");
+            try {
+
+                for (Map.Entry<String, NamedTrackList> entry : list.entrySet()) {
+                    for (Map.Entry<String, Track> trackEntry : entry.getValue().getTracks().entrySet()) {
+                        Track track = trackEntry.getValue();
+                        String oldStatus = track.getStatus();
+                        checkTrack(track);
+                        if (!oldStatus.equals(track.getStatus()) && sender != null) {
+                            sender.sendMessage(new StringBuilder()
+                                    .append(track.getName())
+                                    .append(" | ")
+                                    .append(track.getId())
+                                    .append(" | ")
+                                    .append(track.getStatus()).toString(), trackEntry.getKey());
+                        }
+                    }
+                }
+
+            } catch (Exception e) {
+                log.error(e, e);
+            }
+        }
     }
 }
