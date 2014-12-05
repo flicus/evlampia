@@ -28,6 +28,7 @@ package org.schors.eva.facilities;
 import org.schors.eva.AbstractFacility;
 import org.schors.eva.FacilityManager;
 import org.schors.eva.FacilityStatus;
+import org.schors.eva.Waiter;
 import org.schors.eva.annotations.Facility;
 import org.schors.eva.annotations.Version;
 
@@ -35,7 +36,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 @Facility(name = "token", version = @Version(major = 1, minor = 0))
@@ -64,18 +64,10 @@ public class TokenManager extends AbstractFacility {
     @Override
     public void start() {
         status = FacilityStatus.STARTING;
-
-
-        Future f = e.getExecutor().submit(new Runnable() {
-            @Override
-            public void run() {
-                EvaExecutors e = (EvaExecutors) getFacility(EvaExecutors.getName());
-
-            }
-        });
-        f.get()
-
-        f.getScheduler().scheduleAtFixedRate(new ClearTokensTask(), 1, 2, TimeUnit.HOURS);
+        Waiter<EvaExecutors> item = facilityManager.waitForFacility("executors");
+        EvaExecutors evaExecutors = item.get();
+        evaExecutors.getScheduler().scheduleAtFixedRate(new ClearTokensTask(), 1, 2, TimeUnit.HOURS);
+        status = FacilityStatus.STARTED;
     }
 
     @Override

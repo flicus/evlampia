@@ -30,7 +30,7 @@ package org.schors.eva;
 public abstract class AbstractFacility {
 
     protected FacilityStatus status = FacilityStatus.INITIAL;
-    private FacilityManager facilityManager;
+    protected FacilityManager facilityManager;
 
     public AbstractFacility(FacilityManager facilityManager) {
         this.facilityManager = facilityManager;

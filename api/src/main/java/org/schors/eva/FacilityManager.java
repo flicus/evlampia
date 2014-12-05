@@ -24,12 +24,14 @@
 
 package org.schors.eva;
 
-/**
- * Created by flic on 15.11.14.
- */
-public enum FacilityStatus {
-    INITIAL,
-    STARTED,
-    STARTING,
-    ERROR
+
+public interface FacilityManager<A extends AbstractFacility> {
+
+    public void addNewFacility(Class<?> facility);
+
+    public A getFacility(String name);
+
+    public Waiter<A> waitForFacility(String name);
+
+    public void stop();
 }

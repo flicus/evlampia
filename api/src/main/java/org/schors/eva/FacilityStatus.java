@@ -24,10 +24,14 @@
 
 package org.schors.eva;
 
-public interface FacilityManager<A extends AbstractFacility> {
-    public void addNewFacility(A facility);
-
-    public A getFacility(String name);
-
-    public void stop();
+/**
+ * Created by flic on 15.11.14.
+ */
+public enum FacilityStatus {
+    INITIAL,
+    STARTED,
+    STARTING,
+    STOPPING,
+    STOPPED,
+    ERROR
 }

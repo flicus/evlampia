@@ -1,0 +1,6 @@
+rootProject.name = 'eva'
+
+include 'api'
+
+include 'core'
+

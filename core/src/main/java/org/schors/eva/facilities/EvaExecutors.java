@@ -66,8 +66,10 @@ public class EvaExecutors extends AbstractFacility {
 
     @Override
     public void stop() {
+        status = FacilityStatus.STOPPING;
         scheduler.shutdown();
         executor.shutdown();
+        status = FacilityStatus.STOPPED;
     }
 
 }
