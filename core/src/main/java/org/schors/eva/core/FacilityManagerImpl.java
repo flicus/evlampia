@@ -27,24 +27,25 @@ package org.schors.eva.core;
 import org.schors.eva.AbstractFacility;
 import org.schors.eva.FacilityManager;
 import org.schors.eva.Waiter;
-import org.schors.eva.WaiterHandler;
 import org.schors.eva.annotations.Facility;
 
 import java.lang.reflect.Constructor;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 public class FacilityManagerImpl<A extends AbstractFacility> implements FacilityManager<A> {
 
     private Map<String, A> facilities = new ConcurrentHashMap<>();
-    private Map<String, WaiterHandler<A>> waiters = new ConcurrentHashMap<>();
+    private Map<String, WaiterImp<A>> waiters = new ConcurrentHashMap<>();
+    private Executor pool = Executors.newCachedThreadPool();
 
     @Override
     public void addNewFacility(Class<?> facility) {
-        System.out.println("addNewFacility:: " + facility);
+        System.out.println("FacilityManagerImpl::addNewFacility::" + facility);
         boolean ok = true;
         String name = null;
-        FacilityAdapter facilityAdapter = null;
         if (facility.isAnnotationPresent(Facility.class)) {
             name = facility.getAnnotation(Facility.class).name();
         }
@@ -52,29 +53,36 @@ public class FacilityManagerImpl<A extends AbstractFacility> implements Facility
             ok = false;
         }
 
-        A o = null;
+        A object = null;
         try {
             Constructor constructor = facility.getConstructor(FacilityManager.class);
-            o = (A) constructor.newInstance(this);
-            o.start();
+            object = (A) constructor.newInstance(this);
         } catch (Exception e) {
             ok = false;
         }
-
         if (ok) {
-            System.out.println("addNewFacility:: done:: " + facilityAdapter);
-            facilities.put(name, o);
-        }
-        WaiterHandler<A> future = waiters.remove(name);
-        if (future != null) {
-            future
+            final A theSameObject = object;
+            final String fname = name;
+            pool.execute(new Runnable() {
+                @Override
+                public void run() {
+                    theSameObject.start();
+                    facilities.put(fname, theSameObject);
+                    WaiterImp<A> future = waiters.remove(fname);
+                    if (future != null) {
+                        System.out.println("FacilityManagerImpl::waiterDone::" + fname);
+                        future.done(theSameObject);
+                    }
+                }
+            });
+            System.out.println("FacilityManagerImpl::addNewFacility::done::" + object);
         }
     }
 
     public void stop() {
-        for (FacilityAdapter adapter : facilities.values()) {
+        for (AbstractFacility facility : facilities.values()) {
             try {
-                adapter.stop();
+                facility.stop();
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -82,46 +90,71 @@ public class FacilityManagerImpl<A extends AbstractFacility> implements Facility
     }
 
     public A getFacility(String name) {
-        return facilities.get(name).getFacility();
+        return facilities.get(name);
     }
 
     @Override
     public Waiter<A> waitForFacility(String name) {
         if (facilities.containsKey(name)) {
-            return new WaiterHandlerImpl.WaiterImp(facilities.get(name));
+            System.out.println("FacilityManagerImpl::waitForFacility:: Already here:: " + name);
+            return new WaiterImp(facilities.get(name), name);
+        } else {
+            System.out.println("FacilityManagerImpl::waitForFacility:: Start waiting for facility: " + name);
+            WaiterImp waiter = new WaiterImp(name);
+            waiters.put(name, waiter);
+            return waiter;
         }
-        return null;
     }
 
-    public class WaiterHandlerImpl<A> implements WaiterHandler<A> {
+    public class WaiterImp<A> implements Waiter<A> {
 
-        private WaiterImp<A> item = new WaiterImp();
+        private A item;
+        private String what;
 
-        @Override
-        public boolean isDone() {
-            return false;
+        public WaiterImp(String what) {
+            this.what = what;
+        }
+
+        public WaiterImp(A item, String what) {
+            this.item = item;
+            this.what = what;
         }
 
         @Override
-        public void setItem(A item) {
-            this.item.item = item;
+        public A get() {
+            if (item != null) {
+                return item;
+            }
+            Thread t = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    boolean done = false;
+                    while (!done) {
+                        System.out.println("Waiter:: waiting for:: " + what);
+                        try {
+                            Thread.sleep(500);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                            done = true;
+                        }
+                        if (item != null) {
+                            done = true;
+                            System.out.println("Waiter:: got it:: " + item);
+                        }
+                    }
+                }
+            });
+            t.start();
+            try {
+                t.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            return item;
         }
 
-        public class WaiterImp<A> implements Waiter<A> {
-
-            private A item;
-
-            public WaiterImp() {
-            }
-
-            public WaiterImp(A item) {
-                this.item = item;
-            }
-
-            @Override
-            public A get() {
-                return null;
-            }
+        public void done(A item) {
+            this.item = item;
         }
     }
 

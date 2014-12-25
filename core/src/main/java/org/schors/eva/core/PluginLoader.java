@@ -22,25 +22,12 @@
  * SOFTWARE.
  */
 
-package org.schors.eva.annotations;
+package org.schors.eva.core;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+public interface PluginLoader {
 
-@Target(value = ElementType.TYPE)
-@Retention(value = RetentionPolicy.RUNTIME)
-public @interface Command {
-    String name();
+    public void onFacilityDiscovered(Class<?> clazz);
 
-    String group();
+    public void onCommandDiscovered(Class<?> clazz);
 
-    String shortDescription();
-
-    String longDescription();
-
-    String[] prefixes();
-
-    String[] dependsOn();
 }

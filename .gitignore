@@ -1,7 +1,5 @@
-lib/*
-build/*
+*/build/*
 .idea/*
-out/*
-ivy/*
+.gradle/*
+gradle/*
 *.iml
-ant.log

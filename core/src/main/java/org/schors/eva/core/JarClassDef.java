@@ -22,25 +22,45 @@
  * SOFTWARE.
  */
 
-package org.schors.eva.annotations;
+package org.schors.eva.core;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 
-@Target(value = ElementType.TYPE)
-@Retention(value = RetentionPolicy.RUNTIME)
-public @interface Command {
-    String name();
+public class JarClassDef {
 
-    String group();
+    private JarEntry jarEntry;
+    private JarFile jarFile;
 
-    String shortDescription();
+    public JarClassDef() {
+    }
 
-    String longDescription();
+    public JarClassDef(JarEntry jarEntry, JarFile jarFile) {
+        this.jarEntry = jarEntry;
+        this.jarFile = jarFile;
+    }
 
-    String[] prefixes();
+    public JarEntry getJarEntry() {
+        return jarEntry;
+    }
 
-    String[] dependsOn();
+    public void setJarEntry(JarEntry jarEntry) {
+        this.jarEntry = jarEntry;
+    }
+
+    public JarFile getJarFile() {
+        return jarFile;
+    }
+
+    public void setJarFile(JarFile jarFile) {
+        this.jarFile = jarFile;
+    }
+
+    @Override
+    public String toString() {
+        return "JarClassDef{" +
+                "jarEntry=" + jarEntry +
+                ", jarFile=" + jarFile +
+                '}';
+    }
 }

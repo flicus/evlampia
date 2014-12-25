@@ -58,6 +58,7 @@ public class EvaExecutors extends AbstractFacility {
 
     @Override
     public void start() {
+        System.out.println("EvaExecutors:: start");
         status = FacilityStatus.STARTING;
         scheduler = Executors.newScheduledThreadPool(3);
         executor = Executors.newCachedThreadPool();
@@ -66,6 +67,7 @@ public class EvaExecutors extends AbstractFacility {
 
     @Override
     public void stop() {
+        System.out.println("EvaExecutors:: stop");
         status = FacilityStatus.STOPPING;
         scheduler.shutdown();
         executor.shutdown();

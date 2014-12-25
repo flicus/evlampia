@@ -63,15 +63,18 @@ public class TokenManager extends AbstractFacility {
 
     @Override
     public void start() {
+        System.out.println("TokenManager::start");
         status = FacilityStatus.STARTING;
-        Waiter<EvaExecutors> item = facilityManager.waitForFacility("executors");
+        Waiter<EvaExecutors> item = facilityManager.waitForFacility(EvaExecutors.getName());
         EvaExecutors evaExecutors = item.get();
+        System.out.println("TokenManager:: dependency received:: " + EvaExecutors.getName());
         evaExecutors.getScheduler().scheduleAtFixedRate(new ClearTokensTask(), 1, 2, TimeUnit.HOURS);
         status = FacilityStatus.STARTED;
     }
 
     @Override
     public void stop() {
+        System.out.println("TokenManager stop");
 
     }
 

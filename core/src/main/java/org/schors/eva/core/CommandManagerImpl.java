@@ -26,47 +26,79 @@ package org.schors.eva.core;
 
 import org.schors.eva.CommandContext;
 import org.schors.eva.CommandManager;
+import org.schors.eva.FacilityManager;
+import org.schors.eva.Waiter;
 import org.schors.eva.annotations.Command;
 import org.schors.eva.annotations.CommandExecute;
 
 import java.lang.reflect.Method;
-import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 public class CommandManagerImpl implements CommandManager {
 
-    private Map<String, CommandAdapter> cache = new HashMap<String, CommandAdapter>();
-    private Set<CommandAdapter> commands = new HashSet<CommandAdapter>();
+    private Map<String, CommandAdapter> cache = new ConcurrentHashMap<>();
+    private Set<CommandAdapter> commands = new LinkedHashSet<>();
+    private Executor executor = Executors.newCachedThreadPool();
+    private FacilityManager facilityManager;
 
-    public void addNewCommand(Class<?> command) {
-        System.out.println("addNewCommand:: " + command);
-        boolean ok = true;
-        CommandAdapter commandAdapter = null;
-        String[] prefixes = null;
-        if (command.isAnnotationPresent(Command.class)) {
-            prefixes = command.getAnnotation(Command.class).prefixes();
-        }
-        if (prefixes == null || prefixes.length <= 0) {
-            ok = false;
-        }
-
-        try {
-            Object o = command.newInstance();
-            commandAdapter = new CommandAdapter(o, prefixes);
-        } catch (Exception e) {
-            ok = false;
-        }
-
-        if (ok) {
-            System.out.println("addNewCommand:: done:: " + commandAdapter);
-            commands.add(commandAdapter);
-        }
-
+    public CommandManagerImpl(FacilityManager facilityManager) {
+        this.facilityManager = facilityManager;
     }
 
-    public void processCommand(CommandContext context) {
+    public void addNewCommand(final Class<?> command) {
+
+        executor.execute(new Runnable() {
+            @Override
+            public void run() {
+                System.out.println("CommandManagerImpl::addNewCommand:: " + command);
+                boolean ok = true;
+                CommandAdapter commandAdapter = null;
+                String[] prefixes = null;
+                String[] depends = null;
+                if (command.isAnnotationPresent(Command.class)) {
+                    prefixes = command.getAnnotation(Command.class).prefixes();
+                    depends = command.getAnnotation(Command.class).dependsOn();
+                }
+                if (prefixes == null || prefixes.length <= 0) {
+                    ok = false;
+                }
+
+                if (ok) {
+                    if (depends != null && depends.length > 0) {
+                        System.out.println("CommandManagerImpl:: dependecies wait");
+                        for (String facility : depends) {
+                            System.out.println("CommandManagerImpl::waiting:: " + facility);
+                            Waiter waiter = facilityManager.waitForFacility(facility);
+                            waiter.get();
+                            System.out.println("CommandManagerImpl::gotDep:: " + facility);
+                        }
+                    }
+                }
+
+                if (ok) {
+                    try {
+                        Object o = command.newInstance();
+                        commandAdapter = new CommandAdapter(o, prefixes);
+                    } catch (Exception e) {
+                        ok = false;
+                    }
+                }
+
+                if (ok) {
+                    System.out.println("CommandManagerImpl::addNewCommand::done:: " + commandAdapter);
+                    commands.add(commandAdapter);
+                }
+            }
+        });
+    }
+
+    public void processCommand(final CommandContext context) {
         String[] cmds = context.getParsedCommand();
         CommandAdapter adapter = null;
         if (commands.size() > 0) {
@@ -81,7 +113,13 @@ public class CommandManagerImpl implements CommandManager {
                 }
             }
             if (adapter != null) {
-                adapter.execute(context);
+                final CommandAdapter a = adapter;
+                executor.execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        a.execute(context);
+                    }
+                });
             }
         }
     }
