@@ -1,6 +1,5 @@
 /*
  * The MIT License (MIT)
- *
  * Copyright (c) 2014 schors
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -29,7 +28,10 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Target(value = ElementType.METHOD)
+@Target(value = ElementType.TYPE)
 @Retention(value = RetentionPolicy.RUNTIME)
-public @interface FacilityStop {
+public @interface ProtocolAdapter {
+    String name();
+
+    Version version();
 }

@@ -21,37 +21,25 @@
  * SOFTWARE.
  */
 
-package org.schors.eva;
+package org.schors.eva.protocol;
 
-public abstract class AbstractFacility {
+import org.schors.eva.AbstractProtocolAdapter;
+import org.schors.eva.annotations.ProtocolAdapter;
+import org.schors.eva.annotations.Version;
 
-    protected FacilityStatus status = FacilityStatus.INITIAL;
-    protected String statusMessage = "ok";
-    protected FacilityManager facilityManager;
+@ProtocolAdapter(
+        name = "jabber",
+        version = @Version(major = 1, minor = 0)
+)
+public class JabberAdapter extends AbstractProtocolAdapter {
 
+    @Override
+    public void start() {
 
-    public AbstractFacility(FacilityManager facilityManager) {
-        this.facilityManager = facilityManager;
     }
 
-    public AbstractFacility getFacility(String name) {
-        return facilityManager.getFacility(name);
+    @Override
+    public void stop() {
+
     }
-
-    public FacilityStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(FacilityStatus status) {
-        this.status = status;
-    }
-
-    public void setStatusMessage(String statusMessage) {
-        this.statusMessage = statusMessage;
-    }
-
-    public abstract void start();
-
-    public abstract void stop();
-
 }

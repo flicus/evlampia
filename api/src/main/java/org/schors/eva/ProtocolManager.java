@@ -1,6 +1,5 @@
 /*
  * The MIT License (MIT)
- *
  * Copyright (c) 2014 schors
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -22,14 +21,8 @@
  * SOFTWARE.
  */
 
-package org.schors.eva.annotations;
+package org.schors.eva;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-
-@Target(value = ElementType.METHOD)
-@Retention(value = RetentionPolicy.RUNTIME)
-public @interface FacilityStart {
+public interface ProtocolManager {
+    public void registerProtocol(Class<?> clazz);
 }

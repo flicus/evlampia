@@ -1,16 +1,15 @@
 /*
  * The MIT License (MIT)
- *
  * Copyright (c) 2014 schors
  *
- *  Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
  *
- *  The above copyright notice and this permission notice shall be included in all
+ * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
@@ -29,7 +28,7 @@ import org.apache.log4j.Logger;
 import org.schors.eva.AbstractFacility;
 import org.schors.eva.FacilityManager;
 import org.schors.eva.FacilityStatus;
-import org.schors.eva.Message;
+import org.schors.eva.LogEntry;
 import org.schors.eva.annotations.Facility;
 import org.schors.eva.annotations.Version;
 
@@ -94,7 +93,7 @@ public class LogWriter extends AbstractFacility {
     private final ExecutorService pool = Executors.newFixedThreadPool(10);
     private final ReentrantLock lock = new ReentrantLock();
     private Map<String, File> files = new ConcurrentHashMap<String, File>();
-    private Map<String, Queue<Message>> cache = new ConcurrentHashMap<String, Queue<Message>>();
+    private Map<String, Queue<LogEntry>> cache = new ConcurrentHashMap<String, Queue<LogEntry>>();
     private ThreadLocal<Calendar> calendar = new ThreadLocal<Calendar>() {
 
         @Override
@@ -138,7 +137,7 @@ public class LogWriter extends AbstractFacility {
 
                 @Override
                 public void run() {
-                    cache.get(channel).offer(new Message(timestamp, sender, message, msgType));
+                    cache.get(channel).offer(new LogEntry(timestamp, sender, message, msgType));
                 }
             };
         } else {
@@ -148,7 +147,7 @@ public class LogWriter extends AbstractFacility {
                 public void run() {
                     try {
                         lock.lock();
-                        cache.get(channel).offer(new Message(timestamp, sender, message, msgType));
+                        cache.get(channel).offer(new LogEntry(timestamp, sender, message, msgType));
                         storeRoomCache(channel);
                     } finally {
                         lock.unlock();
@@ -162,11 +161,11 @@ public class LogWriter extends AbstractFacility {
     }
 
     private void storeRoomCache(String channel) {
-        Queue<Message> roomCache = cache.get(channel);
+        Queue<LogEntry> roomCache = cache.get(channel);
         File file = files.get(channel);
         if (file == null) {
-            Message message = roomCache.peek();
-            file = updateFile(channel, message);
+            LogEntry logEntry = roomCache.peek();
+            file = updateFile(channel, logEntry);
             files.put(channel, file);
         }
         RandomAccessFile out = null;
@@ -174,14 +173,14 @@ public class LogWriter extends AbstractFacility {
             out = new RandomAccessFile(file, "rw");
             out.seek(out.length());
             while (roomCache.size() > 0) {
-                Message message = roomCache.poll();
-                calendar.get().setTimeInMillis(message.getTimestamp());
+                LogEntry logEntry = roomCache.poll();
+                calendar.get().setTimeInMillis(logEntry.getTimestamp());
                 int day = calendar.get().get(Calendar.DAY_OF_MONTH);
                 String d = day < 10 ? padding + String.valueOf(day) : String.valueOf(day);
                 if (!file.getName().equals(d + ".html")) {
                     out.write(footer.getBytes("UTF-8"));
                     out.close();
-                    file = updateFile(channel, message);
+                    file = updateFile(channel, logEntry);
                     out = new RandomAccessFile(file, "rw");
                     out.seek(out.length());
                     files.put(channel, file);
@@ -193,9 +192,9 @@ public class LogWriter extends AbstractFacility {
                         .concat(min < 10 ? padding + String.valueOf(min) : String.valueOf(min)).concat(":")
                         .concat(sec < 10 ? padding + String.valueOf(sec) : String.valueOf(sec));
 
-                String linkedMessage = insertLinks(message.getMessage());
+                String linkedMessage = insertLinks(logEntry.getMessage());
                 String longTime = shortTime + "." + String.valueOf(calendar.get().get(Calendar.MILLISECOND));
-                out.write(line.replaceAll("#longTime", longTime).replace("#shortTime", shortTime).replace("#class", message.getType()).replace("#sender", message.getSender()).replace("#message", linkedMessage).getBytes("UTF-8"));
+                out.write(line.replaceAll("#longTime", longTime).replace("#shortTime", shortTime).replace("#class", logEntry.getType()).replace("#sender", logEntry.getSender()).replace("#logEntry", linkedMessage).getBytes("UTF-8"));
             }
         } catch (Exception e) {
             log.error(e, e);
@@ -205,13 +204,12 @@ public class LogWriter extends AbstractFacility {
                     out.close();
                 } catch (Exception e) {
                 }
-                ;
             }
         }
     }
 
-    private File updateFile(String channel, Message message) {
-        calendar.get().setTimeInMillis(message.getTimestamp());
+    private File updateFile(String channel, LogEntry logEntry) {
+        calendar.get().setTimeInMillis(logEntry.getTimestamp());
         int year = calendar.get().get(Calendar.YEAR);
         int month = calendar.get().get(Calendar.MONTH) + 1;
         int day = calendar.get().get(Calendar.DAY_OF_MONTH);
@@ -239,7 +237,6 @@ public class LogWriter extends AbstractFacility {
                         out.close();
                     } catch (Exception e) {
                     }
-                    ;
                 }
             }
         }
@@ -342,7 +339,6 @@ public class LogWriter extends AbstractFacility {
                     out.close();
                 } catch (Exception e) {
                 }
-                ;
             }
         }
 

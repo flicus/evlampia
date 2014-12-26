@@ -1,6 +1,5 @@
 /*
  * The MIT License (MIT)
- *
  * Copyright (c) 2014 schors
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -29,5 +28,7 @@ public interface PluginLoader {
     public void onFacilityDiscovered(Class<?> clazz);
 
     public void onCommandDiscovered(Class<?> clazz);
+
+    public void onProtocolDiscovered(Class<?> clazz);
 
 }

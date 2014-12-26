@@ -21,37 +21,13 @@
  * SOFTWARE.
  */
 
-package org.schors.eva;
+package org.schors.eva.core;
 
-public abstract class AbstractFacility {
+import org.schors.eva.ProtocolManager;
 
-    protected FacilityStatus status = FacilityStatus.INITIAL;
-    protected String statusMessage = "ok";
-    protected FacilityManager facilityManager;
+public class ProtocolManagerImpl implements ProtocolManager {
+    @Override
+    public void registerProtocol(Class<?> clazz) {
 
-
-    public AbstractFacility(FacilityManager facilityManager) {
-        this.facilityManager = facilityManager;
     }
-
-    public AbstractFacility getFacility(String name) {
-        return facilityManager.getFacility(name);
-    }
-
-    public FacilityStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(FacilityStatus status) {
-        this.status = status;
-    }
-
-    public void setStatusMessage(String statusMessage) {
-        this.statusMessage = statusMessage;
-    }
-
-    public abstract void start();
-
-    public abstract void stop();
-
 }

@@ -1,6 +1,5 @@
 /*
  * The MIT License (MIT)
- *
  * Copyright (c) 2014 schors
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -27,6 +26,7 @@ package org.schors.eva.core;
 import org.schors.eva.annotations.Command;
 import org.schors.eva.annotations.CommandExecute;
 import org.schors.eva.annotations.Facility;
+import org.schors.eva.annotations.ProtocolAdapter;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -95,6 +95,9 @@ public class JarClassLoader extends ClassLoader {
                         cache.put(className, clazz);
                         pluginLoader.onCommandDiscovered(clazz);
                     }
+                } else if (clazz.isAnnotationPresent(ProtocolAdapter.class)) {
+                    cache.put(className, clazz);
+                    pluginLoader.onProtocolDiscovered(clazz);
                 }
             }
         }
