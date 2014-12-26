@@ -3,14 +3,14 @@
  *
  * Copyright (c) 2014 schors
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ *  Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
+ *  The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
@@ -24,10 +24,10 @@
 
 package org.schors.eva.core;
 
+import org.apache.log4j.Logger;
 import org.schors.eva.CommandContext;
 import org.schors.eva.CommandManager;
 import org.schors.eva.FacilityManager;
-import org.schors.eva.Waiter;
 import org.schors.eva.annotations.Command;
 import org.schors.eva.annotations.CommandExecute;
 
@@ -36,15 +36,13 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
+import java.util.concurrent.*;
 
 public class CommandManagerImpl implements CommandManager {
-
+    private static final Logger log = Logger.getLogger(CommandManagerImpl.class);
     private Map<String, CommandAdapter> cache = new ConcurrentHashMap<>();
     private Set<CommandAdapter> commands = new LinkedHashSet<>();
-    private Executor executor = Executors.newCachedThreadPool();
+    private ScheduledExecutorService executor = Executors.newScheduledThreadPool(3);
     private FacilityManager facilityManager;
 
     public CommandManagerImpl(FacilityManager facilityManager) {
@@ -53,50 +51,48 @@ public class CommandManagerImpl implements CommandManager {
 
     public void addNewCommand(final Class<?> command) {
 
-        executor.execute(new Runnable() {
-            @Override
-            public void run() {
-                System.out.println("CommandManagerImpl::addNewCommand:: " + command);
-                boolean ok = true;
-                CommandAdapter commandAdapter = null;
-                String[] prefixes = null;
-                String[] depends = null;
-                if (command.isAnnotationPresent(Command.class)) {
-                    prefixes = command.getAnnotation(Command.class).prefixes();
-                    depends = command.getAnnotation(Command.class).dependsOn();
-                }
-                if (prefixes == null || prefixes.length <= 0) {
-                    ok = false;
-                }
+        System.out.println("CommandManagerImpl::addNewCommand:: " + command);
+        CommandAdapter commandAdapter = null;
+        String[] prefixes = null;
+        String[] depends = null;
+        if (command.isAnnotationPresent(Command.class)) {
+            prefixes = command.getAnnotation(Command.class).prefixes();
+            depends = command.getAnnotation(Command.class).dependsOn();
+        }
+        if (prefixes == null || prefixes.length <= 0) {
+            return;
+        }
 
-                if (ok) {
-                    if (depends != null && depends.length > 0) {
-                        System.out.println("CommandManagerImpl:: dependecies wait");
-                        for (String facility : depends) {
-                            System.out.println("CommandManagerImpl::waiting:: " + facility);
-                            Waiter waiter = facilityManager.waitForFacility(facility);
-                            waiter.get();
-                            System.out.println("CommandManagerImpl::gotDep:: " + facility);
-                        }
-                    }
+        if (depends != null && depends.length > 0) {
+            System.out.println("CommandManagerImpl:: dependecies wait");
+            Future future = executor.submit(new DependencyResolver(depends, (FacilityManagerImpl) facilityManager));
+            try {
+                future.get();
+                if (log.isDebugEnabled()) {
+                    log.debug("Resolved dependencies: " + depends);
                 }
-
-                if (ok) {
-                    try {
-                        Object o = command.newInstance();
-                        commandAdapter = new CommandAdapter(o, prefixes);
-                    } catch (Exception e) {
-                        ok = false;
-                    }
-                }
-
-                if (ok) {
-                    System.out.println("CommandManagerImpl::addNewCommand::done:: " + commandAdapter);
-                    commands.add(commandAdapter);
-                }
+            } catch (InterruptedException e) {
+                log.error(e, e);
+                return;
+            } catch (ExecutionException e) {
+                log.error(e, e);
+                return;
             }
-        });
+        }
+
+        try {
+            Object o = command.newInstance();
+            commandAdapter = new CommandAdapter(o, prefixes);
+        } catch (Exception e) {
+            log.error("Unable to instantiate command: ", e);
+            return;
+        }
+
+        System.out.println("CommandManagerImpl::addNewCommand::done:: " + commandAdapter);
+        commands.add(commandAdapter);
+
     }
+
 
     public void processCommand(final CommandContext context) {
         String[] cmds = context.getParsedCommand();

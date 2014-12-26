@@ -46,7 +46,8 @@ public class Main implements PluginLoader {
 
     @Override
     public void onFacilityDiscovered(Class<?> clazz) {
-        facilityManager.addNewFacility(clazz);
+        String name = facilityManager.registerFacility(clazz);
+        facilityManager.getFacility(name).start();
     }
 
     @Override

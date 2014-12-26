@@ -3,14 +3,14 @@
  *
  * Copyright (c) 2014 schors
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ *  Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
+ *  The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
@@ -28,7 +28,6 @@ package org.schors.eva.facilities;
 import org.schors.eva.AbstractFacility;
 import org.schors.eva.FacilityManager;
 import org.schors.eva.FacilityStatus;
-import org.schors.eva.Waiter;
 import org.schors.eva.annotations.Facility;
 import org.schors.eva.annotations.Version;
 
@@ -38,7 +37,11 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
-@Facility(name = "token", version = @Version(major = 1, minor = 0))
+@Facility(
+        name = "token",
+        version = @Version(major = 1, minor = 0),
+        dependsOn = {"executors"}
+)
 public class TokenManager extends AbstractFacility {
 
     private Map<String, String> tokens = new ConcurrentHashMap<>();
@@ -65,9 +68,7 @@ public class TokenManager extends AbstractFacility {
     public void start() {
         System.out.println("TokenManager::start");
         status = FacilityStatus.STARTING;
-        Waiter<EvaExecutors> item = facilityManager.waitForFacility(EvaExecutors.getName());
-        EvaExecutors evaExecutors = item.get();
-        System.out.println("TokenManager:: dependency received:: " + EvaExecutors.getName());
+        EvaExecutors evaExecutors = (EvaExecutors) facilityManager.getFacility(EvaExecutors.getName());
         evaExecutors.getScheduler().scheduleAtFixedRate(new ClearTokensTask(), 1, 2, TimeUnit.HOURS);
         status = FacilityStatus.STARTED;
     }
@@ -75,7 +76,7 @@ public class TokenManager extends AbstractFacility {
     @Override
     public void stop() {
         System.out.println("TokenManager stop");
-
+        status = FacilityStatus.STOPPED;
     }
 
     public class ClearTokensTask implements Runnable {
