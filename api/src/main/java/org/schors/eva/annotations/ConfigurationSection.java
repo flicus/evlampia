@@ -21,29 +21,14 @@
  * SOFTWARE.
  */
 
-package org.schors.eva.commands;
+package org.schors.eva.annotations;
 
-import org.schors.eva.CommandContext;
-import org.schors.eva.annotations.Command;
-import org.schors.eva.annotations.CommandExecute;
-import org.schors.eva.facilities.TracksManager;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-@Command(
-        dependsOn = {"trackManager"},
-        group = "Почта",
-        longDescription = "",
-        name = "DeleteTrack",
-        prefixes = {},
-        shortDescription = ""
-)
-public class DeleteTrackCmd {
-
-    @CommandExecute
-    public void execute(CommandContext ctx) throws Exception {
-        TracksManager tracksManager = ctx.getFacility(TracksManager.class);
-        String[] items = ctx.getParsedCommand();
-        if (items.length >= 3) {
-            tracksManager.deleteTrack(items[1], items[2]);
-        }
-    }
+@Target(value = ElementType.TYPE)
+@Retention(value = RetentionPolicy.RUNTIME)
+public @interface ConfigurationSection {
 }

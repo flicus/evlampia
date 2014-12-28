@@ -23,19 +23,20 @@
 
 package org.schors.eva.core;
 
-import org.schors.eva.CommandManager;
-import org.schors.eva.FacilityManager;
-import org.schors.eva.ProtocolManager;
+import org.schors.eva.*;
 
 public class Main implements PluginLoader {
     private FacilityManager facilityManager;
     private CommandManager commandManager;
     private PluginManager pluginManager;
     private ProtocolManager protocolManager;
+    private EvaConfiguration configuration;
+
 
 
     public Main() {
-        facilityManager = new FacilityManagerImpl();
+        configuration = new EvaConfiguration();
+        facilityManager = new FacilityManagerImpl(configuration);
         commandManager = new CommandManagerImpl(facilityManager);
         pluginManager = new PluginManager(this);
         protocolManager = new ProtocolManagerImpl();
@@ -47,9 +48,9 @@ public class Main implements PluginLoader {
     }
 
     @Override
-    public void onFacilityDiscovered(Class<?> clazz) {
+    public void onFacilityDiscovered(Class<? extends AbstractFacility> clazz) {
         String name = facilityManager.registerFacility(clazz);
-        facilityManager.getFacility(name).start();
+        facilityManager.getFacility(clazz).start();
     }
 
     @Override

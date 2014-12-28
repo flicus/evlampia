@@ -23,9 +23,11 @@
 
 package org.schors.eva.core;
 
+import org.schors.eva.AbstractFacility;
+
 public interface PluginLoader {
 
-    public void onFacilityDiscovered(Class<?> clazz);
+    public void onFacilityDiscovered(Class<? extends AbstractFacility> clazz);
 
     public void onCommandDiscovered(Class<?> clazz);
 

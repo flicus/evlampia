@@ -1,16 +1,15 @@
 /*
  * The MIT License (MIT)
- *
  * Copyright (c) 2014 schors
  *
- *  Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
  *
- *  The above copyright notice and this permission notice shall be included in all
+ * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
@@ -26,6 +25,7 @@ package org.schors.eva.core;
 
 import org.apache.log4j.Logger;
 import org.schors.eva.AbstractFacility;
+import org.schors.eva.EvaConfiguration;
 import org.schors.eva.FacilityManager;
 import org.schors.eva.FacilityStatus;
 import org.schors.eva.annotations.Facility;
@@ -35,11 +35,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.*;
 
-public class FacilityManagerImpl<A extends AbstractFacility> implements FacilityManager<A> {
+public class FacilityManagerImpl implements FacilityManager {
     private static final Logger log = Logger.getLogger(FacilityManagerImpl.class);
-    private Map<String, A> facilities = new ConcurrentHashMap<>();
+    private Map<Class, AbstractFacility> facilities = new ConcurrentHashMap<>();
     private Map<String, List<DependencyListener>> listeners = new ConcurrentHashMap<>();
     private ScheduledExecutorService pool = Executors.newScheduledThreadPool(3);
+    private EvaConfiguration configuration;
+
+    public FacilityManagerImpl(EvaConfiguration configuration) {
+        this.configuration = configuration;
+    }
 
     @Override
     public void stop() {
@@ -56,30 +61,35 @@ public class FacilityManagerImpl<A extends AbstractFacility> implements Facility
     }
 
     @Override
-    public String registerFacility(Class<?> facility) {
+    public EvaConfiguration getConfiguration() {
+        return configuration;
+    }
+
+    @Override
+    public String registerFacility(Class<? extends AbstractFacility> facilityClass) {
         if (log.isDebugEnabled()) {
-            log.debug("registerFacility::" + facility);
+            log.debug("registerFacility::" + facilityClass);
         }
         String name = null;
         String[] depends = null;
-        if (facility.isAnnotationPresent(Facility.class)) {
-            name = facility.getAnnotation(Facility.class).name();
-            depends = facility.getAnnotation(Facility.class).dependsOn();
+        if (facilityClass.isAnnotationPresent(Facility.class)) {
+            name = facilityClass.getAnnotation(Facility.class).name();
+            depends = facilityClass.getAnnotation(Facility.class).dependsOn();
         }
         if (name == null) {
-            log.error("Cannot find Name of the facility: " + facility);
+            log.error("Cannot find Name of the facility: " + facilityClass);
             return null;
         }
-        A object = null;
+        AbstractFacility facilityObject = null;
         try {
-            Constructor constructor = facility.getConstructor(FacilityManager.class);
-            object = (A) constructor.newInstance(this);
+            Constructor constructor = facilityClass.getConstructor(FacilityManager.class);
+            facilityObject = facilityClass.cast(constructor.newInstance(this));
         } catch (Exception e) {
             log.error("Unable to instantiate facility: ", e);
             return null;
         }
-        facilities.put(name, object);
-        object.setStatus(FacilityStatus.RESOLVING);
+        facilities.put(facilityClass, facilityObject);
+        facilityObject.setStatus(FacilityStatus.RESOLVING);
         if (depends != null && depends.length > 0) {
             Future future = pool.submit(new DependencyResolver(depends, this));
             try {
@@ -95,13 +105,13 @@ public class FacilityManagerImpl<A extends AbstractFacility> implements Facility
                 return null;
             }
         }
-        object.setStatus(FacilityStatus.READY);
+        facilityObject.setStatus(FacilityStatus.READY);
         return name;
     }
 
     @Override
     public void startFacility(final String name) {
-        final A facility = facilities.get(name);
+        final AbstractFacility facility = facilities.get(name);
         if (facility != null &&
                 (FacilityStatus.READY.equals(facility.getStatus())
                         || FacilityStatus.STOPPED.equals(facility.getStatus()))) {
@@ -130,13 +140,13 @@ public class FacilityManagerImpl<A extends AbstractFacility> implements Facility
     }
 
     @Override
-    public A getFacility(String name) {
-        return facilities.get(name);
+    public <T extends AbstractFacility> T getFacility(Class<T> type) {
+        return type.cast(facilities.get(type));
     }
 
     @Override
-    public A getFacilityForUsing(String name) {
-        A facility = facilities.get(name);
+    public <T extends AbstractFacility> T getFacilityForUsing(Class<T> type) {
+        T facility = type.cast(facilities.get(type));
         return (facility != null && FacilityStatus.STARTED.equals(facility.getStatus())) ? facility : null;
     }
 

@@ -1,16 +1,15 @@
 /*
  * The MIT License (MIT)
- *
  * Copyright (c) 2014 schors
  *
- *  Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
  *
- *  The above copyright notice and this permission notice shall be included in all
+ * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
@@ -30,7 +29,6 @@ import org.apache.log4j.Logger;
 import org.schors.eva.AbstractFacility;
 import org.schors.eva.FacilityManager;
 import org.schors.eva.FacilityStatus;
-import org.schors.eva.Waiter;
 import org.schors.eva.annotations.Facility;
 import org.schors.eva.annotations.Version;
 import org.schors.eva.facilities.axis.*;
@@ -48,7 +46,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
-@Facility(name = "trackManager", version = @Version(major = 1, minor = 0))
+@Facility(name = "trackManager", version = @Version(major = 1, minor = 0), dependsOn = {})
 public class TracksManager extends AbstractFacility {
 
     private static final Logger log = Logger.getLogger(TracksManager.class);
@@ -84,11 +82,8 @@ public class TracksManager extends AbstractFacility {
         }
 
         binding.setTimeout(60000);
-        Waiter<EvaExecutors> executorsWaiter = facilityManager.waitForFacility(EvaExecutors.getName());
-        Waiter<Jedis> jedisFacilityWaiter = facilityManager.waitForFacility(Jedis.getName());
-        EvaExecutors evaExecutors = executorsWaiter.get();
-        evaExecutors.getScheduler().scheduleAtFixedRate(new UpdateTracksTask(), 1, 2, TimeUnit.HOURS);
-        jedisFacilityWaiter.get();
+        facilityManager.getFacility(EvaExecutors.class).getScheduler().scheduleAtFixedRate(new UpdateTracksTask(), 1, 2, TimeUnit.HOURS);
+
         status = FacilityStatus.STARTED;
     }
 
@@ -102,8 +97,9 @@ public class TracksManager extends AbstractFacility {
     }
 
     public void save() {
-        Jedis jedis = (Jedis) facilityManager.getFacility(Jedis.getName());
+        Jedis jedis = facilityManager.getFacility(Jedis.class);
         try {
+            Jedis jd = gson.fromJson("", Jedis.class);
             String json = gson.toJson(list);
             jedis.getJedis().hset("tracks", listName, json);
         } catch (Exception e) {
@@ -112,7 +108,7 @@ public class TracksManager extends AbstractFacility {
     }
 
     public void load() {
-        Jedis jedis = (Jedis) facilityManager.getFacility(Jedis.getName());
+        Jedis jedis = facilityManager.getFacility(Jedis.class);
 
         list.clear();
         try {

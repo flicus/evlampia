@@ -21,29 +21,22 @@
  * SOFTWARE.
  */
 
-package org.schors.eva.commands;
+package org.schors.eva;
 
-import org.schors.eva.CommandContext;
-import org.schors.eva.annotations.Command;
-import org.schors.eva.annotations.CommandExecute;
-import org.schors.eva.facilities.TracksManager;
+import javax.xml.bind.annotation.XmlRootElement;
+import java.util.HashMap;
+import java.util.Map;
 
-@Command(
-        dependsOn = {"trackManager"},
-        group = "Почта",
-        longDescription = "",
-        name = "DeleteTrack",
-        prefixes = {},
-        shortDescription = ""
-)
-public class DeleteTrackCmd {
+@XmlRootElement
+public class AbstractConfiguration {
 
-    @CommandExecute
-    public void execute(CommandContext ctx) throws Exception {
-        TracksManager tracksManager = ctx.getFacility(TracksManager.class);
-        String[] items = ctx.getParsedCommand();
-        if (items.length >= 3) {
-            tracksManager.deleteTrack(items[1], items[2]);
-        }
+    private Map<String, String> properties = new HashMap<>();
+
+    public Map<String, String> getProperties() {
+        return properties;
+    }
+
+    public void setProperties(Map<String, String> properties) {
+        this.properties = properties;
     }
 }

@@ -25,27 +25,24 @@ package org.schors.eva.facilities;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
-import org.schors.eva.AbstractFacility;
-import org.schors.eva.FacilityManager;
-import org.schors.eva.FacilityStatus;
-import org.schors.eva.LogEntry;
+import org.schors.eva.*;
+import org.schors.eva.annotations.ConfigurationSection;
 import org.schors.eva.annotations.Facility;
 import org.schors.eva.annotations.Version;
 
+import javax.xml.bind.annotation.XmlRootElement;
 import java.io.File;
 import java.io.RandomAccessFile;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Facility(
         name = "logWriter",
-        version = @Version(major = 1, minor = 0)
-)
+        version = @Version(major = 1, minor = 0),
+        dependsOn = {"executors"})
 public class LogWriter extends AbstractFacility {
 
     public static final Logger log = Logger.getLogger(LogWriter.class);
@@ -90,7 +87,6 @@ public class LogWriter extends AbstractFacility {
     private static final String padding = "0";
 
     private static final int roomCacheLimit = 100;
-    private final ExecutorService pool = Executors.newFixedThreadPool(10);
     private final ReentrantLock lock = new ReentrantLock();
     private Map<String, File> files = new ConcurrentHashMap<String, File>();
     private Map<String, Queue<LogEntry>> cache = new ConcurrentHashMap<String, Queue<LogEntry>>();
@@ -102,9 +98,11 @@ public class LogWriter extends AbstractFacility {
         }
 
     };
+    private Configuration configuration;
 
     public LogWriter(FacilityManager facilityManager) {
         super(facilityManager);
+        this.configuration = facilityManager.getConfiguration().getSection(Configuration.class);
     }
 
     public static String getName() {
@@ -156,7 +154,7 @@ public class LogWriter extends AbstractFacility {
 
             };
         }
-        pool.submit(task);
+        facilityManager.getFacility(EvaExecutors.class).getExecutor().submit(task);
         return true;
     }
 
@@ -216,7 +214,7 @@ public class LogWriter extends AbstractFacility {
         String m = month < 10 ? padding + String.valueOf(month) : String.valueOf(month);
         String d = day < 10 ? padding + String.valueOf(day) : String.valueOf(day);
 
-        String path = ConfigurationManager.getInstance().getConfiguration().getLogsPath() + File.separator + channel + File.separator + String.valueOf(year) + File.separator + m + File.separator + d + ".html";
+        String path = configuration.getLogsPath() + File.separator + channel + File.separator + String.valueOf(year) + File.separator + m + File.separator + d + ".html";
         File file = new File(path);
         if (!file.exists()) {
             RandomAccessFile out = null;
@@ -263,11 +261,11 @@ public class LogWriter extends AbstractFacility {
                 }
             }
         };
-        pool.submit(task);
+        facilityManager.getFacility(EvaExecutors.class).getExecutor().submit(task);
     }
 
     private void updateDirectory(String channel, String year, String month) {
-        String path = ConfigurationManager.getInstance().getConfiguration().getLogsPath();
+        String path = configuration.getLogsPath();
         RandomAccessFile out = null;
         try {
             File f = new File(path);
@@ -355,5 +353,20 @@ public class LogWriter extends AbstractFacility {
         }
 
         return result;
+    }
+
+    @XmlRootElement(name = "log-writer")
+    @ConfigurationSection
+    public class Configuration extends AbstractConfiguration {
+
+        private String logsPath;
+
+        public String getLogsPath() {
+            return logsPath;
+        }
+
+        public void setLogsPath(String logsPath) {
+            this.logsPath = logsPath;
+        }
     }
 }
