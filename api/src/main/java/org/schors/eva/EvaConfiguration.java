@@ -26,6 +26,7 @@ package org.schors.eva;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -34,10 +35,15 @@ import java.util.Map;
 @XmlRootElement(name = "configuration")
 public class EvaConfiguration extends AbstractConfiguration {
 
+    @XmlTransient
+    private static final long startTime = System.currentTimeMillis();
     @XmlAttribute
     private String version = "1.0";
-
     private Map<Class, AbstractConfiguration> modules = new HashMap<>();
+
+    public static long getStartTime() {
+        return startTime;
+    }
 
     public <T extends AbstractConfiguration> void putSection(T section) {
         modules.put(section.getClass(), section);

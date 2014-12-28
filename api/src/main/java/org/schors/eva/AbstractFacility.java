@@ -34,10 +34,6 @@ public abstract class AbstractFacility {
         this.facilityManager = facilityManager;
     }
 
-    public AbstractFacility getFacility(String name) {
-        return facilityManager.getFacility(name);
-    }
-
     public FacilityStatus getStatus() {
         return status;
     }

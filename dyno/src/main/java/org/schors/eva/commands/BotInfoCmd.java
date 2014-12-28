@@ -1,16 +1,15 @@
 /*
  * The MIT License (MIT)
- *
  * Copyright (c) 2014 schors
  *
- *  Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
  *
- *  The above copyright notice and this permission notice shall be included in all
+ * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
@@ -60,7 +59,7 @@ public class BotInfoCmd {
                 .append("Memory: ").append(ManagementFactory.getMemoryMXBean().getHeapMemoryUsage().getUsed())
                 .append("/").append(ManagementFactory.getMemoryMXBean().getHeapMemoryUsage().getMax()).append(Jbot.newline)
                 .append("CPU: ").append(ManagementFactory.getOperatingSystemMXBean().getSystemLoadAverage()).append(Jbot.newline)
-                .append("Uptime: ").append(new Period(ConfigurationManager.startTime, new Instant()).toString(pf));
+                .append("Uptime: ").append(new Period(sdf.startTime, new Instant()).toString(pf));
 
         ctx.getEndpoint().send(info.toString());
     }

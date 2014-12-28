@@ -38,7 +38,7 @@ import java.util.concurrent.*;
 public class FacilityManagerImpl implements FacilityManager {
     private static final Logger log = Logger.getLogger(FacilityManagerImpl.class);
     private Map<Class, AbstractFacility> facilities = new ConcurrentHashMap<>();
-    private Map<String, List<DependencyListener>> listeners = new ConcurrentHashMap<>();
+    private Map<AbstractFacility, List<DependencyListener>> listeners = new ConcurrentHashMap<>();
     private ScheduledExecutorService pool = Executors.newScheduledThreadPool(3);
     private EvaConfiguration configuration;
 
@@ -110,8 +110,8 @@ public class FacilityManagerImpl implements FacilityManager {
     }
 
     @Override
-    public void startFacility(final String name) {
-        final AbstractFacility facility = facilities.get(name);
+    public void startFacility(final Class<? extends AbstractFacility> facilityClass) {
+        final AbstractFacility facility = facilities.get(facilityClass);
         if (facility != null &&
                 (FacilityStatus.READY.equals(facility.getStatus())
                         || FacilityStatus.STOPPED.equals(facility.getStatus()))) {
@@ -119,24 +119,32 @@ public class FacilityManagerImpl implements FacilityManager {
                 @Override
                 public void run() {
                     facility.start();
-                    facilityResolved(name);
+                    facilityResolved(facility);
                 }
             });
         }
     }
 
-    private void facilityResolved(String name) {
-        List<DependencyListener> list = listeners.remove(name);
+    private void facilityResolved(AbstractFacility facility) {
+        List<DependencyListener> list = listeners.remove(facility);
         if (list != null && list.size() > 0) {
             for (DependencyListener listener : list) {
-                listener.onResolve(name);
+                listener.onResolve(facility);
             }
         }
     }
 
     @Override
-    public void stopFacility(String name) {
-
+    public void stopFacility(Class<? extends AbstractFacility> facilityClass) {
+        final AbstractFacility facility = facilities.get(facilityClass);
+        if (facility != null && !FacilityStatus.STOPPED.equals(facility.getStatus())) {
+            pool.execute(new Runnable() {
+                @Override
+                public void run() {
+                    facility.stop();
+                }
+            });
+        }
     }
 
     @Override
@@ -150,7 +158,7 @@ public class FacilityManagerImpl implements FacilityManager {
         return (facility != null && FacilityStatus.STARTED.equals(facility.getStatus())) ? facility : null;
     }
 
-    public Map<String, List<DependencyListener>> getListeners() {
+    public Map<AbstractFacility, List<DependencyListener>> getListeners() {
         return listeners;
     }
 }
