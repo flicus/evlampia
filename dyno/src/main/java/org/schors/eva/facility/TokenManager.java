@@ -45,8 +45,6 @@ import java.util.concurrent.TimeUnit;
 public class TokenManager extends AbstractFacility {
 
     private Map<String, String> tokens = new ConcurrentHashMap<>();
-    private Configuration configuration;
-
     public TokenManager(Application application) {
         super(application);
     }
@@ -69,8 +67,8 @@ public class TokenManager extends AbstractFacility {
                 .getScheduler()
                 .scheduleAtFixedRate(
                         new ClearTokensTask(),
-                        configuration.getClearTaskPeriod(),
-                        configuration.getClearTaskPeriod(),
+                        getConfiguration(Configuration.class).getClearTaskPeriod(),
+                        getConfiguration(Configuration.class).getClearTaskPeriod(),
                         TimeUnit.MINUTES);
         status = FacilityStatus.STARTED;
     }
@@ -91,7 +89,7 @@ public class TokenManager extends AbstractFacility {
                 long now = System.currentTimeMillis();
                 for (Map.Entry<String, String> entry : tokens.entrySet()) {
                     long itemTime = Long.decode("#".concat(entry.getKey()));
-                    if ((now - itemTime) > 1000 * 60 * configuration.getTokenTTL())
+                    if ((now - itemTime) > 1000 * 60 * getConfiguration(Configuration.class).getTokenTTL())
                         toRemove.add(entry.getKey());    //24 hours
                 }
                 for (String key : toRemove) {
