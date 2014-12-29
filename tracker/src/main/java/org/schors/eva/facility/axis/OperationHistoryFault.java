@@ -22,19 +22,41 @@
  * SOFTWARE.
  */
 
-package org.schors.eva.core;
+/**
+ * OperationHistoryFault.java
+ *
+ * This file was auto-generated from WSDL
+ * by the Apache Axis 1.4 Apr 22, 2006 (06:55:48 PDT) WSDL2Java emitter.
+ */
 
-import org.schors.eva.dialog.Dialog;
-import org.schors.eva.protocol.ProtocolManager;
+package org.schors.eva.facility.axis;
 
-public class ProtocolManagerImpl implements ProtocolManager {
-    @Override
-    public void registerProtocol(Class<?> clazz) {
+public class OperationHistoryFault extends org.apache.axis.AxisFault {
+    public String reason;
 
+    public OperationHistoryFault() {
     }
 
-    @Override
-    public Dialog createDialog(String endpoint) {
-        return null;
+    public OperationHistoryFault(Exception target) {
+        super(target);
+    }
+
+    public OperationHistoryFault(String message, Throwable t) {
+        super(message, t);
+    }
+
+    public OperationHistoryFault(String reason) {
+        this.reason = reason;
+    }
+
+    public String getReason() {
+        return this.reason;
+    }
+
+    /**
+     * Writes the exception data to the faultDetails
+     */
+    public void writeDetails(javax.xml.namespace.QName qname, org.apache.axis.encoding.SerializationContext context) throws java.io.IOException {
+        context.serialize(qname, null, reason);
     }
 }

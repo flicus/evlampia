@@ -22,19 +22,21 @@
  * SOFTWARE.
  */
 
-package org.schors.eva.core;
+package org.schors.eva.facility;
 
-import org.schors.eva.dialog.Dialog;
-import org.schors.eva.protocol.ProtocolManager;
 
-public class ProtocolManagerImpl implements ProtocolManager {
-    @Override
-    public void registerProtocol(Class<?> clazz) {
+public interface FacilityManager {
 
-    }
+    public String registerFacility(Class<? extends AbstractFacility> facility);
 
-    @Override
-    public Dialog createDialog(String endpoint) {
-        return null;
-    }
+    public void startFacility(String name);
+
+    public void stopFacility(String name);
+
+    public <T extends AbstractFacility> T getFacility(Class<T> type);
+
+    public <T extends AbstractFacility> T getFacilityForUsing(Class<T> type);
+
+    public void stop();
+
 }

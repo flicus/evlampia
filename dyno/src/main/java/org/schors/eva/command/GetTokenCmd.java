@@ -22,19 +22,24 @@
  * SOFTWARE.
  */
 
-package org.schors.eva.core;
+package org.schors.eva.command;
 
-import org.schors.eva.dialog.Dialog;
-import org.schors.eva.protocol.ProtocolManager;
+import org.schors.eva.facility.TokenManager;
 
-public class ProtocolManagerImpl implements ProtocolManager {
-    @Override
-    public void registerProtocol(Class<?> clazz) {
+@Command(
+        dependsOn = {"token"},
+        group = "General",
+        longDescription = "",
+        name = "GetToken",
+        prefixes = {"!t"},
+        shortDescription = ""
+)
+public class GetTokenCmd {
 
-    }
-
-    @Override
-    public Dialog createDialog(String endpoint) {
-        return null;
+    @CommandExecute
+    public void execute(CommandContext ctx) throws Exception {
+        TokenManager tokenManager = ctx.getFacility(TokenManager.class);
+        String token = tokenManager.makeNewToken(ctx.getWho());
+        ctx.getDialog().sendMessage("http://0xffff.net/eva/?evaid=" + token);
     }
 }

@@ -22,19 +22,26 @@
  * SOFTWARE.
  */
 
-package org.schors.eva.core;
+package org.schors.eva.facility.fedex;
 
-import org.schors.eva.dialog.Dialog;
-import org.schors.eva.protocol.ProtocolManager;
+public class FdxResponseWrapper {
+    private TrackPackagesResponse TrackPackagesResponse;
 
-public class ProtocolManagerImpl implements ProtocolManager {
-    @Override
-    public void registerProtocol(Class<?> clazz) {
+    public FdxResponseWrapper() {
+    }
 
+    public TrackPackagesResponse getTrackPackagesResponse() {
+        return TrackPackagesResponse;
+    }
+
+    public void setTrackPackagesResponse(TrackPackagesResponse trackPackagesResponse) {
+        TrackPackagesResponse = trackPackagesResponse;
     }
 
     @Override
-    public Dialog createDialog(String endpoint) {
-        return null;
+    public String toString() {
+        return "FdxResponseWrapper{" +
+                "TrackPackagesResponse=" + TrackPackagesResponse +
+                '}';
     }
 }

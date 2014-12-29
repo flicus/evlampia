@@ -22,19 +22,12 @@
  * SOFTWARE.
  */
 
-package org.schors.eva.core;
+package org.schors.eva;
 
-import org.schors.eva.dialog.Dialog;
-import org.schors.eva.protocol.ProtocolManager;
+import java.util.concurrent.Future;
 
-public class ProtocolManagerImpl implements ProtocolManager {
-    @Override
-    public void registerProtocol(Class<?> clazz) {
+public interface DependencyResolver {
+    public Future resolve(String[] dependencies);
 
-    }
-
-    @Override
-    public Dialog createDialog(String endpoint) {
-        return null;
-    }
+    public void facilityResolved(String name);
 }

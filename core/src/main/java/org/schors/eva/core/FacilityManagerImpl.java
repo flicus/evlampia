@@ -1,15 +1,16 @@
 /*
  * The MIT License (MIT)
+ *
  * Copyright (c) 2014 schors
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ *  Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
+ *  The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
@@ -24,26 +25,25 @@
 package org.schors.eva.core;
 
 import org.apache.log4j.Logger;
-import org.schors.eva.AbstractFacility;
-import org.schors.eva.EvaConfiguration;
-import org.schors.eva.FacilityManager;
-import org.schors.eva.FacilityStatus;
-import org.schors.eva.annotations.Facility;
+import org.schors.eva.Application;
+import org.schors.eva.facility.AbstractFacility;
+import org.schors.eva.facility.Facility;
+import org.schors.eva.facility.FacilityManager;
+import org.schors.eva.facility.FacilityStatus;
 
 import java.lang.reflect.Constructor;
-import java.util.List;
 import java.util.Map;
-import java.util.concurrent.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 public class FacilityManagerImpl implements FacilityManager {
     private static final Logger log = Logger.getLogger(FacilityManagerImpl.class);
     private Map<Class, AbstractFacility> facilities = new ConcurrentHashMap<>();
-    private Map<String, List<DependencyListener>> listeners = new ConcurrentHashMap<>();
-    private ScheduledExecutorService pool = Executors.newScheduledThreadPool(3);
-    private EvaConfiguration configuration;
+    private Application application;
 
-    public FacilityManagerImpl(EvaConfiguration configuration) {
-        this.configuration = configuration;
+    public FacilityManagerImpl(Application application) {
+        this.application = application;
     }
 
     @Override
@@ -58,11 +58,6 @@ public class FacilityManagerImpl implements FacilityManager {
                 log.warn("Unable to stop facility", e);
             }
         }
-    }
-
-    @Override
-    public EvaConfiguration getConfiguration() {
-        return configuration;
     }
 
     @Override
@@ -82,8 +77,8 @@ public class FacilityManagerImpl implements FacilityManager {
         }
         AbstractFacility facilityObject = null;
         try {
-            Constructor constructor = facilityClass.getConstructor(FacilityManager.class);
-            facilityObject = facilityClass.cast(constructor.newInstance(this));
+            Constructor constructor = facilityClass.getConstructor(Application.class);
+            facilityObject = facilityClass.cast(constructor.newInstance(application));
         } catch (Exception e) {
             log.error("Unable to instantiate facility: ", e);
             return null;
@@ -91,7 +86,7 @@ public class FacilityManagerImpl implements FacilityManager {
         facilities.put(facilityClass, facilityObject);
         facilityObject.setStatus(FacilityStatus.RESOLVING);
         if (depends != null && depends.length > 0) {
-            Future future = pool.submit(new DependencyResolver(depends, this));
+            Future future = application.getDependencyResolver().resolve(depends);
             try {
                 future.get();
                 if (log.isDebugEnabled()) {
@@ -115,22 +110,13 @@ public class FacilityManagerImpl implements FacilityManager {
         if (facility != null &&
                 (FacilityStatus.READY.equals(facility.getStatus())
                         || FacilityStatus.STOPPED.equals(facility.getStatus()))) {
-            pool.execute(new Runnable() {
+            application.getThreadPool().execute(new Runnable() {
                 @Override
                 public void run() {
                     facility.start();
-                    facilityResolved(name);
+                    application.getDependencyResolver().facilityResolved(name);
                 }
             });
-        }
-    }
-
-    private void facilityResolved(String name) {
-        List<DependencyListener> list = listeners.remove(name);
-        if (list != null && list.size() > 0) {
-            for (DependencyListener listener : list) {
-                listener.onResolve(name);
-            }
         }
     }
 
@@ -148,10 +134,6 @@ public class FacilityManagerImpl implements FacilityManager {
     public <T extends AbstractFacility> T getFacilityForUsing(Class<T> type) {
         T facility = type.cast(facilities.get(type));
         return (facility != null && FacilityStatus.STARTED.equals(facility.getStatus())) ? facility : null;
-    }
-
-    public Map<String, List<DependencyListener>> getListeners() {
-        return listeners;
     }
 }
 

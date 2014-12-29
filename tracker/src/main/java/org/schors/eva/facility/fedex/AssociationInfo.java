@@ -22,19 +22,37 @@
  * SOFTWARE.
  */
 
-package org.schors.eva.core;
+package org.schors.eva.facility.fedex;
 
-import org.schors.eva.dialog.Dialog;
-import org.schors.eva.protocol.ProtocolManager;
 
-public class ProtocolManagerImpl implements ProtocolManager {
-    @Override
-    public void registerProtocol(Class<?> clazz) {
+public class AssociationInfo {
+    private TrackingNumberInfo trackingNumberInfo;
+    private String associatedType;
 
+    public AssociationInfo() {
+    }
+
+    public TrackingNumberInfo getTrackingNumberInfo() {
+        return trackingNumberInfo;
+    }
+
+    public void setTrackingNumberInfo(TrackingNumberInfo trackingNumberInfo) {
+        this.trackingNumberInfo = trackingNumberInfo;
+    }
+
+    public String getAssociatedType() {
+        return associatedType;
+    }
+
+    public void setAssociatedType(String associatedType) {
+        this.associatedType = associatedType;
     }
 
     @Override
-    public Dialog createDialog(String endpoint) {
-        return null;
+    public String toString() {
+        return "AssociationInfo{" +
+                "trackingNumberInfo=" + trackingNumberInfo +
+                ", associatedType='" + associatedType + '\'' +
+                '}';
     }
 }

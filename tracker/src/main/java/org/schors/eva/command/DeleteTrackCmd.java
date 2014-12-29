@@ -22,19 +22,26 @@
  * SOFTWARE.
  */
 
-package org.schors.eva.core;
+package org.schors.eva.command;
 
-import org.schors.eva.dialog.Dialog;
-import org.schors.eva.protocol.ProtocolManager;
+import org.schors.eva.facility.TracksManager;
 
-public class ProtocolManagerImpl implements ProtocolManager {
-    @Override
-    public void registerProtocol(Class<?> clazz) {
+@Command(
+        dependsOn = {"trackManager"},
+        group = "Почта",
+        longDescription = "",
+        name = "DeleteTrack",
+        prefixes = {},
+        shortDescription = ""
+)
+public class DeleteTrackCmd {
 
-    }
-
-    @Override
-    public Dialog createDialog(String endpoint) {
-        return null;
+    @CommandExecute
+    public void execute(CommandContext ctx) throws Exception {
+        TracksManager tracksManager = ctx.getFacility(TracksManager.class);
+        String[] items = ctx.getParsedCommand();
+        if (items.length >= 3) {
+            tracksManager.deleteTrack(items[1], items[2]);
+        }
     }
 }

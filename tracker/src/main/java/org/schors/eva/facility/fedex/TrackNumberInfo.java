@@ -22,19 +22,46 @@
  * SOFTWARE.
  */
 
-package org.schors.eva.core;
+package org.schors.eva.facility.fedex;
 
-import org.schors.eva.dialog.Dialog;
-import org.schors.eva.protocol.ProtocolManager;
+public class TrackNumberInfo {
+    private String trackingNumber;
+    private String trackingQualifier;
+    private String trackingCarrier;
 
-public class ProtocolManagerImpl implements ProtocolManager {
-    @Override
-    public void registerProtocol(Class<?> clazz) {
+    public TrackNumberInfo() {
+    }
 
+    public String getTrackingNumber() {
+        return trackingNumber;
+    }
+
+    public void setTrackingNumber(String trackingNumber) {
+        this.trackingNumber = trackingNumber;
+    }
+
+    public String getTrackingQualifier() {
+        return trackingQualifier;
+    }
+
+    public void setTrackingQualifier(String trackingQualifier) {
+        this.trackingQualifier = trackingQualifier;
+    }
+
+    public String getTrackingCarrier() {
+        return trackingCarrier;
+    }
+
+    public void setTrackingCarrier(String trackingCarrier) {
+        this.trackingCarrier = trackingCarrier;
     }
 
     @Override
-    public Dialog createDialog(String endpoint) {
-        return null;
+    public String toString() {
+        return "TrackNumberInfo{" +
+                "trackingNumber='" + trackingNumber + '\'' +
+                ", trackingQualifier='" + trackingQualifier + '\'' +
+                ", trackingCarrier='" + trackingCarrier + '\'' +
+                '}';
     }
 }

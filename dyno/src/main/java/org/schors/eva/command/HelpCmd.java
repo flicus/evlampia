@@ -22,19 +22,22 @@
  * SOFTWARE.
  */
 
-package org.schors.eva.core;
+package org.schors.eva.command;
 
-import org.schors.eva.dialog.Dialog;
-import org.schors.eva.protocol.ProtocolManager;
+@Command(
+        dependsOn = {},
+        group = "General",
+        name = "Help",
+        shortDescription = "",
+        longDescription = "",
+        prefixes = {"!?"}
+)
+public class HelpCmd {
 
-public class ProtocolManagerImpl implements ProtocolManager {
-    @Override
-    public void registerProtocol(Class<?> clazz) {
+    @CommandExecute
+    public void execute(CommandContext ctx) {
+
 
     }
 
-    @Override
-    public Dialog createDialog(String endpoint) {
-        return null;
-    }
 }

@@ -1,0 +1,271 @@
+/*
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2014 schors
+ *
+ *  Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ *  The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
+/**
+ * Country.java
+ *
+ * This file was auto-generated from WSDL
+ * by the Apache Axis 1.4 Apr 22, 2006 (06:55:48 PDT) WSDL2Java emitter.
+ */
+
+package org.schors.eva.facility.axis;
+
+public class Country implements java.io.Serializable {
+    // Type metadata
+    private static org.apache.axis.description.TypeDesc typeDesc =
+            new org.apache.axis.description.TypeDesc(Country.class, true);
+
+    static {
+        typeDesc.setXmlType(new javax.xml.namespace.QName("http://russianpost.org/operationhistory/data", "Country"));
+        org.apache.axis.description.ElementDesc elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("id");
+        elemField.setXmlName(new javax.xml.namespace.QName("http://russianpost.org/operationhistory/data", "Id"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "int"));
+        elemField.setNillable(false);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("code2A");
+        elemField.setXmlName(new javax.xml.namespace.QName("http://russianpost.org/operationhistory/data", "Code2A"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"));
+        elemField.setNillable(false);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("code3A");
+        elemField.setXmlName(new javax.xml.namespace.QName("http://russianpost.org/operationhistory/data", "Code3A"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"));
+        elemField.setNillable(false);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("nameRU");
+        elemField.setXmlName(new javax.xml.namespace.QName("http://russianpost.org/operationhistory/data", "NameRU"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"));
+        elemField.setNillable(false);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("nameEN");
+        elemField.setXmlName(new javax.xml.namespace.QName("http://russianpost.org/operationhistory/data", "NameEN"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"));
+        elemField.setNillable(false);
+        typeDesc.addFieldDesc(elemField);
+    }
+
+    private int id;
+    private String code2A;
+    private String code3A;
+    private String nameRU;
+    private String nameEN;
+    private Object __equalsCalc = null;
+    private boolean __hashCodeCalc = false;
+
+
+    public Country() {
+    }
+
+
+    public Country(
+            int id,
+            String code2A,
+            String code3A,
+            String nameRU,
+            String nameEN) {
+        this.id = id;
+        this.code2A = code2A;
+        this.code3A = code3A;
+        this.nameRU = nameRU;
+        this.nameEN = nameEN;
+    }
+
+    /**
+     * Return type metadata object
+     */
+    public static org.apache.axis.description.TypeDesc getTypeDesc() {
+        return typeDesc;
+    }
+
+    /**
+     * Get Custom Serializer
+     */
+    public static org.apache.axis.encoding.Serializer getSerializer(
+            String mechType,
+            Class _javaType,
+            javax.xml.namespace.QName _xmlType) {
+        return
+                new org.apache.axis.encoding.ser.BeanSerializer(
+                        _javaType, _xmlType, typeDesc);
+    }
+
+    /**
+     * Get Custom Deserializer
+     */
+    public static org.apache.axis.encoding.Deserializer getDeserializer(
+            String mechType,
+            Class _javaType,
+            javax.xml.namespace.QName _xmlType) {
+        return
+                new org.apache.axis.encoding.ser.BeanDeserializer(
+                        _javaType, _xmlType, typeDesc);
+    }
+
+    /**
+     * Gets the id value for this Country.
+     *
+     * @return id
+     */
+    public int getId() {
+        return id;
+    }
+
+    /**
+     * Sets the id value for this Country.
+     *
+     * @param id
+     */
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    /**
+     * Gets the code2A value for this Country.
+     *
+     * @return code2A
+     */
+    public String getCode2A() {
+        return code2A;
+    }
+
+    /**
+     * Sets the code2A value for this Country.
+     *
+     * @param code2A
+     */
+    public void setCode2A(String code2A) {
+        this.code2A = code2A;
+    }
+
+    /**
+     * Gets the code3A value for this Country.
+     *
+     * @return code3A
+     */
+    public String getCode3A() {
+        return code3A;
+    }
+
+    /**
+     * Sets the code3A value for this Country.
+     *
+     * @param code3A
+     */
+    public void setCode3A(String code3A) {
+        this.code3A = code3A;
+    }
+
+    /**
+     * Gets the nameRU value for this Country.
+     *
+     * @return nameRU
+     */
+    public String getNameRU() {
+        return nameRU;
+    }
+
+    /**
+     * Sets the nameRU value for this Country.
+     *
+     * @param nameRU
+     */
+    public void setNameRU(String nameRU) {
+        this.nameRU = nameRU;
+    }
+
+    /**
+     * Gets the nameEN value for this Country.
+     *
+     * @return nameEN
+     */
+    public String getNameEN() {
+        return nameEN;
+    }
+
+    /**
+     * Sets the nameEN value for this Country.
+     *
+     * @param nameEN
+     */
+    public void setNameEN(String nameEN) {
+        this.nameEN = nameEN;
+    }
+
+    public synchronized boolean equals(Object obj) {
+        if (!(obj instanceof Country)) return false;
+        Country other = (Country) obj;
+        if (obj == null) return false;
+        if (this == obj) return true;
+        if (__equalsCalc != null) {
+            return (__equalsCalc == obj);
+        }
+        __equalsCalc = obj;
+        boolean _equals;
+        _equals = true &&
+                this.id == other.getId() &&
+                ((this.code2A == null && other.getCode2A() == null) ||
+                        (this.code2A != null &&
+                                this.code2A.equals(other.getCode2A()))) &&
+                ((this.code3A == null && other.getCode3A() == null) ||
+                        (this.code3A != null &&
+                                this.code3A.equals(other.getCode3A()))) &&
+                ((this.nameRU == null && other.getNameRU() == null) ||
+                        (this.nameRU != null &&
+                                this.nameRU.equals(other.getNameRU()))) &&
+                ((this.nameEN == null && other.getNameEN() == null) ||
+                        (this.nameEN != null &&
+                                this.nameEN.equals(other.getNameEN())));
+        __equalsCalc = null;
+        return _equals;
+    }
+
+    public synchronized int hashCode() {
+        if (__hashCodeCalc) {
+            return 0;
+        }
+        __hashCodeCalc = true;
+        int _hashCode = 1;
+        _hashCode += getId();
+        if (getCode2A() != null) {
+            _hashCode += getCode2A().hashCode();
+        }
+        if (getCode3A() != null) {
+            _hashCode += getCode3A().hashCode();
+        }
+        if (getNameRU() != null) {
+            _hashCode += getNameRU().hashCode();
+        }
+        if (getNameEN() != null) {
+            _hashCode += getNameEN().hashCode();
+        }
+        __hashCodeCalc = false;
+        return _hashCode;
+    }
+
+}

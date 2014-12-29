@@ -22,19 +22,24 @@
  * SOFTWARE.
  */
 
-package org.schors.eva.core;
+package org.schors.eva.command;
 
-import org.schors.eva.dialog.Dialog;
-import org.schors.eva.protocol.ProtocolManager;
+import org.schors.eva.facility.FeedReader;
 
-public class ProtocolManagerImpl implements ProtocolManager {
-    @Override
-    public void registerProtocol(Class<?> clazz) {
+@Command(
+        dependsOn = {"feedReader"},
+        group = "RSS",
+        longDescription = "",
+        name = "RssShutUp",
+        prefixes = {},
+        shortDescription = ""
+)
+public class RssShutUpCmd {
 
-    }
-
-    @Override
-    public Dialog createDialog(String endpoint) {
-        return null;
+    @CommandExecute
+    public void execute(CommandContext ctx) throws Exception {
+        FeedReader feedReader = ctx.getFacility(FeedReader.class);
+        feedReader.setSilent(!feedReader.isSilent());
+        ctx.getDialog().sendMessage(feedReader.isSilent() ? "Молчу, молчу" : "Вот теперь наговорюсь!");
     }
 }

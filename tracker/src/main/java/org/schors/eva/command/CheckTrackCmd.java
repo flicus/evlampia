@@ -22,19 +22,36 @@
  * SOFTWARE.
  */
 
-package org.schors.eva.core;
+package org.schors.eva.command;
 
-import org.schors.eva.dialog.Dialog;
-import org.schors.eva.protocol.ProtocolManager;
+import org.schors.eva.facility.TracksManager;
 
-public class ProtocolManagerImpl implements ProtocolManager {
-    @Override
-    public void registerProtocol(Class<?> clazz) {
+import java.util.List;
 
-    }
+@Command(
+        dependsOn = {"trackManager"},
+        group = "Почта",
+        longDescription = "",
+        name = "CheckTrack",
+        prefixes = {},
+        shortDescription = ""
+)
+public class CheckTrackCmd {
 
-    @Override
-    public Dialog createDialog(String endpoint) {
-        return null;
+    @CommandExecute
+    public void execute(CommandContext ctx) {
+        TracksManager tracksManager = ctx.getFacility(TracksManager.class);
+        String[] items = ctx.getParsedCommand();
+
+        if (items.length >= 2) {
+            List<String> list = tracksManager.getStatus(items[1]);
+            if (list != null && list.size() > 0) {
+                StringBuilder sb = new StringBuilder();
+                for (String s : list) {
+                    sb.append(s).append(System.getProperty("line.separator"));
+                }
+                ctx.getDialog().sendMessage(sb.toString());
+            }
+        }
     }
 }

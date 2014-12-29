@@ -22,19 +22,26 @@
  * SOFTWARE.
  */
 
-package org.schors.eva.core;
+package org.schors.eva.command;
 
-import org.schors.eva.dialog.Dialog;
-import org.schors.eva.protocol.ProtocolManager;
+import org.schors.eva.dialog.GroupDialog;
 
-public class ProtocolManagerImpl implements ProtocolManager {
-    @Override
-    public void registerProtocol(Class<?> clazz) {
+@Command(
+        dependsOn = {},
+        group = "",
+        longDescription = "",
+        name = "ChangeNick",
+        prefixes = {},
+        shortDescription = ""
 
-    }
+)
+public class ChangeNickCmd {
 
-    @Override
-    public Dialog createDialog(String endpoint) {
-        return null;
+    @CommandExecute
+    public void execute(CommandContext ctx) throws Exception {
+        if (!(ctx.getDialog() instanceof GroupDialog)) {
+            ctx.getDialog().sendMessage("Только групповой чат");
+        }
+        ((GroupDialog) ctx.getDialog()).changeNick(ctx.getParsedCommand()[1]);
     }
 }

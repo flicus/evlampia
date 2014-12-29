@@ -1,15 +1,16 @@
 /*
  * The MIT License (MIT)
+ *
  * Copyright (c) 2014 schors
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ *  Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
+ *  The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
@@ -23,23 +24,34 @@
 
 package org.schors.eva.core;
 
-import org.schors.eva.*;
+import org.schors.eva.Application;
+import org.schors.eva.DependencyResolver;
+import org.schors.eva.command.CommandManager;
+import org.schors.eva.configuration.EvaConfiguration;
+import org.schors.eva.facility.AbstractFacility;
+import org.schors.eva.facility.FacilityManager;
+import org.schors.eva.protocol.ProtocolManager;
 
-public class Main implements PluginLoader {
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+
+public class Main implements PluginLoader, Application {
     private FacilityManager facilityManager;
     private CommandManager commandManager;
     private PluginManager pluginManager;
     private ProtocolManager protocolManager;
     private EvaConfiguration configuration;
-
-
+    private DependencyResolver dependencyResolver;
+    private ScheduledExecutorService pool;
 
     public Main() {
         configuration = new EvaConfiguration();
-        facilityManager = new FacilityManagerImpl(configuration);
-        commandManager = new CommandManagerImpl(facilityManager);
+        facilityManager = new FacilityManagerImpl(this);
+        commandManager = new CommandManagerImpl(this);
         pluginManager = new PluginManager(this);
         protocolManager = new ProtocolManagerImpl();
+        dependencyResolver = new DependencyResolverImpl();
+        pool = Executors.newScheduledThreadPool(3);
     }
 
     public static void main(String[] args) {
@@ -48,19 +60,34 @@ public class Main implements PluginLoader {
     }
 
     @Override
-    public void onFacilityDiscovered(Class<? extends AbstractFacility> clazz) {
-        String name = facilityManager.registerFacility(clazz);
-        facilityManager.getFacility(clazz).start();
+    public void onFacilityDiscovered(final Class<? extends AbstractFacility> clazz) {
+        pool.execute(new Runnable() {
+            @Override
+            public void run() {
+                String name = facilityManager.registerFacility(clazz);
+                facilityManager.startFacility(name);
+            }
+        });
     }
 
     @Override
-    public void onCommandDiscovered(Class<?> clazz) {
-        commandManager.addNewCommand(clazz);
+    public void onCommandDiscovered(final Class<?> clazz) {
+        pool.execute(new Runnable() {
+            @Override
+            public void run() {
+                commandManager.addNewCommand(clazz);
+            }
+        });
     }
 
     @Override
-    public void onProtocolDiscovered(Class<?> clazz) {
-        protocolManager.registerProtocol(clazz);
+    public void onProtocolDiscovered(final Class<?> clazz) {
+        pool.execute(new Runnable() {
+            @Override
+            public void run() {
+                protocolManager.registerProtocol(clazz);
+            }
+        });
     }
 
     public void run() {
@@ -71,5 +98,35 @@ public class Main implements PluginLoader {
                 e.printStackTrace();
             }
         }
+    }
+
+    @Override
+    public FacilityManager getFacilityManager() {
+        return facilityManager;
+    }
+
+    @Override
+    public CommandManager getCommandManager() {
+        return commandManager;
+    }
+
+    @Override
+    public ProtocolManager getProtocolManager() {
+        return protocolManager;
+    }
+
+    @Override
+    public EvaConfiguration getConfiguration() {
+        return configuration;
+    }
+
+    @Override
+    public DependencyResolver getDependencyResolver() {
+        return dependencyResolver;
+    }
+
+    @Override
+    public ScheduledExecutorService getThreadPool() {
+        return pool;
     }
 }

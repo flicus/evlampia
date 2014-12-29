@@ -22,19 +22,22 @@
  * SOFTWARE.
  */
 
-package org.schors.eva.core;
+package org.schors.eva.configuration;
 
-import org.schors.eva.dialog.Dialog;
-import org.schors.eva.protocol.ProtocolManager;
+import javax.xml.bind.annotation.XmlRootElement;
+import java.util.HashMap;
+import java.util.Map;
 
-public class ProtocolManagerImpl implements ProtocolManager {
-    @Override
-    public void registerProtocol(Class<?> clazz) {
+@XmlRootElement
+public class AbstractConfiguration {
 
+    private Map<String, String> properties = new HashMap<>();
+
+    public Map<String, String> getProperties() {
+        return properties;
     }
 
-    @Override
-    public Dialog createDialog(String endpoint) {
-        return null;
+    public void setProperties(Map<String, String> properties) {
+        this.properties = properties;
     }
 }

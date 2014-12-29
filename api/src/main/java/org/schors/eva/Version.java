@@ -22,19 +22,14 @@
  * SOFTWARE.
  */
 
-package org.schors.eva.core;
+package org.schors.eva;
 
-import org.schors.eva.dialog.Dialog;
-import org.schors.eva.protocol.ProtocolManager;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 
-public class ProtocolManagerImpl implements ProtocolManager {
-    @Override
-    public void registerProtocol(Class<?> clazz) {
+@Retention(value = RetentionPolicy.RUNTIME)
+public @interface Version {
+    int major();
 
-    }
-
-    @Override
-    public Dialog createDialog(String endpoint) {
-        return null;
-    }
+    int minor();
 }

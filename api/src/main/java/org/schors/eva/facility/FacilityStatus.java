@@ -22,19 +22,15 @@
  * SOFTWARE.
  */
 
-package org.schors.eva.core;
+package org.schors.eva.facility;
 
-import org.schors.eva.dialog.Dialog;
-import org.schors.eva.protocol.ProtocolManager;
-
-public class ProtocolManagerImpl implements ProtocolManager {
-    @Override
-    public void registerProtocol(Class<?> clazz) {
-
-    }
-
-    @Override
-    public Dialog createDialog(String endpoint) {
-        return null;
-    }
+public enum FacilityStatus {
+    INITIAL,
+    RESOLVING,
+    READY,
+    STARTING,
+    STARTED,
+    STOPPING,
+    STOPPED,
+    ERROR
 }

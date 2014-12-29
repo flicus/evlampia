@@ -22,19 +22,25 @@
  * SOFTWARE.
  */
 
-package org.schors.eva.core;
+package org.schors.eva.command;
 
-import org.schors.eva.dialog.Dialog;
-import org.schors.eva.protocol.ProtocolManager;
+import org.schors.eva.facility.FeedReader;
 
-public class ProtocolManagerImpl implements ProtocolManager {
-    @Override
-    public void registerProtocol(Class<?> clazz) {
+@Command(
+        dependsOn = {"feedReader"},
+        group = "RSS",
+        longDescription = "",
+        name = "AddFeed",
+        prefixes = {},
+        shortDescription = ""
+)
+public class AddFeedCmd {
 
-    }
-
-    @Override
-    public Dialog createDialog(String endpoint) {
-        return null;
+    @CommandExecute
+    public void execute(CommandContext ctx) throws Exception {
+        FeedReader reader = ctx.getFacility(FeedReader.class);
+        String url = ctx.getParsedCommand()[1];
+        String res = reader.addFeed(ctx.getWho(), url);
+        if (res != null) ctx.getDialog().sendMessage(res);
     }
 }

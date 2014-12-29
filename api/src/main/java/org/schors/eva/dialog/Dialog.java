@@ -22,19 +22,19 @@
  * SOFTWARE.
  */
 
-package org.schors.eva.core;
+package org.schors.eva.dialog;
 
-import org.schors.eva.dialog.Dialog;
-import org.schors.eva.protocol.ProtocolManager;
+public abstract class Dialog {
 
-public class ProtocolManagerImpl implements ProtocolManager {
-    @Override
-    public void registerProtocol(Class<?> clazz) {
+    private String endpoint;
 
+    public Dialog(String endpoint) {
+        this.endpoint = endpoint;
     }
 
-    @Override
-    public Dialog createDialog(String endpoint) {
-        return null;
+    public String getEndpoint() {
+        return endpoint;
     }
+
+    public abstract void sendMessage(String message) throws DialogException;
 }

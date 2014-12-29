@@ -22,19 +22,25 @@
  * SOFTWARE.
  */
 
-package org.schors.eva.core;
+package org.schors.eva;
 
-import org.schors.eva.dialog.Dialog;
+import org.schors.eva.command.CommandManager;
+import org.schors.eva.configuration.EvaConfiguration;
+import org.schors.eva.facility.FacilityManager;
 import org.schors.eva.protocol.ProtocolManager;
 
-public class ProtocolManagerImpl implements ProtocolManager {
-    @Override
-    public void registerProtocol(Class<?> clazz) {
+import java.util.concurrent.ScheduledExecutorService;
 
-    }
+public interface Application {
+    public FacilityManager getFacilityManager();
 
-    @Override
-    public Dialog createDialog(String endpoint) {
-        return null;
-    }
+    public CommandManager getCommandManager();
+
+    public ProtocolManager getProtocolManager();
+
+    public EvaConfiguration getConfiguration();
+
+    public DependencyResolver getDependencyResolver();
+
+    public ScheduledExecutorService getThreadPool();
 }

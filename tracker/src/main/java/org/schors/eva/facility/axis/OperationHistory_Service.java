@@ -22,19 +22,19 @@
  * SOFTWARE.
  */
 
-package org.schors.eva.core;
+/**
+ * OperationHistory_Service.java
+ *
+ * This file was auto-generated from WSDL
+ * by the Apache Axis 1.4 Apr 22, 2006 (06:55:48 PDT) WSDL2Java emitter.
+ */
 
-import org.schors.eva.dialog.Dialog;
-import org.schors.eva.protocol.ProtocolManager;
+package org.schors.eva.facility.axis;
 
-public class ProtocolManagerImpl implements ProtocolManager {
-    @Override
-    public void registerProtocol(Class<?> clazz) {
+public interface OperationHistory_Service extends javax.xml.rpc.Service {
+    public String getOperationHistoryAddress();
 
-    }
+    public OperationHistoryInterface getOperationHistory() throws javax.xml.rpc.ServiceException;
 
-    @Override
-    public Dialog createDialog(String endpoint) {
-        return null;
-    }
+    public OperationHistoryInterface getOperationHistory(java.net.URL portAddress) throws javax.xml.rpc.ServiceException;
 }

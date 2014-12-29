@@ -22,19 +22,18 @@
  * SOFTWARE.
  */
 
-package org.schors.eva.core;
+package org.schors.eva.protocol;
 
-import org.schors.eva.dialog.Dialog;
-import org.schors.eva.protocol.ProtocolManager;
+import org.schors.eva.dialog.PrivateDialog;
 
-public class ProtocolManagerImpl implements ProtocolManager {
-    @Override
-    public void registerProtocol(Class<?> clazz) {
+public class JabberPrivateDialog extends PrivateDialog {
 
+    public JabberPrivateDialog(String endpoint) {
+        super(endpoint);
     }
 
     @Override
-    public Dialog createDialog(String endpoint) {
-        return null;
+    public void sendMessage(String message) {
+
     }
 }

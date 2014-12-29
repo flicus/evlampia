@@ -22,19 +22,30 @@
  * SOFTWARE.
  */
 
-package org.schors.eva.core;
+package org.schors.eva.protocol;
 
-import org.schors.eva.dialog.Dialog;
-import org.schors.eva.protocol.ProtocolManager;
+import org.schors.eva.Application;
+import org.schors.eva.configuration.AbstractConfiguration;
+import org.schors.eva.configuration.ConfigurationListener;
 
-public class ProtocolManagerImpl implements ProtocolManager {
-    @Override
-    public void registerProtocol(Class<?> clazz) {
+public abstract class AbstractProtocolAdapter implements ConfigurationListener {
 
+    protected Application application;
+
+    public AbstractProtocolAdapter(Application application) {
+        this.application = application;
+    }
+
+    public <T extends AbstractConfiguration> T getConfiguration(Class<T> clazz) {
+        return application.getConfiguration().getSection(clazz);
     }
 
     @Override
-    public Dialog createDialog(String endpoint) {
-        return null;
+    public void onConfigurationChange() {
+        //override if you need
     }
+
+    public abstract void start();
+
+    public abstract void stop();
 }
