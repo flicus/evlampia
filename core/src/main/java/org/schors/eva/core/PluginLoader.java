@@ -23,8 +23,9 @@
 
 package org.schors.eva.core;
 
-import org.schors.eva.AbstractConfiguration;
-import org.schors.eva.AbstractFacility;
+
+import org.schors.eva.configuration.AbstractConfiguration;
+import org.schors.eva.facility.AbstractFacility;
 
 public interface PluginLoader {
 

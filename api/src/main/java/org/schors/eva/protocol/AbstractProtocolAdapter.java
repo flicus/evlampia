@@ -21,12 +21,30 @@
  * SOFTWARE.
  */
 
+package org.schors.eva.protocol;
 
+import org.schors.eva.Application;
+import org.schors.eva.configuration.AbstractConfiguration;
+import org.schors.eva.configuration.ConfigurationListener;
 
+public abstract class AbstractProtocolAdapter implements ConfigurationListener {
 
+    protected Application application;
 
-dependencies {
-    compile project(':api')
-    compile group: 'org.igniterealtime.smack', name: 'smack-tcp', version: '4.0.6'
-    compile group: 'org.igniterealtime.smack', name: 'smack-extensions', version: '4.0.6'
+    public AbstractProtocolAdapter(Application application) {
+        this.application = application;
+    }
+
+    public <T extends AbstractConfiguration> T getConfiguration(Class<T> clazz) {
+        return application.getConfiguration().getSection(clazz);
+    }
+
+    @Override
+    public void onConfigurationChange() {
+        //override if you need
+    }
+
+    public abstract void start();
+
+    public abstract void stop();
 }

@@ -21,12 +21,17 @@
  * SOFTWARE.
  */
 
+/**
+ * OperationHistoryInterface.java
+ *
+ * This file was auto-generated from WSDL
+ * by the Apache Axis 1.4 Apr 22, 2006 (06:55:48 PDT) WSDL2Java emitter.
+ */
 
+package org.schors.eva.facility.axis;
 
+public interface OperationHistoryInterface extends java.rmi.Remote {
+    public OperationHistoryRecord[] getOperationHistory(OperationHistoryRequest historyRequest, AuthorizationHeader authorizationHeader) throws java.rmi.RemoteException;
 
-
-dependencies {
-    compile project(':api')
-    compile group: 'org.igniterealtime.smack', name: 'smack-tcp', version: '4.0.6'
-    compile group: 'org.igniterealtime.smack', name: 'smack-extensions', version: '4.0.6'
+    public OperationHistoryRecord[] updateOperationData(UpdateOperationRequest updateRequest, AuthorizationHeader authorizationHeader) throws java.rmi.RemoteException;
 }

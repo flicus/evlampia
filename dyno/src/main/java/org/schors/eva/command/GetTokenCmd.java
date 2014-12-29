@@ -21,12 +21,24 @@
  * SOFTWARE.
  */
 
+package org.schors.eva.command;
 
+import org.schors.eva.facility.TokenManager;
 
+@Command(
+        dependsOn = {"token"},
+        group = "General",
+        longDescription = "",
+        name = "GetToken",
+        prefixes = {"!t"},
+        shortDescription = ""
+)
+public class GetTokenCmd {
 
-
-dependencies {
-    compile project(':api')
-    compile group: 'org.igniterealtime.smack', name: 'smack-tcp', version: '4.0.6'
-    compile group: 'org.igniterealtime.smack', name: 'smack-extensions', version: '4.0.6'
+    @CommandExecute
+    public void execute(CommandContext ctx) throws Exception {
+        TokenManager tokenManager = ctx.getFacility(TokenManager.class);
+        String token = tokenManager.makeNewToken(ctx.getWho());
+        ctx.getDialog().sendMessage("http://0xffff.net/eva/?evaid=" + token);
+    }
 }

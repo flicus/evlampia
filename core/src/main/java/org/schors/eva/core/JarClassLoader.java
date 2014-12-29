@@ -23,9 +23,13 @@
 
 package org.schors.eva.core;
 
-import org.schors.eva.AbstractConfiguration;
-import org.schors.eva.AbstractFacility;
-import org.schors.eva.annotations.*;
+import org.schors.eva.command.Command;
+import org.schors.eva.command.CommandExecute;
+import org.schors.eva.configuration.AbstractConfiguration;
+import org.schors.eva.configuration.ConfigurationSection;
+import org.schors.eva.facility.AbstractFacility;
+import org.schors.eva.facility.Facility;
+import org.schors.eva.protocol.ProtocolAdapter;
 
 import java.io.IOException;
 import java.io.InputStream;

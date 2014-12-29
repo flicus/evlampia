@@ -21,12 +21,25 @@
  * SOFTWARE.
  */
 
+package org.schors.eva;
 
+import org.schors.eva.command.CommandManager;
+import org.schors.eva.configuration.ConfigurationManager;
+import org.schors.eva.facility.FacilityManager;
+import org.schors.eva.protocol.ProtocolManager;
 
+import java.util.concurrent.ScheduledExecutorService;
 
+public interface Application {
+    public FacilityManager getFacilityManager();
 
-dependencies {
-    compile project(':api')
-    compile group: 'org.igniterealtime.smack', name: 'smack-tcp', version: '4.0.6'
-    compile group: 'org.igniterealtime.smack', name: 'smack-extensions', version: '4.0.6'
+    public CommandManager getCommandManager();
+
+    public ProtocolManager getProtocolManager();
+
+    public DependencyResolver getDependencyResolver();
+
+    public ScheduledExecutorService getThreadPool();
+
+    public ConfigurationManager getConfigurationManager();
 }

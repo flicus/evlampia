@@ -21,12 +21,10 @@
  * SOFTWARE.
  */
 
+package org.schors.eva.dialog;
 
-
-
-
-dependencies {
-    compile project(':api')
-    compile group: 'org.igniterealtime.smack', name: 'smack-tcp', version: '4.0.6'
-    compile group: 'org.igniterealtime.smack', name: 'smack-extensions', version: '4.0.6'
+public class DialogException extends Exception {
+    public DialogException(String message, Exception e) {
+        super(message, e);
+    }
 }

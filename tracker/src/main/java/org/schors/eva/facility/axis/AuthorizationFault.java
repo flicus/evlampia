@@ -21,12 +21,41 @@
  * SOFTWARE.
  */
 
+/**
+ * AuthorizationFault.java
+ *
+ * This file was auto-generated from WSDL
+ * by the Apache Axis 1.4 Apr 22, 2006 (06:55:48 PDT) WSDL2Java emitter.
+ */
 
+package org.schors.eva.facility.axis;
 
+public class AuthorizationFault extends org.apache.axis.AxisFault {
+    public String reason;
 
+    public AuthorizationFault() {
+    }
 
-dependencies {
-    compile project(':api')
-    compile group: 'org.igniterealtime.smack', name: 'smack-tcp', version: '4.0.6'
-    compile group: 'org.igniterealtime.smack', name: 'smack-extensions', version: '4.0.6'
+    public AuthorizationFault(Exception target) {
+        super(target);
+    }
+
+    public AuthorizationFault(String message, Throwable t) {
+        super(message, t);
+    }
+
+    public AuthorizationFault(String reason) {
+        this.reason = reason;
+    }
+
+    public String getReason() {
+        return this.reason;
+    }
+
+    /**
+     * Writes the exception data to the faultDetails
+     */
+    public void writeDetails(javax.xml.namespace.QName qname, org.apache.axis.encoding.SerializationContext context) throws java.io.IOException {
+        context.serialize(qname, null, reason);
+    }
 }

@@ -21,12 +21,25 @@
  * SOFTWARE.
  */
 
+package org.schors.eva.command;
 
+import org.schors.eva.facility.FeedReader;
 
+@Command(
+        dependsOn = {FeedReader.class},
+        group = "RSS",
+        longDescription = "",
+        name = "AddFeed",
+        prefixes = {},
+        shortDescription = ""
+)
+public class AddFeedCmd {
 
-
-dependencies {
-    compile project(':api')
-    compile group: 'org.igniterealtime.smack', name: 'smack-tcp', version: '4.0.6'
-    compile group: 'org.igniterealtime.smack', name: 'smack-extensions', version: '4.0.6'
+    @CommandExecute
+    public void execute(CommandContext ctx) throws Exception {
+        FeedReader reader = ctx.getFacility(FeedReader.class);
+        String url = ctx.getParsedCommand()[1];
+        String res = reader.addFeed(ctx.getWho(), url);
+        if (res != null) ctx.getDialog().sendMessage(res);
+    }
 }

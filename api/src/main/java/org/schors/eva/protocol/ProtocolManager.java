@@ -21,12 +21,12 @@
  * SOFTWARE.
  */
 
+package org.schors.eva.protocol;
 
+import org.schors.eva.dialog.Dialog;
 
+public interface ProtocolManager {
+    public void registerProtocol(Class<?> clazz);
 
-
-dependencies {
-    compile project(':api')
-    compile group: 'org.igniterealtime.smack', name: 'smack-tcp', version: '4.0.6'
-    compile group: 'org.igniterealtime.smack', name: 'smack-extensions', version: '4.0.6'
+    public Dialog createDialog(String endpoint);
 }

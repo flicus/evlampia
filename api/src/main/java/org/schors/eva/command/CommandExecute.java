@@ -21,12 +21,14 @@
  * SOFTWARE.
  */
 
+package org.schors.eva.command;
 
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-
-
-dependencies {
-    compile project(':api')
-    compile group: 'org.igniterealtime.smack', name: 'smack-tcp', version: '4.0.6'
-    compile group: 'org.igniterealtime.smack', name: 'smack-extensions', version: '4.0.6'
+@Target(value = ElementType.METHOD)
+@Retention(value = RetentionPolicy.RUNTIME)
+public @interface CommandExecute {
 }

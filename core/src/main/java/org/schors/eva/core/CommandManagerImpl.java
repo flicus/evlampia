@@ -1,16 +1,15 @@
 /*
  * The MIT License (MIT)
- *
  * Copyright (c) 2014 schors
  *
- *  Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
  *
- *  The above copyright notice and this permission notice shall be included in all
+ * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
@@ -25,28 +24,30 @@
 package org.schors.eva.core;
 
 import org.apache.log4j.Logger;
-import org.schors.eva.CommandContext;
-import org.schors.eva.CommandManager;
-import org.schors.eva.FacilityManager;
-import org.schors.eva.annotations.Command;
-import org.schors.eva.annotations.CommandExecute;
+import org.schors.eva.Application;
+import org.schors.eva.command.Command;
+import org.schors.eva.command.CommandContext;
+import org.schors.eva.command.CommandExecute;
+import org.schors.eva.command.CommandManager;
+import org.schors.eva.facility.AbstractFacility;
 
 import java.lang.reflect.Method;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 public class CommandManagerImpl implements CommandManager {
     private static final Logger log = Logger.getLogger(CommandManagerImpl.class);
     private Map<String, CommandAdapter> cache = new ConcurrentHashMap<>();
     private Set<CommandAdapter> commands = new LinkedHashSet<>();
-    private ScheduledExecutorService executor = Executors.newScheduledThreadPool(3);
-    private FacilityManager facilityManager;
+    private Application application;
 
-    public CommandManagerImpl(FacilityManager facilityManager) {
-        this.facilityManager = facilityManager;
+    public CommandManagerImpl(Application application) {
+        this.application = application;
     }
 
     public void addNewCommand(final Class<?> command) {
@@ -54,7 +55,7 @@ public class CommandManagerImpl implements CommandManager {
         System.out.println("CommandManagerImpl::addNewCommand:: " + command);
         CommandAdapter commandAdapter = null;
         String[] prefixes = null;
-        String[] depends = null;
+        Class<? extends AbstractFacility>[] depends = null;
         if (command.isAnnotationPresent(Command.class)) {
             prefixes = command.getAnnotation(Command.class).prefixes();
             depends = command.getAnnotation(Command.class).dependsOn();
@@ -65,7 +66,7 @@ public class CommandManagerImpl implements CommandManager {
 
         if (depends != null && depends.length > 0) {
             System.out.println("CommandManagerImpl:: dependecies wait");
-            Future future = executor.submit(new DependencyResolver(depends, (FacilityManagerImpl) facilityManager));
+            Future future = application.getDependencyResolver().resolve(depends);
             try {
                 future.get();
                 if (log.isDebugEnabled()) {
@@ -110,7 +111,7 @@ public class CommandManagerImpl implements CommandManager {
             }
             if (adapter != null) {
                 final CommandAdapter a = adapter;
-                executor.execute(new Runnable() {
+                application.getThreadPool().execute(new Runnable() {
                     @Override
                     public void run() {
                         a.execute(context);

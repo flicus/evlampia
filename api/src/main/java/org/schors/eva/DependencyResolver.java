@@ -21,12 +21,14 @@
  * SOFTWARE.
  */
 
+package org.schors.eva;
 
+import org.schors.eva.facility.AbstractFacility;
 
+import java.util.concurrent.Future;
 
+public interface DependencyResolver {
+    public Future resolve(Class<? extends AbstractFacility>[] dependencies);
 
-dependencies {
-    compile project(':api')
-    compile group: 'org.igniterealtime.smack', name: 'smack-tcp', version: '4.0.6'
-    compile group: 'org.igniterealtime.smack', name: 'smack-extensions', version: '4.0.6'
+    public <T extends AbstractFacility> void facilityResolved(Class<T> facility);
 }

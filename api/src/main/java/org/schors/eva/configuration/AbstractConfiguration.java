@@ -21,12 +21,22 @@
  * SOFTWARE.
  */
 
+package org.schors.eva.configuration;
 
+import javax.xml.bind.annotation.XmlRootElement;
+import java.util.HashMap;
+import java.util.Map;
 
+@XmlRootElement
+public class AbstractConfiguration {
 
+    private Map<String, String> properties = new HashMap<>();
 
-dependencies {
-    compile project(':api')
-    compile group: 'org.igniterealtime.smack', name: 'smack-tcp', version: '4.0.6'
-    compile group: 'org.igniterealtime.smack', name: 'smack-extensions', version: '4.0.6'
+    public Map<String, String> getProperties() {
+        return properties;
+    }
+
+    public void setProperties(Map<String, String> properties) {
+        this.properties = properties;
+    }
 }

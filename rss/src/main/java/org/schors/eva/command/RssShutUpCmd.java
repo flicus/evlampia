@@ -21,12 +21,24 @@
  * SOFTWARE.
  */
 
+package org.schors.eva.command;
 
+import org.schors.eva.facility.FeedReader;
 
+@Command(
+        dependsOn = {"feedReader"},
+        group = "RSS",
+        longDescription = "",
+        name = "RssShutUp",
+        prefixes = {},
+        shortDescription = ""
+)
+public class RssShutUpCmd {
 
-
-dependencies {
-    compile project(':api')
-    compile group: 'org.igniterealtime.smack', name: 'smack-tcp', version: '4.0.6'
-    compile group: 'org.igniterealtime.smack', name: 'smack-extensions', version: '4.0.6'
+    @CommandExecute
+    public void execute(CommandContext ctx) throws Exception {
+        FeedReader feedReader = ctx.getFacility(FeedReader.class);
+        feedReader.setSilent(!feedReader.isSilent());
+        ctx.getDialog().sendMessage(feedReader.isSilent() ? "Молчу, молчу" : "Вот теперь наговорюсь!");
+    }
 }

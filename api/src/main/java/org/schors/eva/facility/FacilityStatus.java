@@ -21,12 +21,15 @@
  * SOFTWARE.
  */
 
+package org.schors.eva.facility;
 
-
-
-
-dependencies {
-    compile project(':api')
-    compile group: 'org.igniterealtime.smack', name: 'smack-tcp', version: '4.0.6'
-    compile group: 'org.igniterealtime.smack', name: 'smack-extensions', version: '4.0.6'
+public enum FacilityStatus {
+    INITIAL,
+    RESOLVING,
+    READY,
+    STARTING,
+    STARTED,
+    STOPPING,
+    STOPPED,
+    ERROR
 }

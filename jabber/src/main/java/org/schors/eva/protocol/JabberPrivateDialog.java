@@ -21,12 +21,18 @@
  * SOFTWARE.
  */
 
+package org.schors.eva.protocol;
 
+import org.schors.eva.dialog.PrivateDialog;
 
+public class JabberPrivateDialog extends PrivateDialog {
 
+    public JabberPrivateDialog(String endpoint) {
+        super(endpoint);
+    }
 
-dependencies {
-    compile project(':api')
-    compile group: 'org.igniterealtime.smack', name: 'smack-tcp', version: '4.0.6'
-    compile group: 'org.igniterealtime.smack', name: 'smack-extensions', version: '4.0.6'
+    @Override
+    public void sendMessage(String message) {
+
+    }
 }

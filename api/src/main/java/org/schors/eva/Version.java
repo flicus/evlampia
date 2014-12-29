@@ -21,12 +21,13 @@
  * SOFTWARE.
  */
 
+package org.schors.eva;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 
-
-
-dependencies {
-    compile project(':api')
-    compile group: 'org.igniterealtime.smack', name: 'smack-tcp', version: '4.0.6'
-    compile group: 'org.igniterealtime.smack', name: 'smack-extensions', version: '4.0.6'
+@Retention(value = RetentionPolicy.RUNTIME)
+public @interface Version {
+    int major();
+    int minor();
 }

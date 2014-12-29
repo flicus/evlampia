@@ -21,12 +21,26 @@
  * SOFTWARE.
  */
 
+package org.schors.eva.facility.fedex;
 
+public class FdxRequestWrapper {
+    private TrackPackagesRequest TrackPackagesRequest;
 
+    public FdxRequestWrapper() {
+    }
 
+    public TrackPackagesRequest getTrackPackagesRequest() {
+        return TrackPackagesRequest;
+    }
 
-dependencies {
-    compile project(':api')
-    compile group: 'org.igniterealtime.smack', name: 'smack-tcp', version: '4.0.6'
-    compile group: 'org.igniterealtime.smack', name: 'smack-extensions', version: '4.0.6'
+    public void setTrackPackagesRequest(TrackPackagesRequest trackPackagesRequest) {
+        this.TrackPackagesRequest = trackPackagesRequest;
+    }
+
+    @Override
+    public String toString() {
+        return "FdxRequestWrapper{" +
+                "TrackPackagesRequest=" + TrackPackagesRequest +
+                '}';
+    }
 }

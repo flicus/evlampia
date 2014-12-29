@@ -21,12 +21,46 @@
  * SOFTWARE.
  */
 
+package org.schors.eva.facility.fedex;
 
+public class TrackNumberInfo {
+    private String trackingNumber;
+    private String trackingQualifier;
+    private String trackingCarrier;
 
+    public TrackNumberInfo() {
+    }
 
+    public String getTrackingNumber() {
+        return trackingNumber;
+    }
 
-dependencies {
-    compile project(':api')
-    compile group: 'org.igniterealtime.smack', name: 'smack-tcp', version: '4.0.6'
-    compile group: 'org.igniterealtime.smack', name: 'smack-extensions', version: '4.0.6'
+    public void setTrackingNumber(String trackingNumber) {
+        this.trackingNumber = trackingNumber;
+    }
+
+    public String getTrackingQualifier() {
+        return trackingQualifier;
+    }
+
+    public void setTrackingQualifier(String trackingQualifier) {
+        this.trackingQualifier = trackingQualifier;
+    }
+
+    public String getTrackingCarrier() {
+        return trackingCarrier;
+    }
+
+    public void setTrackingCarrier(String trackingCarrier) {
+        this.trackingCarrier = trackingCarrier;
+    }
+
+    @Override
+    public String toString() {
+        return "TrackNumberInfo{" +
+                "trackingNumber='" + trackingNumber + '\'' +
+                ", trackingQualifier='" + trackingQualifier + '\'' +
+                ", trackingCarrier='" + trackingCarrier + '\'' +
+                '}';
+    }
 }

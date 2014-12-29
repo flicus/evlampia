@@ -21,19 +21,56 @@
  * SOFTWARE.
  */
 
-package org.schors.eva.core;
+package org.schors.eva.facility.fedex;
 
-import org.schors.eva.dialog.Dialog;
-import org.schors.eva.protocol.ProtocolManager;
+public class MultiStat {
+    private String multiPiec;
+    private String multiTm;
+    private String multiDispTm;
+    private String multiSta;
 
-public class ProtocolManagerImpl implements ProtocolManager {
-    @Override
-    public void registerProtocol(Class<?> clazz) {
+    public MultiStat() {
+    }
 
+    public String getMultiPiec() {
+        return multiPiec;
+    }
+
+    public void setMultiPiec(String multiPiec) {
+        this.multiPiec = multiPiec;
+    }
+
+    public String getMultiTm() {
+        return multiTm;
+    }
+
+    public void setMultiTm(String multiTm) {
+        this.multiTm = multiTm;
+    }
+
+    public String getMultiDispTm() {
+        return multiDispTm;
+    }
+
+    public void setMultiDispTm(String multiDispTm) {
+        this.multiDispTm = multiDispTm;
+    }
+
+    public String getMultiSta() {
+        return multiSta;
+    }
+
+    public void setMultiSta(String multiSta) {
+        this.multiSta = multiSta;
     }
 
     @Override
-    public Dialog createDialog(String endpoint) {
-        return null;
+    public String toString() {
+        return "MultiStat{" +
+                "multiPiec='" + multiPiec + '\'' +
+                ", multiTm='" + multiTm + '\'' +
+                ", multiDispTm='" + multiDispTm + '\'' +
+                ", multiSta='" + multiSta + '\'' +
+                '}';
     }
 }

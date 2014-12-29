@@ -21,12 +21,22 @@
  * SOFTWARE.
  */
 
+package org.schors.eva.command;
+
+@Command(
+        dependsOn = {},
+        group = "General",
+        name = "Help",
+        shortDescription = "",
+        longDescription = "",
+        prefixes = {"!?"}
+)
+public class HelpCmd {
+
+    @CommandExecute
+    public void execute(CommandContext ctx) {
 
 
+    }
 
-
-dependencies {
-    compile project(':api')
-    compile group: 'org.igniterealtime.smack', name: 'smack-tcp', version: '4.0.6'
-    compile group: 'org.igniterealtime.smack', name: 'smack-extensions', version: '4.0.6'
 }

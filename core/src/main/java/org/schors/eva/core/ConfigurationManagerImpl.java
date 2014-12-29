@@ -25,8 +25,8 @@ package org.schors.eva.core;
 
 import org.apache.log4j.Logger;
 import org.schors.eva.AbstractConfiguration;
-import org.schors.eva.ConfigurationManager;
 import org.schors.eva.RootConfiguration;
+import org.schors.eva.configuration.ConfigurationManager;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;

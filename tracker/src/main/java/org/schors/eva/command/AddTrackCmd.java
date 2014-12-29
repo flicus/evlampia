@@ -21,12 +21,25 @@
  * SOFTWARE.
  */
 
+package org.schors.eva.command;
 
+import org.schors.eva.facility.TracksManager;
 
+@Command(
+        dependsOn = {"trackManager"},
+        group = "Почта",
+        longDescription = "",
+        name = "AddTrack",
+        prefixes = {},
+        shortDescription = "")
+public class AddTrackCmd {
 
-
-dependencies {
-    compile project(':api')
-    compile group: 'org.igniterealtime.smack', name: 'smack-tcp', version: '4.0.6'
-    compile group: 'org.igniterealtime.smack', name: 'smack-extensions', version: '4.0.6'
+    @CommandExecute
+    public void execute(CommandContext ctx) {
+        TracksManager tracksManager = ctx.getFacility(TracksManager.class);
+        String[] items = ctx.getParsedCommand();
+        if (items.length >= 4) {
+            tracksManager.addTrack(items[1], items[2], items[3]);
+        }
+    }
 }

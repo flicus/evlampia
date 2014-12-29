@@ -21,12 +21,37 @@
  * SOFTWARE.
  */
 
+package org.schors.eva.facility.fedex;
 
 
+public class AssociationInfo {
+    private TrackingNumberInfo trackingNumberInfo;
+    private String associatedType;
 
+    public AssociationInfo() {
+    }
 
-dependencies {
-    compile project(':api')
-    compile group: 'org.igniterealtime.smack', name: 'smack-tcp', version: '4.0.6'
-    compile group: 'org.igniterealtime.smack', name: 'smack-extensions', version: '4.0.6'
+    public TrackingNumberInfo getTrackingNumberInfo() {
+        return trackingNumberInfo;
+    }
+
+    public void setTrackingNumberInfo(TrackingNumberInfo trackingNumberInfo) {
+        this.trackingNumberInfo = trackingNumberInfo;
+    }
+
+    public String getAssociatedType() {
+        return associatedType;
+    }
+
+    public void setAssociatedType(String associatedType) {
+        this.associatedType = associatedType;
+    }
+
+    @Override
+    public String toString() {
+        return "AssociationInfo{" +
+                "trackingNumberInfo=" + trackingNumberInfo +
+                ", associatedType='" + associatedType + '\'' +
+                '}';
+    }
 }

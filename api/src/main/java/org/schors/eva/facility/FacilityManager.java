@@ -21,12 +21,24 @@
  * SOFTWARE.
  */
 
+package org.schors.eva.facility;
 
 
+import org.schors.eva.configuration.ConfigurationManager;
 
+public interface FacilityManager {
 
-dependencies {
-    compile project(':api')
-    compile group: 'org.igniterealtime.smack', name: 'smack-tcp', version: '4.0.6'
-    compile group: 'org.igniterealtime.smack', name: 'smack-extensions', version: '4.0.6'
+    public String registerFacility(Class<? extends AbstractFacility> facility);
+
+    public void startFacility(Class<? extends AbstractFacility> facility);
+
+    public void stopFacility(Class<? extends AbstractFacility> facility);
+
+    public <T extends AbstractFacility> T getFacility(Class<T> type);
+
+    public <T extends AbstractFacility> T getFacilityForUsing(Class<T> type);
+
+    public void stop();
+
+    public ConfigurationManager getConfigurationManager();
 }

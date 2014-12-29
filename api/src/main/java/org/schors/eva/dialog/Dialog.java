@@ -21,12 +21,19 @@
  * SOFTWARE.
  */
 
+package org.schors.eva.dialog;
 
+public abstract class Dialog {
 
+    private String endpoint;
 
+    public Dialog(String endpoint) {
+        this.endpoint = endpoint;
+    }
 
-dependencies {
-    compile project(':api')
-    compile group: 'org.igniterealtime.smack', name: 'smack-tcp', version: '4.0.6'
-    compile group: 'org.igniterealtime.smack', name: 'smack-extensions', version: '4.0.6'
+    public String getEndpoint() {
+        return endpoint;
+    }
+
+    public abstract void sendMessage(String message) throws DialogException;
 }

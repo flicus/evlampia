@@ -21,12 +21,26 @@
  * SOFTWARE.
  */
 
+package org.schors.eva.command;
 
+import org.schors.eva.dialog.GroupDialog;
 
+@Command(
+        dependsOn = {},
+        group = "",
+        longDescription = "",
+        name = "ChangeNick",
+        prefixes = {},
+        shortDescription = ""
 
+)
+public class ChangeNickCmd {
 
-dependencies {
-    compile project(':api')
-    compile group: 'org.igniterealtime.smack', name: 'smack-tcp', version: '4.0.6'
-    compile group: 'org.igniterealtime.smack', name: 'smack-extensions', version: '4.0.6'
+    @CommandExecute
+    public void execute(CommandContext ctx) throws Exception {
+        if (!(ctx.getDialog() instanceof GroupDialog)) {
+            ctx.getDialog().sendMessage("Только групповой чат");
+        }
+        ((GroupDialog) ctx.getDialog()).changeNick(ctx.getParsedCommand()[1]);
+    }
 }

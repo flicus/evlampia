@@ -21,12 +21,10 @@
  * SOFTWARE.
  */
 
+package org.schors.eva.command;
 
+public interface CommandManager {
+    public void addNewCommand(Class<?> command);
 
-
-
-dependencies {
-    compile project(':api')
-    compile group: 'org.igniterealtime.smack', name: 'smack-tcp', version: '4.0.6'
-    compile group: 'org.igniterealtime.smack', name: 'smack-extensions', version: '4.0.6'
+    public void processCommand(CommandContext context);
 }
