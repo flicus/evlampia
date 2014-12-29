@@ -1,6 +1,5 @@
 /*
  * The MIT License (MIT)
- *
  * Copyright (c) 2014 schors
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -24,6 +23,8 @@
 
 package org.schors.eva.annotations;
 
+import org.schors.eva.AbstractFacility;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -42,5 +43,5 @@ public @interface Command {
 
     String[] prefixes();
 
-    String[] dependsOn();
+    Class<? extends AbstractFacility>[] dependsOn();
 }

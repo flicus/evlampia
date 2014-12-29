@@ -29,7 +29,6 @@ public abstract class AbstractFacility {
     protected String statusMessage = "ok";
     protected FacilityManager facilityManager;
 
-
     public AbstractFacility(FacilityManager facilityManager) {
         this.facilityManager = facilityManager;
     }

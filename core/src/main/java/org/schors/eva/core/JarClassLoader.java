@@ -23,10 +23,9 @@
 
 package org.schors.eva.core;
 
-import org.schors.eva.annotations.Command;
-import org.schors.eva.annotations.CommandExecute;
-import org.schors.eva.annotations.Facility;
-import org.schors.eva.annotations.ProtocolAdapter;
+import org.schors.eva.AbstractConfiguration;
+import org.schors.eva.AbstractFacility;
+import org.schors.eva.annotations.*;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -82,7 +81,7 @@ public class JarClassLoader extends ClassLoader {
             if (clazz != null) {
                 if (clazz.isAnnotationPresent(Facility.class)) {
                     cache.put(className, clazz);
-                    pluginLoader.onFacilityDiscovered(clazz);
+                    pluginLoader.onFacilityDiscovered((Class<? extends AbstractFacility>) clazz);
                 } else if (clazz.isAnnotationPresent(Command.class)) {
                     boolean hasExecute = false;
                     for (Method method : clazz.getMethods()) {
@@ -98,6 +97,9 @@ public class JarClassLoader extends ClassLoader {
                 } else if (clazz.isAnnotationPresent(ProtocolAdapter.class)) {
                     cache.put(className, clazz);
                     pluginLoader.onProtocolDiscovered(clazz);
+                } else if (clazz.isAnnotationPresent(ConfigurationSection.class)) {
+                    cache.put(className, clazz);
+                    pluginLoader.onConfigurationDiscovered((Class<? extends AbstractConfiguration>) clazz);
                 }
             }
         }

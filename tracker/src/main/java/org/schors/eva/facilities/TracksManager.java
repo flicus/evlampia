@@ -46,7 +46,10 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
-@Facility(name = "trackManager", version = @Version(major = 1, minor = 0), dependsOn = {})
+@Facility(
+        name = "trackManager",
+        version = @Version(major = 1, minor = 0),
+        dependsOn = {EvaExecutors.class, Jedis.class})
 public class TracksManager extends AbstractFacility {
 
     private static final Logger log = Logger.getLogger(TracksManager.class);

@@ -42,7 +42,7 @@ import java.util.regex.Pattern;
 @Facility(
         name = "logWriter",
         version = @Version(major = 1, minor = 0),
-        dependsOn = {"executors"})
+        dependsOn = {EvaExecutors.class})
 public class LogWriter extends AbstractFacility {
 
     public static final Logger log = Logger.getLogger(LogWriter.class);
@@ -88,8 +88,8 @@ public class LogWriter extends AbstractFacility {
 
     private static final int roomCacheLimit = 100;
     private final ReentrantLock lock = new ReentrantLock();
-    private Map<String, File> files = new ConcurrentHashMap<String, File>();
-    private Map<String, Queue<LogEntry>> cache = new ConcurrentHashMap<String, Queue<LogEntry>>();
+    private Map<String, File> files = new ConcurrentHashMap<>();
+    private Map<String, Queue<LogEntry>> cache = new ConcurrentHashMap<>();
     private ThreadLocal<Calendar> calendar = new ThreadLocal<Calendar>() {
 
         @Override

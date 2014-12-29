@@ -38,5 +38,5 @@ public interface FacilityManager {
 
     public void stop();
 
-    public EvaConfiguration getConfiguration();
+    public ConfigurationManager getConfigurationManager();
 }

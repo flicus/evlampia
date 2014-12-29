@@ -42,7 +42,7 @@ import java.util.concurrent.TimeUnit;
 @Facility(
         name = "token",
         version = @Version(major = 1, minor = 0),
-        dependsOn = {"executors"}
+        dependsOn = {EvaExecutors.class}
 )
 public class TokenManager extends AbstractFacility {
 

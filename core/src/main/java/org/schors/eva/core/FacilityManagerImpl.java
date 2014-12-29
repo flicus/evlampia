@@ -25,7 +25,7 @@ package org.schors.eva.core;
 
 import org.apache.log4j.Logger;
 import org.schors.eva.AbstractFacility;
-import org.schors.eva.EvaConfiguration;
+import org.schors.eva.ConfigurationManager;
 import org.schors.eva.FacilityManager;
 import org.schors.eva.FacilityStatus;
 import org.schors.eva.annotations.Facility;
@@ -38,11 +38,11 @@ import java.util.concurrent.*;
 public class FacilityManagerImpl implements FacilityManager {
     private static final Logger log = Logger.getLogger(FacilityManagerImpl.class);
     private Map<Class, AbstractFacility> facilities = new ConcurrentHashMap<>();
-    private Map<AbstractFacility, List<DependencyListener>> listeners = new ConcurrentHashMap<>();
+    private Map<Class, List<DependencyListener>> listeners = new ConcurrentHashMap<>();
     private ScheduledExecutorService pool = Executors.newScheduledThreadPool(3);
-    private EvaConfiguration configuration;
+    private ConfigurationManager configuration;
 
-    public FacilityManagerImpl(EvaConfiguration configuration) {
+    public FacilityManagerImpl(ConfigurationManager configuration) {
         this.configuration = configuration;
     }
 
@@ -61,7 +61,7 @@ public class FacilityManagerImpl implements FacilityManager {
     }
 
     @Override
-    public EvaConfiguration getConfiguration() {
+    public ConfigurationManager getConfigurationManager() {
         return configuration;
     }
 
@@ -71,7 +71,7 @@ public class FacilityManagerImpl implements FacilityManager {
             log.debug("registerFacility::" + facilityClass);
         }
         String name = null;
-        String[] depends = null;
+        Class<? extends AbstractFacility>[] depends = null;
         if (facilityClass.isAnnotationPresent(Facility.class)) {
             name = facilityClass.getAnnotation(Facility.class).name();
             depends = facilityClass.getAnnotation(Facility.class).dependsOn();
@@ -119,13 +119,13 @@ public class FacilityManagerImpl implements FacilityManager {
                 @Override
                 public void run() {
                     facility.start();
-                    facilityResolved(facility);
+                    facilityResolved(facilityClass);
                 }
             });
         }
     }
 
-    private void facilityResolved(AbstractFacility facility) {
+    private void facilityResolved(Class<? extends AbstractFacility> facility) {
         List<DependencyListener> list = listeners.remove(facility);
         if (list != null && list.size() > 0) {
             for (DependencyListener listener : list) {
@@ -158,7 +158,7 @@ public class FacilityManagerImpl implements FacilityManager {
         return (facility != null && FacilityStatus.STARTED.equals(facility.getStatus())) ? facility : null;
     }
 
-    public Map<AbstractFacility, List<DependencyListener>> getListeners() {
+    public Map<Class, List<DependencyListener>> getListeners() {
         return listeners;
     }
 }

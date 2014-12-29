@@ -23,6 +23,8 @@
 
 package org.schors.eva;
 
+import org.apache.log4j.Logger;
+
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -33,7 +35,10 @@ import java.util.List;
 import java.util.Map;
 
 @XmlRootElement(name = "configuration")
-public class EvaConfiguration extends AbstractConfiguration {
+public class RootConfiguration extends AbstractConfiguration {
+
+    @XmlTransient
+    private static final Logger log = Logger.getLogger(RootConfiguration.class);
 
     @XmlTransient
     private static final long startTime = System.currentTimeMillis();
@@ -43,6 +48,10 @@ public class EvaConfiguration extends AbstractConfiguration {
 
     public static long getStartTime() {
         return startTime;
+    }
+
+    public Map<Class, AbstractConfiguration> getModulesExt() {
+        return modules;
     }
 
     public <T extends AbstractConfiguration> void putSection(T section) {
@@ -70,4 +79,6 @@ public class EvaConfiguration extends AbstractConfiguration {
     public String getVersion() {
         return version;
     }
+
+
 }

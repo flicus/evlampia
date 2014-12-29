@@ -30,13 +30,11 @@ public class Main implements PluginLoader {
     private CommandManager commandManager;
     private PluginManager pluginManager;
     private ProtocolManager protocolManager;
-    private EvaConfiguration configuration;
-
-
+    private ConfigurationManager configurationManager;
 
     public Main() {
-        configuration = new EvaConfiguration();
-        facilityManager = new FacilityManagerImpl(configuration);
+        configurationManager = new ConfigurationManagerImpl();
+        facilityManager = new FacilityManagerImpl(configurationManager);
         commandManager = new CommandManagerImpl(facilityManager);
         pluginManager = new PluginManager(this);
         protocolManager = new ProtocolManagerImpl();
@@ -61,6 +59,24 @@ public class Main implements PluginLoader {
     @Override
     public void onProtocolDiscovered(Class<?> clazz) {
         protocolManager.registerProtocol(clazz);
+    }
+
+    @Override
+    public void onConfigurationDiscovered(Class<? extends AbstractConfiguration> clazz) {
+        configurationManager.registerConfiguration(clazz);
+    }
+
+    @Override
+    public void onStartLoading() {
+
+    }
+
+    @Override
+    public void onStopLoading() {
+        configurationManager.load();
+        if (configurationManager.needUpdate()) {
+            configurationManager.save();
+        }
     }
 
     public void run() {

@@ -26,5 +26,5 @@ package org.schors.eva.core;
 import org.schors.eva.AbstractFacility;
 
 public interface DependencyListener {
-    public void onResolve(AbstractFacility facility);
+    public void onResolve(Class<? extends AbstractFacility> facility);
 }

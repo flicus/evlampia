@@ -21,23 +21,15 @@
  * SOFTWARE.
  */
 
-package org.schors.eva.core;
+package org.schors.eva;
 
-import org.schors.eva.AbstractConfiguration;
-import org.schors.eva.AbstractFacility;
+public interface ConfigurationManager {
 
-public interface PluginLoader {
+    public void registerConfiguration(Class<? extends AbstractConfiguration> configuration);
 
-    public void onFacilityDiscovered(Class<? extends AbstractFacility> clazz);
+    public void save();
 
-    public void onCommandDiscovered(Class<?> clazz);
+    public void load();
 
-    public void onProtocolDiscovered(Class<?> clazz);
-
-    public void onConfigurationDiscovered(Class<? extends AbstractConfiguration> clazz);
-
-    public void onStartLoading();
-
-    public void onStopLoading();
-
+    public boolean needUpdate();
 }

@@ -1,16 +1,15 @@
 /*
  * The MIT License (MIT)
- *
  * Copyright (c) 2014 schors
  *
- *  Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
  *
- *  The above copyright notice and this permission notice shall be included in all
+ * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
@@ -24,26 +23,28 @@
 
 package org.schors.eva.core;
 
+import org.schors.eva.AbstractFacility;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class DependencyResolver implements Runnable {
 
-    private List<String> dependencies = new CopyOnWriteArrayList<>();
+    private List<Class<? extends AbstractFacility>> dependencies = new CopyOnWriteArrayList<>();
 
-    public DependencyResolver(String[] depends, FacilityManagerImpl facilityManager) {
-        for (String dep : depends) {
+    public DependencyResolver(Class<? extends AbstractFacility>[] depends, FacilityManagerImpl facilityManager) {
+        for (Class<? extends AbstractFacility> dep : depends) {
             dependencies.add(dep);
-            List<DependencyListener> list = (List<DependencyListener>) facilityManager.getListeners().get(dep);
+            List<DependencyListener> list = facilityManager.getListeners().get(dep);
             if (list == null) {
                 list = new ArrayList<>();
                 facilityManager.getListeners().put(dep, list);
             }
             list.add(new DependencyListener() {
                 @Override
-                public void onResolve(String dependency) {
-                    dependencies.remove(dependency);
+                public void onResolve(Class<? extends AbstractFacility> facility) {
+                    dependencies.remove(facility);
                 }
             });
         }
