@@ -1,15 +1,16 @@
 /*
  * The MIT License (MIT)
+ *
  * Copyright (c) 2014 schors
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ *  Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
+ *  The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
@@ -24,10 +25,11 @@
 package org.schors.eva.facility;
 
 import com.google.gson.Gson;
-import com.google.gson.internal.StringMap;
+import com.google.gson.reflect.TypeToken;
 import org.apache.log4j.Logger;
 import org.schors.eva.Application;
 import org.schors.eva.Version;
+import org.schors.eva.dialog.Dialog;
 import org.schors.eva.facility.axis.*;
 import org.schors.eva.facility.fedex.FdxResponseWrapper;
 
@@ -35,6 +37,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.lang.reflect.Type;
 import java.net.URL;
 import java.net.URLConnection;
 import java.rmi.RemoteException;
@@ -53,12 +56,13 @@ public class TracksManager extends AbstractFacility {
 
     //RC213094378HK
     private static final Pattern pattern = Pattern.compile("\\D{2}\\d{9}\\D{2}");
+    private Type trackType = new TypeToken<HashMap<String, HashMap<String, NamedTrackList>>>() {
+    }.getType();
 
-    private Map<String, NamedTrackList> list = new ConcurrentHashMap<String, NamedTrackList>();
+
+    private Map<String, Map<String, NamedTrackList>> list = new ConcurrentHashMap<>();
     private WebOperationHistoryStub binding = null;
     private Gson gson;
-
-    private Sender sender = null;
 
     public TracksManager(Application application) {
         super(application);
@@ -88,15 +92,11 @@ public class TracksManager extends AbstractFacility {
         //executor.shutdown();
     }
 
-    public void registerSender(Sender sender) {
-        this.sender = sender;
-    }
-
     public void save() {
         Jedis jedis = getFacility(Jedis.class);
         try {
-            String json = gson.toJson(list);
-            jedis.getJedis().hset("tracks", listName, json);
+            String json = gson.toJson(list, trackType);
+            jedis.getJedis().set("tracks", json);
         } catch (Exception e) {
             log.error(e, e);
         }
@@ -107,53 +107,59 @@ public class TracksManager extends AbstractFacility {
 
         list.clear();
         try {
-            String json = jedis.getJedis().hget("tracks", listName);
-            Map<String, StringMap> _res = gson.fromJson(json, Map.class);
-            Map<String, NamedTrackList> res = new HashMap<>();
-            for (Map.Entry<String, StringMap> entry : _res.entrySet()) {
-                NamedTrackList namedTrackList = new NamedTrackList(entry.getKey());
-                res.put(entry.getKey(), namedTrackList);
-
-                StringMap map = (StringMap) entry.getValue().get("tracks");
-                for (Object _trackEntry : map.entrySet()) {
-                    Map.Entry trackEntry = (Map.Entry) _trackEntry;
-                    String n1 = (String) trackEntry.getKey();
-                    StringMap bean = (StringMap) trackEntry.getValue();
-                    namedTrackList.addTrack(new Track((String) bean.get("name"), (String) bean.get("id")));
+            String json = jedis.getJedis().get("tracks");
+            HashMap<String, HashMap<String, NamedTrackList>> _res = gson.fromJson(json, trackType);
+            for (Map.Entry<String, HashMap<String, NamedTrackList>> entry : _res.entrySet()) {
+                ConcurrentHashMap<String, NamedTrackList> a1 = new ConcurrentHashMap<>();
+                list.put(entry.getKey(), a1);
+                for (Map.Entry<String, NamedTrackList> entry2 : entry.getValue().entrySet()) {
+                    a1.put(entry2.getKey(), entry2.getValue());
                 }
             }
-            list.putAll(res);
         } catch (Exception e) {
             log.error(e, e);
         }
 
         StringBuilder sb = new StringBuilder();
         sb.append("{");
-        for (Map.Entry<String, NamedTrackList> entry : list.entrySet()) {
-            sb.append(entry.getKey()).append(" : ").append(entry.getValue().toString()).append(", ");
+        for (Map.Entry<String, Map<String, NamedTrackList>> entry : list.entrySet()) {
+            sb.append("{").append(entry.getKey()).append(",");
+            for (Map.Entry<String, NamedTrackList> entry2 : entry.getValue().entrySet()) {
+                sb.append(entry2.getKey()).append(" : ").append(entry2.getValue().toString()).append(", ");
+            }
+            sb.append("}");
         }
         sb.append("}");
         log.debug("### Loaded list: " + sb.toString());
     }
 
-    public void addTrack(String listName, String newTrackId, String newTrackName) {
-        log.debug(String.format("addTrack: %s, %s, %s", listName, newTrackId, newTrackName));
-        NamedTrackList listToAddTo = list.get(listName);
+    public void addTrack(String endpoint, String listName, String newTrackId, String newTrackName) {
+        log.debug(String.format("addTrack: %s, %s, %s, %s", endpoint, listName, newTrackId, newTrackName));
+        Map<String, NamedTrackList> endpointList = list.get(endpoint);
+        if (endpointList == null) {
+            endpointList = new ConcurrentHashMap<>();
+            list.put(endpoint, endpointList);
+        }
+
+        NamedTrackList listToAddTo = endpointList.get(listName);
         if (listToAddTo == null) {
             log.debug("no list exist, creating new");
             listToAddTo = new NamedTrackList(listName);
-            list.put(listName, listToAddTo);
+            endpointList.put(listName, listToAddTo);
         }
         Track newTrack = new Track(newTrackName, newTrackId);
         checkTrack(newTrack);
-        log.debug("adding new track");
+        log.debug("adding new track: " + newTrack);
         listToAddTo.addTrack(newTrack);
         save();
     }
 
-    public void deleteTrack(String listName, String trackId) {
-        log.debug(String.format("deleteTrack: %s, %s", listName, trackId));
-        NamedTrackList listToRemoveFrom = list.get(listName);
+    public void deleteTrack(String endpoint, String listName, String trackId) {
+        log.debug(String.format("deleteTrack: %s, %s, %s", endpoint, listName, trackId));
+        Map<String, NamedTrackList> endpointList = list.get(endpoint);
+        if (endpointList == null) return;
+
+        NamedTrackList listToRemoveFrom = endpointList.get(listName);
         if (listToRemoveFrom != null) {
             listToRemoveFrom.removeTrack(trackId);
             if (listToRemoveFrom.size() == 0) {
@@ -168,10 +174,15 @@ public class TracksManager extends AbstractFacility {
         save();
     }
 
-    public List<String> getStatus(String listName) {
-        log.debug(String.format("getStatus: %s", listName));
+    public List<String> getStatus(String endpoint, String listName) {
+        log.debug(String.format("getStatus: %s, %s", endpoint, listName));
         List<String> result = null;
-        NamedTrackList listToCheck = list.get(listName);
+        Map<String, NamedTrackList> endpointList = list.get(endpoint);
+        if (endpointList == null) {
+            return result;
+        }
+
+        NamedTrackList listToCheck = endpointList.get(listName);
         if (listToCheck != null) {
             log.debug("named list found: " + listToCheck.size());
             result = new ArrayList<String>();
@@ -265,32 +276,33 @@ public class TracksManager extends AbstractFacility {
         return b.toString();
     }
 
-    public interface Sender {
-        public void sendMessage(String message, String to);
-    }
-
     private class UpdateTracksTask implements Runnable {
 
         public void run() {
             log.debug("Background update");
             try {
-
-                for (Map.Entry<String, NamedTrackList> entry : list.entrySet()) {
-                    for (Map.Entry<String, Track> trackEntry : entry.getValue().getTracks().entrySet()) {
-                        Track track = trackEntry.getValue();
-                        String oldStatus = track.getStatus();
-                        checkTrack(track);
-                        if (!oldStatus.equals(track.getStatus()) && sender != null) {
-                            sender.sendMessage(new StringBuilder()
-                                    .append(track.getName())
-                                    .append(" | ")
-                                    .append(track.getId())
-                                    .append(" | ")
-                                    .append(track.getStatus()).toString(), trackEntry.getKey());
+                for (Map.Entry<String, Map<String, NamedTrackList>> entry : list.entrySet()) {
+                    for (Map.Entry<String, NamedTrackList> entry2 : entry.getValue().entrySet()) {
+                        for (Map.Entry<String, Track> trackEntry : entry2.getValue().getTracks().entrySet()) {
+                            Track track = trackEntry.getValue();
+                            String oldStatus = track.getStatus();
+                            checkTrack(track);
+                            if (!oldStatus.equals(track.getStatus())) {
+                                Dialog dialog = createDialog(entry.getKey());
+                                if (dialog != null) {
+                                    dialog.sendMessage(new StringBuilder()
+                                            .append(track.getName())
+                                            .append(" | ")
+                                            .append(track.getId())
+                                            .append(" | ")
+                                            .append(track.getStatus()).toString());
+                                } else {
+                                    log.warn("Unable to create dialog for: " + entry.getKey());
+                                }
+                            }
                         }
                     }
                 }
-
             } catch (Exception e) {
                 log.error(e, e);
             }

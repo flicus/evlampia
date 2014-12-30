@@ -1,15 +1,16 @@
 /*
  * The MIT License (MIT)
+ *
  * Copyright (c) 2014 schors
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ *  Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
+ *  The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
@@ -27,6 +28,8 @@
  */
 package org.schors.eva.facility;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.sun.syndication.feed.synd.SyndEntry;
 import com.sun.syndication.feed.synd.SyndFeed;
 import com.sun.syndication.io.FeedException;
@@ -37,13 +40,11 @@ import org.schors.eva.Application;
 import org.schors.eva.Version;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLDecoder;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Queue;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CopyOnWriteArraySet;
@@ -57,15 +58,18 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
         dependsOn = {})
 public class FeedReader extends AbstractFacility {
     private static final Logger log = Logger.getLogger(FeedReader.class);
+    private static final Type feedsType = new TypeToken<HashMap<String, ArrayList<Feed>>>() {
+    }.getType();
+    private static final Type user2feedsType = new TypeToken<HashMap<String, HashSet<RootFeed>>>() {
+    }.getType();
     private Map<String, RootFeed> rootFeeds = new ConcurrentHashMap<>();
     private Map<RootFeed, Queue<Feed>> feeds = new ConcurrentHashMap<>();
     private Map<String, Set<RootFeed>> user2feeds = new ConcurrentHashMap<>();
     private Map<RootFeed, Set<String>> feed2users = new ConcurrentHashMap<>();
     private ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
-
     private AtomicInteger idGen = new AtomicInteger();
-    private String fileName;
     private boolean silent = false;
+    private Gson gson = new Gson();
 
     public FeedReader(Application application) {
         super(application);
@@ -163,36 +167,79 @@ public class FeedReader extends AbstractFacility {
         this.silent = silent;
     }
 
-    public synchronized void save() {
-        DAOManager.getInstance().saveFeeds(feeds);
-        DAOManager.getInstance().saveCount(idGen);
-//        ObjectOutputStream oos = null;
-//        try {
-//            oos = new ObjectOutputStream(new FileOutputStream(fileName));
-//            oos.writeObject(feeds);
-//            oos.flush();
-//            oos.close();
-//        } catch (IOException e) {
-//            log.error(e, e);
-//        }
+    public void save() {
+        try {
+            lock.readLock().lock();
+            lock.writeLock().lock();
+
+            Jedis jedis = getFacility(Jedis.class);
+            jedis.getJedis().set("feedCount", String.valueOf(idGen));
+            String json = gson.toJson(feeds, feedsType);
+            jedis.getJedis().set("feeds", json);
+            json = gson.toJson(user2feeds, user2feedsType);
+            jedis.getJedis().set("user2feeds", json);
+        } finally {
+            lock.readLock().unlock();
+            lock.writeLock().unlock();
+        }
     }
 
     public synchronized void load() {
-        idGen = DAOManager.getInstance().loadCount();
-        DAOManager.getInstance().loadFeeds(feeds);
+        try {
+            lock.readLock().lock();
+            lock.writeLock().lock();
 
-//        ObjectInputStream ois = null;
-//        try {
-//            ois = new ObjectInputStream(new FileInputStream(fileName));
-//            feeds = (ConcurrentHashMap<RootFeed, ConcurrentLinkedQueue<Feed>>) ois.readObject();
-//        } catch (Exception e) {
-//            log.error(e, e);
-//            feeds = new ConcurrentHashMap<>();
-//        }
+            Jedis jedis = getFacility(Jedis.class);
+
+            int resInt = 0;
+            try {
+                String res = jedis.getJedis().get("feedCount");
+                resInt = Integer.parseInt(res);
+            } catch (Exception e) {
+                resInt = 0;
+            }
+            idGen = new AtomicInteger(resInt);
+
+            String json = jedis.getJedis().get("feeds");
+            HashMap<String, ArrayList<Feed>> res = gson.fromJson(json, feedsType);
+            feeds.clear();
+            rootFeeds.clear();
+            for (Map.Entry<String, ArrayList<Feed>> entry : res.entrySet()) {
+                ConcurrentLinkedQueue<Feed> q = new ConcurrentLinkedQueue<>(entry.getValue());
+                String aaa = entry.getKey().substring(8);
+                RootFeed rf = gson.fromJson(aaa, RootFeed.class);
+                feeds.put(rf, q);
+                rootFeeds.put(rf.getLink(), rf);
+            }
+
+            user2feeds.clear();
+            json = jedis.getJedis().get("user2feeds");
+            HashMap<String, HashSet<RootFeed>> tmp = gson.fromJson(json, user2feedsType);
+            for (Map.Entry<String, HashSet<RootFeed>> entry : tmp.entrySet()) {
+                Set<RootFeed> uf = new CopyOnWriteArraySet<>();
+                user2feeds.put(entry.getKey(), uf);
+                uf.addAll(entry.getValue());
+            }
+
+            feed2users.clear();
+            for (Map.Entry<String, RootFeed> entry : rootFeeds.entrySet()) {
+                Set<String> uf = new CopyOnWriteArraySet<>();
+                feed2users.put(entry.getValue(), uf);
+
+                for (Map.Entry<String, Set<RootFeed>> entry1 : user2feeds.entrySet()) {
+                    if (entry1.getValue().contains(entry.getValue())) {
+                        uf.add(entry.getKey());
+                    }
+                }
+            }
+        } finally {
+            lock.readLock().unlock();
+            lock.writeLock().unlock();
+        }
 
         StringBuilder sb = new StringBuilder();
         sb.append("{");
-        for (Map.Entry<RootFeed, ConcurrentLinkedQueue<Feed>> entry : feeds.entrySet()) {
+        for (Map.Entry<RootFeed, Queue<Feed>> entry : feeds.entrySet()) {
             sb.append(entry.getKey()).append(" : ").append(entry.getValue().toString()).append(", ");
         }
         sb.append("}");

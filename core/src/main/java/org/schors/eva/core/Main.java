@@ -1,15 +1,16 @@
 /*
  * The MIT License (MIT)
+ *
  * Copyright (c) 2014 schors
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ *  Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
+ *  The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
@@ -28,7 +29,6 @@ import org.schors.eva.DependencyResolver;
 import org.schors.eva.command.CommandManager;
 import org.schors.eva.configuration.AbstractConfiguration;
 import org.schors.eva.configuration.ConfigurationManager;
-import org.schors.eva.configuration.EvaConfiguration;
 import org.schors.eva.facility.AbstractFacility;
 import org.schors.eva.facility.FacilityManager;
 import org.schors.eva.protocol.ProtocolManager;
@@ -41,14 +41,12 @@ public class Main implements PluginLoader, Application {
     private CommandManager commandManager;
     private PluginManager pluginManager;
     private ProtocolManager protocolManager;
-    private EvaConfiguration configuration;
     private DependencyResolver dependencyResolver;
     private ScheduledExecutorService pool;
     private ConfigurationManager configurationManager;
 
     public Main() {
         configurationManager = new ConfigurationManagerImpl();
-        configuration = new EvaConfiguration();
         facilityManager = new FacilityManagerImpl(this);
         commandManager = new CommandManagerImpl(this);
         pluginManager = new PluginManager(this);
@@ -134,11 +132,6 @@ public class Main implements PluginLoader, Application {
     @Override
     public ProtocolManager getProtocolManager() {
         return protocolManager;
-    }
-
-    @Override
-    public EvaConfiguration getConfiguration() {
-        return configuration;
     }
 
     @Override
