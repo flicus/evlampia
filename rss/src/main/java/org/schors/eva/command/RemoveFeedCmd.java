@@ -27,7 +27,7 @@ package org.schors.eva.command;
 import org.schors.eva.facility.FeedReader;
 
 @Command(
-        dependsOn = {FeedReader.class},
+        dependsOn = {"feedReader"},
         group = "RSS",
         longDescription = "",
         name = "RemoveFeed",

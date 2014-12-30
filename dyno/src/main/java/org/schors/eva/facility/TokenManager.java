@@ -1,15 +1,16 @@
 /*
  * The MIT License (MIT)
+ *
  * Copyright (c) 2014 schors
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ *  Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
+ *  The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
@@ -26,10 +27,7 @@ package org.schors.eva.facility;
 
 import org.schors.eva.Application;
 import org.schors.eva.Version;
-import org.schors.eva.configuration.AbstractConfiguration;
-import org.schors.eva.configuration.ConfigurationSection;
 
-import javax.xml.bind.annotation.XmlRootElement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -39,7 +37,7 @@ import java.util.concurrent.TimeUnit;
 @Facility(
         name = "token",
         version = @Version(major = 1, minor = 0),
-        dependsOn = {EvaExecutors.class}
+        dependsOn = {"executors"}
 )
 public class TokenManager extends AbstractFacility {
 
@@ -67,8 +65,8 @@ public class TokenManager extends AbstractFacility {
                 .getScheduler()
                 .scheduleAtFixedRate(
                         new ClearTokensTask(),
-                        getConfiguration(Configuration.class).getClearTaskPeriod(),
-                        getConfiguration(Configuration.class).getClearTaskPeriod(),
+                        getConfiguration(TokenManagerConfiguration.class).getClearTaskPeriod(),
+                        getConfiguration(TokenManagerConfiguration.class).getClearTaskPeriod(),
                         TimeUnit.MINUTES);
         status = FacilityStatus.STARTED;
     }
@@ -89,7 +87,7 @@ public class TokenManager extends AbstractFacility {
                 long now = System.currentTimeMillis();
                 for (Map.Entry<String, String> entry : tokens.entrySet()) {
                     long itemTime = Long.decode("#".concat(entry.getKey()));
-                    if ((now - itemTime) > 1000 * 60 * getConfiguration(Configuration.class).getTokenTTL())
+                    if ((now - itemTime) > 1000 * 60 * getConfiguration(TokenManagerConfiguration.class).getTokenTTL())
                         toRemove.add(entry.getKey());    //24 hours
                 }
                 for (String key : toRemove) {
@@ -98,30 +96,6 @@ public class TokenManager extends AbstractFacility {
             } catch (Exception e) {
 
             }
-        }
-    }
-
-    @XmlRootElement(name = "token-manager")
-    @ConfigurationSection
-    public class Configuration extends AbstractConfiguration {
-
-        private int clearTaskPeriod;
-        private int tokenTTL;
-
-        public int getClearTaskPeriod() {
-            return clearTaskPeriod;
-        }
-
-        public void setClearTaskPeriod(int clearTaskPeriod) {
-            this.clearTaskPeriod = clearTaskPeriod;
-        }
-
-        public int getTokenTTL() {
-            return tokenTTL;
-        }
-
-        public void setTokenTTL(int tokenTTL) {
-            this.tokenTTL = tokenTTL;
         }
     }
 

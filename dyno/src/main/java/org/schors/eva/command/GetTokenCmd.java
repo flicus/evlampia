@@ -27,7 +27,7 @@ package org.schors.eva.command;
 import org.schors.eva.facility.TokenManager;
 
 @Command(
-        dependsOn = {TokenManager.class},
+        dependsOn = {"token"},
         group = "General",
         longDescription = "",
         name = "GetToken",

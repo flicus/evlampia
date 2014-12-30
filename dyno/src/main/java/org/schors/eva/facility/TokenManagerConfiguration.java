@@ -22,12 +22,32 @@
  * SOFTWARE.
  */
 
-package org.schors.eva;
+package org.schors.eva.facility;
 
-import java.util.concurrent.Future;
+import org.schors.eva.configuration.AbstractConfiguration;
+import org.schors.eva.configuration.ConfigurationSection;
 
-public interface DependencyResolver {
-    public Future resolve(String[] dependencies);
+import javax.xml.bind.annotation.XmlRootElement;
 
-    public void facilityResolved(String facility);
+@XmlRootElement(name = "token-manager")
+@ConfigurationSection
+public class TokenManagerConfiguration extends AbstractConfiguration {
+    private int clearTaskPeriod = 120;
+    private int tokenTTL = 1440;
+
+    public int getClearTaskPeriod() {
+        return clearTaskPeriod;
+    }
+
+    public void setClearTaskPeriod(int clearTaskPeriod) {
+        this.clearTaskPeriod = clearTaskPeriod;
+    }
+
+    public int getTokenTTL() {
+        return tokenTTL;
+    }
+
+    public void setTokenTTL(int tokenTTL) {
+        this.tokenTTL = tokenTTL;
+    }
 }

@@ -31,7 +31,7 @@ import org.schors.eva.facility.EvaExecutors;
 import java.util.List;
 
 @Command(
-        dependsOn = {EvaExecutors.class},
+        dependsOn = {"executors"},
         group = "General",
         longDescription = "",
         name = "Alarm",
@@ -39,7 +39,6 @@ import java.util.List;
         shortDescription = ""
 )
 public class AlarmCmd {
-
     private static final Logger log = Logger.getLogger(AlarmCmd.class);
     private static volatile boolean alarmGap = false;
 

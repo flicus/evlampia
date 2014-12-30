@@ -29,13 +29,17 @@ public interface FacilityManager {
 
     public String registerFacility(Class<? extends AbstractFacility> facility);
 
-    public void startFacility(Class<? extends AbstractFacility> facility);
+    public void startFacility(String facility);
 
-    public void stopFacility(Class<? extends AbstractFacility> facility);
+    public void stopFacility(String facility);
 
     public <T extends AbstractFacility> T getFacility(Class<T> type);
 
+    public AbstractFacility getFacilityByName(String name);
+
     public <T extends AbstractFacility> T getFacilityForUsing(Class<T> type);
+
+    public void tryStart();
 
     public void stop();
 

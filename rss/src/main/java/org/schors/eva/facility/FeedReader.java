@@ -55,7 +55,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 @Facility(
         name = "feedReader",
         version = @Version(major = 1, minor = 0),
-        dependsOn = {})
+        dependsOn = {"redis"})
 public class FeedReader extends AbstractFacility {
     private static final Logger log = Logger.getLogger(FeedReader.class);
     private static final Type feedsType = new TypeToken<HashMap<String, ArrayList<Feed>>>() {
@@ -172,12 +172,12 @@ public class FeedReader extends AbstractFacility {
             lock.readLock().lock();
             lock.writeLock().lock();
 
-            Jedis jedis = getFacility(Jedis.class);
-            jedis.getJedis().set("feedCount", String.valueOf(idGen));
+            Redis redis = getFacility(Redis.class);
+            redis.getJedis().set("feedCount", String.valueOf(idGen));
             String json = gson.toJson(feeds, feedsType);
-            jedis.getJedis().set("feeds", json);
+            redis.getJedis().set("feeds", json);
             json = gson.toJson(user2feeds, user2feedsType);
-            jedis.getJedis().set("user2feeds", json);
+            redis.getJedis().set("user2feeds", json);
         } finally {
             lock.readLock().unlock();
             lock.writeLock().unlock();
@@ -189,18 +189,18 @@ public class FeedReader extends AbstractFacility {
             lock.readLock().lock();
             lock.writeLock().lock();
 
-            Jedis jedis = getFacility(Jedis.class);
+            Redis redis = getFacility(Redis.class);
 
             int resInt = 0;
             try {
-                String res = jedis.getJedis().get("feedCount");
+                String res = redis.getJedis().get("feedCount");
                 resInt = Integer.parseInt(res);
             } catch (Exception e) {
                 resInt = 0;
             }
             idGen = new AtomicInteger(resInt);
 
-            String json = jedis.getJedis().get("feeds");
+            String json = redis.getJedis().get("feeds");
             HashMap<String, ArrayList<Feed>> res = gson.fromJson(json, feedsType);
             feeds.clear();
             rootFeeds.clear();
@@ -213,7 +213,7 @@ public class FeedReader extends AbstractFacility {
             }
 
             user2feeds.clear();
-            json = jedis.getJedis().get("user2feeds");
+            json = redis.getJedis().get("user2feeds");
             HashMap<String, HashSet<RootFeed>> tmp = gson.fromJson(json, user2feedsType);
             for (Map.Entry<String, HashSet<RootFeed>> entry : tmp.entrySet()) {
                 Set<RootFeed> uf = new CopyOnWriteArraySet<>();

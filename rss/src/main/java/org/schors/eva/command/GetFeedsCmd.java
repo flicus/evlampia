@@ -30,7 +30,7 @@ import org.schors.eva.facility.RootFeed;
 import java.util.Set;
 
 @Command(
-        dependsOn = {FeedReader.class},
+        dependsOn = {"feedReader"},
         group = "RSS",
         longDescription = "",
         name = "GetFeeds",

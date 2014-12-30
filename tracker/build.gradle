@@ -22,9 +22,12 @@
  * SOFTWARE.
  */
 
+
+
 dependencies {
     compile project(':api')
     compile project(':dyno')
     compile group: 'org.apache.axis', name: 'axis', version: '1.4'
     compile group: 'commons-io', name: 'commons-io', version: '1.3.2'
+    compile group: 'org.apache.openejb', name: 'javaee-api', version: '5.0-2'
 }

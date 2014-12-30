@@ -29,7 +29,7 @@ import org.schors.eva.facility.LogWriter;
 import java.util.Calendar;
 
 @Command(
-        dependsOn = {LogWriter.class},
+        dependsOn = {"logger"},
         group = "",
         longDescription = "",
         name = "",

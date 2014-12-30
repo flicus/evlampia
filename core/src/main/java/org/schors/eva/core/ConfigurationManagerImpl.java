@@ -47,6 +47,7 @@ public class ConfigurationManagerImpl implements ConfigurationManager {
 
     @Override
     public <T extends AbstractConfiguration> void putSection(T section) {
+        log.debug("register configuration: " + section);
         configuration.getModulesExt().put(section.getClass(), section);
     }
 
@@ -61,7 +62,7 @@ public class ConfigurationManagerImpl implements ConfigurationManager {
     @Override
     public void save() {
 
-        File file = new File("e:\\tmp\\eva.xml");
+        File file = new File("c:\\temp\\eva.xml");
         Class[] classes = new Class[configuration.getModulesExt().size() + 1];
         classes[0] = RootConfiguration.class;
         int i = 1;
@@ -74,8 +75,8 @@ public class ConfigurationManagerImpl implements ConfigurationManager {
             Marshaller marshaller = jaxbContext.createMarshaller();
 
             marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-            marshaller.marshal(this, file);
-            marshaller.marshal(this, System.out);
+            marshaller.marshal(configuration, file);
+//            marshaller.marshal(this, System.out);
         } catch (JAXBException e) {
             log.error(e, e);
         }
@@ -84,7 +85,7 @@ public class ConfigurationManagerImpl implements ConfigurationManager {
 
     @Override
     public void load() {
-        File file = new File("e:\\tmp\\eva.xml");
+        File file = new File("c:\\temp\\eva.xml");
         Class[] classes = new Class[configuration.getModulesExt().size() + 1];
         classes[0] = RootConfiguration.class;
         int i = 1;
@@ -95,7 +96,7 @@ public class ConfigurationManagerImpl implements ConfigurationManager {
             JAXBContext jaxbContext = JAXBContext.newInstance(classes);
             Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
             this.configuration = (RootConfiguration) unmarshaller.unmarshal(file);
-        } catch (JAXBException e) {
+        } catch (Exception e) {
             log.error(e, e);
         }
 

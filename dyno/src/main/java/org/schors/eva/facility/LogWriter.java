@@ -1,15 +1,16 @@
 /*
  * The MIT License (MIT)
+ *
  * Copyright (c) 2014 schors
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ *  Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
+ *  The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
@@ -28,10 +29,7 @@ import org.apache.log4j.Logger;
 import org.schors.eva.Application;
 import org.schors.eva.LogEntry;
 import org.schors.eva.Version;
-import org.schors.eva.configuration.AbstractConfiguration;
-import org.schors.eva.configuration.ConfigurationSection;
 
-import javax.xml.bind.annotation.XmlRootElement;
 import java.io.File;
 import java.io.RandomAccessFile;
 import java.util.*;
@@ -41,9 +39,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Facility(
-        name = "logWriter",
+        name = "logger",
         version = @Version(major = 1, minor = 0),
-        dependsOn = {EvaExecutors.class})
+        dependsOn = {"executors"})
 public class LogWriter extends AbstractFacility {
 
     public static final Logger log = Logger.getLogger(LogWriter.class);
@@ -106,11 +104,13 @@ public class LogWriter extends AbstractFacility {
 
     @Override
     public void start() {
+        log.debug("start");
         status = FacilityStatus.STARTED;
     }
 
     @Override
     public void stop() {
+        log.debug("start");
         status = FacilityStatus.STOPPED;
     }
 
@@ -209,7 +209,7 @@ public class LogWriter extends AbstractFacility {
         String m = month < 10 ? padding + String.valueOf(month) : String.valueOf(month);
         String d = day < 10 ? padding + String.valueOf(day) : String.valueOf(day);
 
-        String path = getConfiguration(Configuration.class).getLogsPath() + File.separator + channel + File.separator + String.valueOf(year) + File.separator + m + File.separator + d + ".html";
+        String path = getConfiguration(LogWriterConfiguration.class).getLogsPath() + File.separator + channel + File.separator + String.valueOf(year) + File.separator + m + File.separator + d + ".html";
         File file = new File(path);
         if (!file.exists()) {
             RandomAccessFile out = null;
@@ -260,7 +260,7 @@ public class LogWriter extends AbstractFacility {
     }
 
     private void updateDirectory(String channel, String year, String month) {
-        String path = getConfiguration(Configuration.class).getLogsPath();
+        String path = getConfiguration(LogWriterConfiguration.class).getLogsPath();
         RandomAccessFile out = null;
         try {
             File f = new File(path);
@@ -350,18 +350,4 @@ public class LogWriter extends AbstractFacility {
         return result;
     }
 
-    @XmlRootElement(name = "log-writer")
-    @ConfigurationSection
-    public class Configuration extends AbstractConfiguration {
-
-        private String logsPath;
-
-        public String getLogsPath() {
-            return logsPath;
-        }
-
-        public void setLogsPath(String logsPath) {
-            this.logsPath = logsPath;
-        }
-    }
 }

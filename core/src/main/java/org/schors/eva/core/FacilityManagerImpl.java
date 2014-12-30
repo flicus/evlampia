@@ -40,6 +40,7 @@ import java.util.concurrent.Future;
 public class FacilityManagerImpl implements FacilityManager {
     private static final Logger log = Logger.getLogger(FacilityManagerImpl.class);
     private Map<Class<? extends AbstractFacility>, AbstractFacility> facilities = new ConcurrentHashMap<>();
+    private Map<String, AbstractFacility> name2facility = new ConcurrentHashMap<>();
     private Application application;
 
     public FacilityManagerImpl(Application application) {
@@ -48,9 +49,7 @@ public class FacilityManagerImpl implements FacilityManager {
 
     @Override
     public void stop() {
-        if (log.isDebugEnabled()) {
-            log.debug("stop");
-        }
+        log.debug("stop");
         for (AbstractFacility facility : facilities.values()) {
             try {
                 facility.stop();
@@ -62,11 +61,10 @@ public class FacilityManagerImpl implements FacilityManager {
 
     @Override
     public String registerFacility(Class<? extends AbstractFacility> facilityClass) {
-        if (log.isDebugEnabled()) {
-            log.debug("registerFacility::" + facilityClass);
-        }
+        log.debug("registerFacility::" + facilityClass);
+
         String name = null;
-        Class<? extends AbstractFacility>[] depends = null;
+        String[] depends = null;
         if (facilityClass.isAnnotationPresent(Facility.class)) {
             name = facilityClass.getAnnotation(Facility.class).name();
             depends = facilityClass.getAnnotation(Facility.class).dependsOn();
@@ -84,14 +82,13 @@ public class FacilityManagerImpl implements FacilityManager {
             return null;
         }
         facilities.put(facilityClass, facilityObject);
+        name2facility.put(name, facilityObject);
         facilityObject.setStatus(FacilityStatus.RESOLVING);
         if (depends != null && depends.length > 0) {
             Future future = application.getDependencyResolver().resolve(depends);
             try {
                 future.get();
-                if (log.isDebugEnabled()) {
-                    log.debug("Resolved dependencies: " + depends);
-                }
+                log.debug("Resolved dependencies: " + depends);
             } catch (InterruptedException e) {
                 log.error(e, e);
                 return null;
@@ -105,9 +102,9 @@ public class FacilityManagerImpl implements FacilityManager {
     }
 
     @Override
-    public void startFacility(final Class<? extends AbstractFacility> facility) {
-        final AbstractFacility f = facilities.get(facility);
-        if (facility != null &&
+    public void startFacility(final String facility) {
+        final AbstractFacility f = name2facility.get(facility);
+        if (f != null &&
                 (FacilityStatus.READY.equals(f.getStatus())
                         || FacilityStatus.STOPPED.equals(f.getStatus()))) {
             application.getThreadPool().execute(new Runnable() {
@@ -121,13 +118,13 @@ public class FacilityManagerImpl implements FacilityManager {
     }
 
     @Override
-    public void stopFacility(Class<? extends AbstractFacility> facilityClass) {
-        final AbstractFacility facility = facilities.get(facilityClass);
-        if (facility != null && !FacilityStatus.STOPPED.equals(facility.getStatus())) {
+    public void stopFacility(String facility) {
+        final AbstractFacility f = name2facility.get(facility);
+        if (f != null && !FacilityStatus.STOPPED.equals(f.getStatus())) {
             application.getThreadPool().execute(new Runnable() {
                 @Override
                 public void run() {
-                    facility.stop();
+                    f.stop();
                 }
             });
         }
@@ -139,9 +136,22 @@ public class FacilityManagerImpl implements FacilityManager {
     }
 
     @Override
+    public AbstractFacility getFacilityByName(String name) {
+        return name2facility.get(name);
+    }
+
+    @Override
     public <T extends AbstractFacility> T getFacilityForUsing(Class<T> type) {
         T facility = type.cast(facilities.get(type));
         return (facility != null && FacilityStatus.STARTED.equals(facility.getStatus())) ? facility : null;
+    }
+
+    @Override
+    public void tryStart() {
+        for (final Map.Entry<String, AbstractFacility> entry : name2facility.entrySet()) {
+            log.debug(String.format("Facility: %s, status: %s", entry.getValue(), entry.getValue().getStatus()));
+            startFacility(entry.getKey());
+        }
     }
 }
 

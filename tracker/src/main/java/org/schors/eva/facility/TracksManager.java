@@ -33,6 +33,7 @@ import org.schors.eva.dialog.Dialog;
 import org.schors.eva.facility.axis.*;
 import org.schors.eva.facility.fedex.FdxResponseWrapper;
 
+import javax.xml.rpc.ServiceException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -49,9 +50,8 @@ import java.util.regex.Pattern;
 @Facility(
         name = "trackManager",
         version = @Version(major = 1, minor = 0),
-        dependsOn = {EvaExecutors.class, Jedis.class})
+        dependsOn = {"executors", "redis"})
 public class TracksManager extends AbstractFacility {
-
     private static final Logger log = Logger.getLogger(TracksManager.class);
 
     //RC213094378HK
@@ -93,21 +93,21 @@ public class TracksManager extends AbstractFacility {
     }
 
     public void save() {
-        Jedis jedis = getFacility(Jedis.class);
+        Redis redis = getFacility(Redis.class);
         try {
             String json = gson.toJson(list, trackType);
-            jedis.getJedis().set("tracks", json);
+            redis.getJedis().set("tracks", json);
         } catch (Exception e) {
             log.error(e, e);
         }
     }
 
     public void load() {
-        Jedis jedis = getFacility(Jedis.class);
+        Redis redis = getFacility(Redis.class);
 
         list.clear();
         try {
-            String json = jedis.getJedis().get("tracks");
+            String json = redis.getJedis().get("tracks");
             HashMap<String, HashMap<String, NamedTrackList>> _res = gson.fromJson(json, trackType);
             for (Map.Entry<String, HashMap<String, NamedTrackList>> entry : _res.entrySet()) {
                 ConcurrentHashMap<String, NamedTrackList> a1 = new ConcurrentHashMap<>();

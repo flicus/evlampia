@@ -22,12 +22,23 @@
  * SOFTWARE.
  */
 
-package org.schors.eva;
+package org.schors.eva.facility;
 
-import java.util.concurrent.Future;
+import org.schors.eva.configuration.AbstractConfiguration;
+import org.schors.eva.configuration.ConfigurationSection;
 
-public interface DependencyResolver {
-    public Future resolve(String[] dependencies);
+import javax.xml.bind.annotation.XmlRootElement;
 
-    public void facilityResolved(String facility);
+@XmlRootElement(name = "redis")
+@ConfigurationSection
+public class RedisConfiguration extends AbstractConfiguration {
+    private String host = "localhost";
+
+    public String getHost() {
+        return host;
+    }
+
+    public void setHost(String host) {
+        this.host = host;
+    }
 }

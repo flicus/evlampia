@@ -22,12 +22,23 @@
  * SOFTWARE.
  */
 
-package org.schors.eva;
+package org.schors.eva.facility;
 
-import java.util.concurrent.Future;
+import org.schors.eva.configuration.AbstractConfiguration;
+import org.schors.eva.configuration.ConfigurationSection;
 
-public interface DependencyResolver {
-    public Future resolve(String[] dependencies);
+import javax.xml.bind.annotation.XmlRootElement;
 
-    public void facilityResolved(String facility);
+@XmlRootElement(name = "log-writer")
+@ConfigurationSection
+public class LogWriterConfiguration extends AbstractConfiguration {
+    private String logsPath = "c:\\temp\\logs";
+
+    public String getLogsPath() {
+        return logsPath;
+    }
+
+    public void setLogsPath(String logsPath) {
+        this.logsPath = logsPath;
+    }
 }

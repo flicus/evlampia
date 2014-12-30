@@ -1,15 +1,16 @@
 /*
  * The MIT License (MIT)
+ *
  * Copyright (c) 2014 schors
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ *  Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
+ *  The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
@@ -23,6 +24,7 @@
 
 package org.schors.eva.core;
 
+import org.apache.log4j.Logger;
 import org.schors.eva.command.Command;
 import org.schors.eva.command.CommandExecute;
 import org.schors.eva.configuration.AbstractConfiguration;
@@ -41,6 +43,7 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 public class JarClassLoader extends ClassLoader {
+    private static final Logger log = Logger.getLogger(JarClassLoader.class);
 
     private Map<String, JarClassDef> mappings = new HashMap<String, JarClassDef>();
     private Map<String, Class<?>> cache = new HashMap<String, Class<?>>();
@@ -71,14 +74,15 @@ public class JarClassLoader extends ClassLoader {
     }
 
     public void loadJar(String jarFileName) throws IOException {
-        System.out.println("JarClassLoader:: loading jar:: " + jarFileName);
+        log.debug("loading jar:: " + jarFileName);
         JarFile jarFile = new JarFile(jarFileName);
         Enumeration<JarEntry> entries = jarFile.entries();
+        pluginLoader.onStartLoading();
         while (entries.hasMoreElements()) {
             JarEntry entry = entries.nextElement();
             if (entry.isDirectory() || !entry.getName().endsWith(".class")) continue;
             String className = stripClassName(normalize(entry.getName()));
-            System.out.println("JarClassLoader:: Class found:: " + className);
+            log.debug("Class found:: " + className);
             JarClassDef jarClassDef = new JarClassDef(entry, jarFile);
             mappings.put(className, jarClassDef);
             Class<?> clazz = readClass(className, jarClassDef);
@@ -107,6 +111,7 @@ public class JarClassLoader extends ClassLoader {
                 }
             }
         }
+        pluginLoader.onStopLoading();
     }
 
     private Class<?> readClass(String className, JarClassDef jarClassDef) throws IOException {
