@@ -1,16 +1,15 @@
 /*
  * The MIT License (MIT)
- *
  * Copyright (c) 2014 schors
  *
- *  Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
  *
- *  The above copyright notice and this permission notice shall be included in all
+ * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
@@ -45,10 +44,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLDecoder;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.CopyOnWriteArraySet;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
@@ -70,6 +66,7 @@ public class FeedReader extends AbstractFacility {
     private AtomicInteger idGen = new AtomicInteger();
     private boolean silent = false;
     private Gson gson = new Gson();
+    private ScheduledFuture updateTask;
 
     public FeedReader(Application application) {
         super(application);
@@ -248,13 +245,28 @@ public class FeedReader extends AbstractFacility {
 
     @Override
     public void start() {
-        log.debug("Start feed reader");
-        getFacility(EvaExecutors.class).getScheduler().scheduleAtFixedRate(new FeedsUpdater(), 2, 40, TimeUnit.MINUTES);
+        log.debug("start");
+        try {
+            status = FacilityStatus.STARTING;
+            EvaExecutors evaExecutors = getFacility(EvaExecutors.class);
+            updateTask = evaExecutors.getScheduler().scheduleAtFixedRate(
+                    new FeedsUpdater(),
+                    2,
+                    40,
+                    TimeUnit.MINUTES
+            );
+            status = FacilityStatus.STARTED;
+        } catch (Exception e) {
+            status = FacilityStatus.ERROR;
+            log.error("Unable to start", e);
+        }
     }
 
     @Override
     public void stop() {
-
+        log.debug("stop");
+        updateTask.cancel(true);
+        status = FacilityStatus.STOPPED;
     }
 
     private class FeedsUpdater implements Runnable {

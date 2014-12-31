@@ -1,16 +1,15 @@
 /*
  * The MIT License (MIT)
- *
  * Copyright (c) 2014 schors
  *
- *  Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
  *
- *  The above copyright notice and this permission notice shall be included in all
+ * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
@@ -44,6 +43,7 @@ import java.net.URLConnection;
 import java.rmi.RemoteException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
@@ -63,6 +63,7 @@ public class TracksManager extends AbstractFacility {
     private Map<String, Map<String, NamedTrackList>> list = new ConcurrentHashMap<>();
     private WebOperationHistoryStub binding = null;
     private Gson gson;
+    private ScheduledFuture updateTask;
 
     public TracksManager(Application application) {
         super(application);
@@ -71,25 +72,28 @@ public class TracksManager extends AbstractFacility {
 
     @Override
     public void start() {
+        log.debug("start");
         status = FacilityStatus.STARTING;
         try {
             binding = (WebOperationHistoryStub) new OperationHistory_ServiceLocator().getOperationHistory();
+            binding.setTimeout(60000);
+            EvaExecutors evaExecutors = getFacility(EvaExecutors.class);
+            updateTask = evaExecutors.getScheduler().scheduleAtFixedRate(new UpdateTracksTask(), 1, 2, TimeUnit.HOURS);
+            status = FacilityStatus.STARTED;
         } catch (ServiceException se) {
-            if (se.getLinkedCause() != null)
-                se.getLinkedCause().printStackTrace();
+            log.error("Unable to start", se);
+            status = FacilityStatus.ERROR;
         } catch (Exception e) {
-            log.error(e, e);
+            log.error("Unable to start", e);
+            status = FacilityStatus.ERROR;
         }
-
-        binding.setTimeout(60000);
-        getFacility(EvaExecutors.class).getScheduler().scheduleAtFixedRate(new UpdateTracksTask(), 1, 2, TimeUnit.HOURS);
-
-        status = FacilityStatus.STARTED;
     }
 
     @Override
     public void stop() {
-        //executor.shutdown();
+        log.debug("stop");
+        updateTask.cancel(true);
+        status = FacilityStatus.STOPPED;
     }
 
     public void save() {
