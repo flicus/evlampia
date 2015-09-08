@@ -92,7 +92,7 @@ public class Endpoint {
                     muc.addSubjectUpdatedListener((subject, from) -> {
                         if (!subject.contains("http://0xffff.net/logs")) {
                             try {
-                                muc.changeSubject(subject + " | ���� ����: http://0xffff.net/logs");
+                                muc.changeSubject(subject + " | Логи чата: http://0xffff.net/logs");
                             } catch (Exception ex) {
                                 log.error(ex, ex);
                             }
