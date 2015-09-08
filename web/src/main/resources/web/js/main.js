@@ -135,6 +135,25 @@ app.factory('Helper', function () {
     return data;
 });
 
+app.directive('onEnter', function () {
+    return {
+        restrict: 'A',
+        scope: {
+            handler: '&'
+        },
+        link: function postLink(scope, element, attrs) {
+            //app.log('init onEnter');
+            element.keyup(function (event) {
+                //app.log('keyup');
+                //app.log(event);
+                if (event.which == 13) {
+                    scope.handler();
+                }
+            });
+        }
+    }
+});
+
 app.config(function ($routeProvider) {
 
     log("on config");
@@ -165,23 +184,34 @@ app.controller('MainCtrl', function ($scope, Helper, $location) {
 app.controller('ChatCtrl', function ($scope, Helper) {
     $scope.name = "ChatCtrl";
     log('chat ctrl start');
-    $scope.ws = new WebSocket('ws://localhost:8080/ws/api?name=' + Helper.storage.name);
+    $scope.ws = new WebSocket('ws://localhost:8080/ws/api');
+    $scope.ctx = {};
+    $scope.ctx.messages = [];
+    $scope.ctx.toSay = "";
+    $scope.ctx.name = Helper.storage.name;
+
     $scope.ws.onopen = function (data) {
         log('web socket opened');
         log(data);
-        var name = Helper.storage.name;
-        $scope.ws.send({'timestamp': '', 'who': name, 'command': 'join', 'data': ''});
+        $scope.ws.send(JSON.stringify({'name': $scope.ctx.name, 'command': 1}));
     };
+
     $scope.ws.onclose = function (data) {
         log('web socket closed');
         log(data);
+        $location.path('/login');
     };
+
     $scope.ws.onmessage = function (data) {
         log('web socket on message');
         log(data);
+        $scope.ctx.messages.push(data);
+    };
+
+    $scope.send = function () {
+        $scope.ws.send(JSON.stringify({'name': $scope.ctx.name, 'command': 2, 'message': $scope.ctx.toSay}));
+        $scope.ctx.toSay = "";
     }
-
-
 });
 
 app.controller('LoginCtrl', function ($scope, $location, Helper) {

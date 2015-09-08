@@ -61,6 +61,14 @@ public class WebRootVerticle extends AbstractVerticle {
         return ret;
     }
 
+    private JsonObject createMessage(String from, String message) {
+        JsonObject ret = new JsonObject()
+                .put("result", 0)
+                .put("from", from)
+                .put("message", message);
+        return ret;
+    }
+
     private void log(String message) {
         System.out.println(message);
     }
@@ -82,73 +90,81 @@ public class WebRootVerticle extends AbstractVerticle {
 
     private class WebSocketHandler implements Handler<ServerWebSocket> {
 
+        private JabberAdapterService jabber;
+        private String name;
+        private String id;
+        private boolean connected = false;
+
         @Override
         public void handle(final ServerWebSocket webSocket) {
-
             log("ws handshake");
-
-            //check path
-            log(webSocket.path());
             if (!"/ws/api".equals(webSocket.path())) {
                 webSocket.reject();
                 return;
             }
 
-            //check name
-            String query = webSocket.query();
-            log(query);
-            String parts[] = query.split("&");
-            String name = null;
-            for (String part : parts) {
-                String pairs[] = part.split("=");
-                if (pairs != null && pairs.length == 2) {
-                    if ("name".equals(pairs[0])) {
-                        name = pairs[1];
+            webSocket.frameHandler(message -> {
+                log(message.textData());
+                JsonObject jsonObject = new JsonObject(message.textData());
+                int cmd = jsonObject.getInteger(Constants.JSON_COMMAND_CODE);
+                switch (cmd) {
+
+                    case 1: {   //new connection
+                        String name = jsonObject.getString(Constants.JSON_NAME);
+                        if (name != null) {
+                            this.name = name;
+                            jabber = JabberAdapterService.createProxy(vertx, Constants.SERVICE_JABBER);
+                            jabber.newTmpEndpoint(name, event -> {
+                                if (event.succeeded()) {
+                                    this.id = event.result();
+                                    jabber.joinRoom(this.id, "r1@conference.sskoptsov01", false);
+
+                                    vertx.eventBus().consumer("/jabber/" + this.id, event2 -> {
+                                        JsonObject msg = (JsonObject) event2.body();
+                                        webSocket.writeFinalTextFrame(msg.encode());
+                                    });
+
+                                    connected = true;
+                                } else {
+                                    webSocket.writeFinalTextFrame(
+                                            createError(103, "Unable to connect: " + event.cause().getMessage()).encode());
+                                }
+                            });
+                        } else {
+                            webSocket.writeFinalTextFrame(createError(102, "Name field is absent").encode());
+                        }
                         break;
                     }
-                }
-            }
-            log(name);
-            if (name == null) {
-                webSocket.writeFinalTextFrame(createError(101, "No name").encode());
-                webSocket.close();
-                return;
-            }
 
-            //check if its already exist
-            if (connections.containsKey(name)) {
-                webSocket.writeFinalTextFrame(createError(102, "Already exist").encode());
-                webSocket.close();
-                return;
-            }
-
-            //all is ok, keep this connection
-            connections.put(name, webSocket);
-
-            final String finalName = name;
-            final JabberAdapterService jabber = JabberAdapterService.createProxy(vertx, Constants.SERVICE_JABBER);
-            jabber.newTmpEndpoint(name, event1 -> {
-//                    final String id = event1.result();
-                jabber.joinRoom(finalName, "r1@conference.sskoptsov01", false);
-
-                vertx.eventBus().consumer("/jabber/" + finalName, event -> {
-                    webSocket.writeFinalTextFrame(event.body().toString());
-                });
-
-                webSocket.frameHandler(message -> {
-                    jabber.sendRoomMessage(finalName, "r1@conference.sskoptsov01", message.textData());
-//                    webSocket.writeFinalTextFrame("Hello");
-                });
-
-                webSocket.closeHandler(new Handler<Void>() {
-                    @Override
-                    public void handle(Void event) {
-                        jabber.shutDownEndpoint(finalName);
-                        connections.remove(finalName);
+                    case 2: {   //generic message
+                        if (!connected) {
+                            webSocket.writeFinalTextFrame(createError(104, "Not connected").encode());
+                        } else {
+                            jabber.sendRoomMessage(id, "r1@conference.sskoptsov01", jsonObject.getString("message"));
+                        }
+                        break;
                     }
-                });
+
+                    case 3: {   //drop connection
+                        connected = false;
+                        if (jabber != null) {
+                            jabber.shutDownEndpoint(id);
+                        }
+                        break;
+                    }
+
+                    default: {  //unknown command
+                        webSocket.writeFinalTextFrame(createError(101, "Unknown command").encode());
+                    }
+                }
+            });
+
+            webSocket.closeHandler(event -> {
+                connected = false;
+                if (jabber != null) {
+                    jabber.shutDownEndpoint(id);
+                }
             });
         }
     }
-
 }

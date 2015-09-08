@@ -1,4 +1,4 @@
-package org.schors.eva;/*
+/*
  * The MIT License (MIT)
  *
  * Copyright (c) 2015 schors
@@ -22,10 +22,11 @@ package org.schors.eva;/*
  * SOFTWARE.
  */
 
+package org.schors.eva;
+
 import io.vertx.core.DeploymentOptions;
 import io.vertx.core.Vertx;
 import io.vertx.core.VertxOptions;
-import org.schors.eva.EvaBot;
 import org.schors.eva.protocol.JabberAdapter;
 import org.schors.eva.web.WebRootVerticle;
 

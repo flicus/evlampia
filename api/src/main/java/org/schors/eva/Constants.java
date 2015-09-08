@@ -39,4 +39,9 @@ public interface Constants {
     String MSG_JABBER_READY = "jabber.ready";
     String MSG_JABBER_SHUTDOWN = "jabber.shutdown";
 
+    String JSON_COMMAND_CODE = "command";
+    String JSON_NAME = "name";
+
+
+
 }

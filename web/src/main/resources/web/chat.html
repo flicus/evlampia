@@ -22,3 +22,16 @@
   ~ SOFTWARE.
   -->
 
+<div class="container">
+    <div class="raw" data-ng-repeat="item in ctx.messages">
+        <div class="col-md-2">{{ item.from }}</div>
+        <div class="col-md-10">{{ item.body }}</div>
+    </div>
+    <div class="raw">
+        <div class="input-group">
+            <span class="input-group-addon" id="name-addon">{{ctx.name}}</span>
+            <input type="text" class="form-control" placeholder="скажи ку" aria-describedby="name-addon"
+                   data-ng-model="ctx.toSay" on-enter handler="send()">
+        </div>
+    </div>
+</div>

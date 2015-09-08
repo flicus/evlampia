@@ -193,12 +193,12 @@ public class JabberAdapterServiceImpl implements JabberAdapterService {
             if (endpoint != null && endpoint.getConnection().isConnected()) {
                 for (MultiUserChat room : endpoint.getRooms().values()) {
                     if (room.isJoined()) {
-                        room.sendMessage("/me ������ �������");
+                        room.sendMessage("/me закрыл(а) браузер");
                         room.leave();
                     }
                 }
                 Presence p = new Presence(Presence.Type.unavailable);
-                p.setStatus("����, �����������");
+                p.setStatus("Пака, бугагашечки");
                 endpoint.getConnection().disconnect(p);
             }
         } catch (Exception e) {
@@ -261,26 +261,6 @@ public class JabberAdapterServiceImpl implements JabberAdapterService {
         presence.setStatus("Ready");
         presence.setPriority(10);
         connection.sendStanza(presence);
-    }
-
-    private void shutDown() {
-        for (Endpoint endpoint : endpointMap.values()) {
-            try {
-                if (endpoint.getConnection().isConnected()) {
-                    for (MultiUserChat room : endpoint.getRooms().values()) {
-                        if (room.isJoined()) {
-                            room.sendMessage("/me ���� �� ����");
-                            room.leave();
-                        }
-                    }
-                    Presence p = new Presence(Presence.Type.unavailable);
-                    p.setStatus("����, �����������");
-                    endpoint.getConnection().disconnect(p);
-                }
-            } catch (Exception e) {
-                log.warn("Error on shutdown", e);
-            }
-        }
     }
 
     private class ConnListener implements ConnectionListener {
