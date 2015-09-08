@@ -22,10 +22,23 @@
  * SOFTWARE.
  */
 
-rootProject.name = 'eva'
-include 'starter'
-include 'web'
-include 'jabber'
-include 'bot'
-include 'api'
+import io.vertx.core.DeploymentOptions;
+import io.vertx.core.Vertx;
+import io.vertx.core.VertxOptions;
+import org.schors.eva.EvaBot;
+import org.schors.eva.protocol.JabberAdapter;
+import org.schors.eva.web.WebRootVerticle;
 
+public class Main {
+
+    public static void main(String[] args) {
+        VertxOptions options = new VertxOptions().setWorkerPoolSize(40);
+        Vertx vertx = Vertx.vertx(options);
+
+        DeploymentOptions deploymentOptions = new DeploymentOptions().setInstances(1);
+        vertx.deployVerticle(new JabberAdapter(), deploymentOptions, event -> {
+            vertx.deployVerticle(new WebRootVerticle(), deploymentOptions);
+            vertx.deployVerticle(new EvaBot(), deploymentOptions);
+        });
+    }
+}

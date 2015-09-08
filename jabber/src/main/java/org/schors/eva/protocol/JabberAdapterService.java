@@ -22,10 +22,37 @@
  * SOFTWARE.
  */
 
-rootProject.name = 'eva'
-include 'starter'
-include 'web'
-include 'jabber'
-include 'bot'
-include 'api'
+package org.schors.eva.protocol;
 
+import io.vertx.codegen.annotations.ProxyGen;
+import io.vertx.core.AsyncResult;
+import io.vertx.core.Handler;
+import io.vertx.core.Vertx;
+import io.vertx.core.json.JsonObject;
+import io.vertx.serviceproxy.ProxyHelper;
+
+@ProxyGen
+public interface JabberAdapterService {
+
+    static JabberAdapterService create(Vertx vertx) {
+        return new JabberAdapterServiceImpl(vertx);
+    }
+
+    static JabberAdapterService createProxy(Vertx vertx, String address) {
+        return ProxyHelper.createProxy(JabberAdapterService.class, vertx, address);
+    }
+
+    void newEndpoint(JsonObject cfg, Handler<AsyncResult<String>> handler);
+
+    void newTmpEndpoint(String nick, Handler<AsyncResult<String>> handler);
+
+    void shutDownEndpoint(String endpointId);
+
+    void joinRoom(String endpointId, String room, boolean look4subject);
+
+    void sendRoomMessage(String endpointId, String room, String message);
+
+    void sendRoomMessagePrivate(String endpointId, String room, String message);
+
+    void sendMessage(String endpointId, String jid, String message);
+}

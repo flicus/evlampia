@@ -22,10 +22,21 @@
  * SOFTWARE.
  */
 
-rootProject.name = 'eva'
-include 'starter'
-include 'web'
-include 'jabber'
-include 'bot'
-include 'api'
+package org.schors.eva;
 
+public interface Constants {
+
+    String HOST = "host";
+    String JID = "jid";
+    String PASSWORD = "password";
+    String FIRST_NAME = "firstName";
+    String LAST_NAME = "lastName";
+    String E_MAIL = "email";
+    String ORGANIZATION = "organization";
+    String NICK = "nick";
+
+    String SERVICE_JABBER = "adapter.jabber";
+    String MSG_JABBER_READY = "jabber.ready";
+    String MSG_JABBER_SHUTDOWN = "jabber.shutdown";
+
+}

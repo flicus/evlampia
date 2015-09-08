@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2014 schors
+ * Copyright (c) 2015 schors
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,22 +22,57 @@
  * SOFTWARE.
  */
 
+if (!JavaVersion.current().java8Compatible) {
+    throw new IllegalStateException('''A Haiku:
+                                      |  This needs Java 8,
+                                      |  You are using something else,
+                                      |  Refresh. Try again.'''.stripMargin())
+}
+
+buildscript {
+    repositories { jcenter() }
+    dependencies {
+        classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.0'
+    }
+}
+
 subprojects {
     apply plugin: 'java'
-
-    sourceCompatibility = 1.7
-    version = '1.0'
+    apply plugin: 'com.github.johnrengelman.shadow'
+    apply plugin: 'idea'
 
     repositories {
         mavenCentral()
+        maven {
+            url = 'http://oss.sonatype.org/content/repositories/snapshots/'
+        }
     }
 
+    version = '3.0.0'
+
     dependencies {
-        testCompile group: 'junit', name: 'junit', version: '4.11'
         compile group: 'log4j', name: 'log4j', version: '1.2.17'
-        compile group: 'redis.clients', name: 'jedis', version: '2.6.1'
-        compile group: 'com.google.code.gson', name: 'gson', version: '2.2.2'
-        compile group: 'joda-time', name: 'joda-time', version: '2.6'
+        compile "io.vertx:vertx-core:$version"
+    }
+
+    shadowJar {
+        classifier = 'fat'
+        manifest {
+            attributes 'Main-Class': 'Main'
+        }
+        mergeServiceFiles {
+            include 'META-INF/services/io.vertx.core.spi.VerticleFactory'
+        }
+    }
+
+    task wrapper(type: Wrapper) {
+        gradleVersion = '2.0'
     }
 }
+
+
+
+
+
+
 

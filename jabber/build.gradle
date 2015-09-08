@@ -1,15 +1,16 @@
 /*
  * The MIT License (MIT)
- * Copyright (c) 2014 schors
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Copyright (c) 2015 schors
+ *
+ *  Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
+ *  The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
@@ -21,12 +22,43 @@
  * SOFTWARE.
  */
 
+group 'schors'
+version '1.0-SNAPSHOT'
 
+def generateSrcPath = "$buildDir/generated-src"
+def generatedSrcDir = file("$buildDir/generated-src")
 
-
+sourceSets {
+    main {
+        java.srcDirs += generatedSrcDir
+        output.dir(builtBy: 'generateServiceProxy', generateSrcPath)
+    }
+}
 
 dependencies {
     compile project(':api')
-    compile group: 'org.igniterealtime.smack', name: 'smack-tcp', version: '4.0.6'
-    compile group: 'org.igniterealtime.smack', name: 'smack-extensions', version: '4.0.6'
+    compile "io.vertx:vertx-service-proxy:$version"
+    compile "io.vertx:vertx-codegen:$version"
+    compile "org.igniterealtime.smack:smack-java7:4.1.3"
+    compile "org.igniterealtime.smack:smack-tcp:4.1.3"
+    compile "org.igniterealtime.smack:smack-im:4.1.3"
+    compile "org.igniterealtime.smack:smack-extensions:4.1.3"
+//    compile group: 'org.igniterealtime.smack', name: 'smack-tcp', version: '4.1.3'
+//    compile group: 'org.igniterealtime.smack', name: 'smack-extensions', version: '4.1.3'
+    compile group: 'org.igniterealtime.smack', name: 'smack-resolver-dnsjava', version: '4.1.3'
 }
+
+task generateServiceProxy(type: JavaCompile, description: 'Generates EBServiceProxies') {
+    source = sourceSets.main.java
+    classpath = configurations.compile
+    destinationDir = generatedSrcDir
+    options.compilerArgs = [
+
+            "-proc:only",
+            "-processor", "io.vertx.codegen.CodeGenProcessor",
+
+            "-AoutputDirectory=$generateSrcPath"
+    ]
+}
+
+compileJava.dependsOn generateServiceProxy

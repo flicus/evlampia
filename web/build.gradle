@@ -22,10 +22,9 @@
  * SOFTWARE.
  */
 
-rootProject.name = 'eva'
-include 'starter'
-include 'web'
-include 'jabber'
-include 'bot'
-include 'api'
+group 'schors'
+version '1.0-SNAPSHOT'
 
+dependencies {
+    compile project(":jabber")
+}

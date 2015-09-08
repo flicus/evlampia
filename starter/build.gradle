@@ -22,10 +22,10 @@
  * SOFTWARE.
  */
 
-rootProject.name = 'eva'
-include 'starter'
-include 'web'
-include 'jabber'
-include 'bot'
-include 'api'
+group 'schors'
 
+dependencies {
+    compile project(":web")
+    compile project(":jabber")
+    compile project(":bot")
+}

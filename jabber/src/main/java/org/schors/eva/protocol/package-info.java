@@ -22,10 +22,6 @@
  * SOFTWARE.
  */
 
-rootProject.name = 'eva'
-include 'starter'
-include 'web'
-include 'jabber'
-include 'bot'
-include 'api'
+@GenModule(name = "vertx-jabber-adapter", groupPackageName = "org.schors.eva.protocol") package org.schors.eva.protocol;
 
+import io.vertx.codegen.annotations.GenModule;
