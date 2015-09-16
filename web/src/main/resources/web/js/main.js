@@ -193,7 +193,7 @@ app.controller('ChatCtrl', function ($scope, Helper) {
     $scope.ws.onopen = function (data) {
         log('web socket opened');
         log(data);
-        $scope.ws.send(JSON.stringify({'name': $scope.ctx.name, 'command': 1}));
+        $scope.ws.send(JSON.stringify({'name': $scope.ctx.name, 'command': 1}));    //connect
     };
 
     $scope.ws.onclose = function (data) {
@@ -202,15 +202,33 @@ app.controller('ChatCtrl', function ($scope, Helper) {
         $location.path('/login');
     };
 
-    $scope.ws.onmessage = function (data) {
+    $scope.ws.onmessage = function (msg) {
         log('web socket on message');
-        log(data);
-        $scope.ctx.messages.push(data);
+        log(msg.data);
+        var json = JSON.parse(msg.data);
+        switch (json.command) {
+            case 1:
+                $scope.ws.send(JSON.stringify({'name': $scope.ctx.name, 'command': 4}));    //get participants
+                break;
+            case 2:
+                $scope.$apply(function () {
+                    $scope.ctx.messages.push({'from': json.from, 'body': json.body});
+                });
+                break;
+            case 4:
+                $scope.$apply(function () {
+                    $scope.ctx.users = json.users;
+                });
+                break;
+            default :
+        }
     };
 
     $scope.send = function () {
         $scope.ws.send(JSON.stringify({'name': $scope.ctx.name, 'command': 2, 'message': $scope.ctx.toSay}));
-        $scope.ctx.toSay = "";
+        $scope.$apply(function () {
+            $scope.ctx.toSay = "";
+        });
     }
 });
 

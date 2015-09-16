@@ -31,6 +31,7 @@ import io.vertx.core.http.HttpServer;
 import io.vertx.core.http.HttpServerOptions;
 import io.vertx.core.http.HttpServerRequest;
 import io.vertx.core.http.ServerWebSocket;
+import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import org.schors.eva.Constants;
 import org.schors.eva.protocol.JabberAdapterService;
@@ -54,8 +55,9 @@ public class WebRootVerticle extends AbstractVerticle {
         startFuture.succeeded();
     }
 
-    private JsonObject createError(int code, String message) {
+    private JsonObject createError(int command, int code, String message) {
         JsonObject ret = new JsonObject()
+                .put("command", command)
                 .put("result", code)
                 .put("error", message);
         return ret;
@@ -63,10 +65,24 @@ public class WebRootVerticle extends AbstractVerticle {
 
     private JsonObject createMessage(String from, String message) {
         JsonObject ret = new JsonObject()
+                .put("command", 2)
                 .put("result", 0)
                 .put("from", from)
                 .put("message", message);
         return ret;
+    }
+
+    private JsonObject createParticipants(String json) {
+        JsonArray obj = new JsonArray(json);
+        JsonObject ret = new JsonObject()
+                .put("command", 4)
+                .put("result", 0)
+                .put("users", obj);
+        return ret;
+    }
+
+    private JsonObject createConnected() {
+        return new JsonObject().put("command", 1).put("result", 0);
     }
 
     private void log(String message) {
@@ -125,20 +141,21 @@ public class WebRootVerticle extends AbstractVerticle {
                                     });
 
                                     connected = true;
+                                    webSocket.writeFinalTextFrame(createConnected().encode());
                                 } else {
                                     webSocket.writeFinalTextFrame(
-                                            createError(103, "Unable to connect: " + event.cause().getMessage()).encode());
+                                            createError(1, 103, "Unable to connect: " + event.cause().getMessage()).encode());
                                 }
                             });
                         } else {
-                            webSocket.writeFinalTextFrame(createError(102, "Name field is absent").encode());
+                            webSocket.writeFinalTextFrame(createError(1, 102, "Name field is absent").encode());
                         }
                         break;
                     }
 
                     case 2: {   //generic message
                         if (!connected) {
-                            webSocket.writeFinalTextFrame(createError(104, "Not connected").encode());
+                            webSocket.writeFinalTextFrame(createError(2, 104, "Not connected").encode());
                         } else {
                             jabber.sendRoomMessage(id, "r1@conference.sskoptsov01", jsonObject.getString("message"));
                         }
@@ -148,13 +165,30 @@ public class WebRootVerticle extends AbstractVerticle {
                     case 3: {   //drop connection
                         connected = false;
                         if (jabber != null) {
-                            jabber.shutDownEndpoint(id);
+                            jabber.shutDownEndpoint(this.id);
                         }
                         break;
                     }
 
+                    case 4: {   //get room participants
+                        if (!connected) {
+                            webSocket.writeFinalTextFrame(createError(4, 104, "Not connected").encode());
+                        } else {
+                            jabber.getRoomParticipants(this.id, "r1@conference.sskoptsov01", event -> {
+                                if (event.succeeded()) {
+                                    webSocket.writeFinalTextFrame(createParticipants(event.result()).encode());
+                                }
+                            });
+                        }
+                        break;
+                    }
+
+                    case 5: {   //get user info
+
+                    }
+
                     default: {  //unknown command
-                        webSocket.writeFinalTextFrame(createError(101, "Unknown command").encode());
+                        webSocket.writeFinalTextFrame(createError(0, 101, "Unknown command").encode());
                     }
                 }
             });
@@ -162,7 +196,7 @@ public class WebRootVerticle extends AbstractVerticle {
             webSocket.closeHandler(event -> {
                 connected = false;
                 if (jabber != null) {
-                    jabber.shutDownEndpoint(id);
+                    jabber.shutDownEndpoint(this.id);
                 }
             });
         }

@@ -27,6 +27,7 @@ package org.schors.eva.protocol;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
+import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import org.apache.log4j.Logger;
 import org.jivesoftware.smack.*;
@@ -35,12 +36,14 @@ import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.roster.Roster;
 import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 import org.jivesoftware.smack.tcp.XMPPTCPConnectionConfiguration;
+import org.jivesoftware.smackx.iqregister.AccountManager;
 import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.jivesoftware.smackx.vcardtemp.VCardManager;
 import org.jivesoftware.smackx.vcardtemp.packet.VCard;
 import org.schors.eva.Constants;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -53,10 +56,38 @@ public class JabberAdapterServiceImpl implements JabberAdapterService {
 
     public JabberAdapterServiceImpl(Vertx vertx) {
         this.vertx = vertx;
+        AccountManager.sensitiveOperationOverInsecureConnectionDefault(true);
+    }
+
+    private static AsyncResult<String> makeAsyncResult(String result, Throwable cause, boolean success) {
+        return new AsyncResult<String>() {
+            @Override
+            public String result() {
+                return result;
+            }
+
+            @Override
+            public Throwable cause() {
+                return cause;
+            }
+
+            @Override
+            public boolean succeeded() {
+                return success;
+            }
+
+            @Override
+            public boolean failed() {
+                return !success;
+            }
+        };
     }
 
     @Override
     public void newEndpoint(JsonObject cfg, Handler<AsyncResult<String>> handler) {
+
+        SmackConfiguration.DEBUG = true;
+
         Endpoint endpoint = new Endpoint(UUID.randomUUID().toString(), cfg.getString(Constants.NICK));
         endpointMap.put(endpoint.getId(), endpoint);
 
@@ -67,7 +98,7 @@ public class JabberAdapterServiceImpl implements JabberAdapterService {
         configBuilder.setUsernameAndPassword(cfg.getString(Constants.JID), cfg.getString(Constants.PASSWORD));
         configBuilder.setResource("taiga");
         configBuilder.setServiceName(cfg.getString(Constants.HOST));
-//        configBuilder.setHost(cfg.getString(Constants.HOST));
+        configBuilder.setHost(cfg.getString(Constants.HOST));
         configBuilder.setSecurityMode(ConnectionConfiguration.SecurityMode.disabled);
         configBuilder.setDebuggerEnabled(true);
 //        configBuilder.setSecurityMode(XMPPTCPConnectionConfiguration.SecurityMode.required);
@@ -79,7 +110,6 @@ public class JabberAdapterServiceImpl implements JabberAdapterService {
         XMPPTCPConnection connection = new XMPPTCPConnection(configBuilder.build());
         endpoint.setConnection(connection);
 
-        AsyncResult<String> asyncResult;
         try {
             connection.connect().login();
             connection.addConnectionListener(new ConnListener(endpoint));
@@ -87,103 +117,43 @@ public class JabberAdapterServiceImpl implements JabberAdapterService {
         } catch (Exception e) {
             e.printStackTrace();
             log.error(e, e);
-            asyncResult = new AsyncResult<String>() {
-                @Override
-                public String result() {
-                    return null;
-                }
-
-                @Override
-                public Throwable cause() {
-                    return e;
-                }
-
-                @Override
-                public boolean succeeded() {
-                    return false;
-                }
-
-                @Override
-                public boolean failed() {
-                    return true;
-                }
-            };
-            handler.handle(asyncResult);
+            handler.handle(makeAsyncResult(null, e, false));
             return;
         }
-
-        asyncResult = new AsyncResult<String>() {
-            @Override
-            public String result() {
-                return endpoint.getId();
-            }
-
-            @Override
-            public Throwable cause() {
-                return null;
-            }
-
-            @Override
-            public boolean succeeded() {
-                return true;
-            }
-
-            @Override
-            public boolean failed() {
-                return false;
-            }
-        };
-
-        handler.handle(asyncResult);
+        handler.handle(makeAsyncResult(endpoint.getId(), null, true));
     }
 
     @Override
     public void newTmpEndpoint(String nick, Handler<AsyncResult<String>> handler) {
-        Endpoint endpoint = new Endpoint(nick, nick);
+        Endpoint endpoint = new Endpoint(UUID.randomUUID().toString(), nick);
         endpointMap.put(endpoint.getId(), endpoint);
 
         Roster.setDefaultSubscriptionMode(Roster.SubscriptionMode.manual);
         SmackConfiguration.setDefaultPacketReplyTimeout(15000);
 
         XMPPTCPConnectionConfiguration.Builder configBuilder = XMPPTCPConnectionConfiguration.builder();
-        configBuilder.setUsernameAndPassword("test2", "pass2");
         configBuilder.setResource("evachat");
         configBuilder.setServiceName("sskoptsov01");
-//        configBuilder.setHost("localhost");
+        configBuilder.setHost("sskoptsov01");
         configBuilder.setSecurityMode(ConnectionConfiguration.SecurityMode.disabled);
 
         XMPPTCPConnection connection = new XMPPTCPConnection(configBuilder.build());
         endpoint.setConnection(connection);
 
         try {
-            connection.connect().login();
+            connection.connect();
+            TemporaryAccountManager.Account account = TemporaryAccountManager.getInstance().getTemporaryAccount(connection);
+            connection.login(account.getName(), account.getPassword());
             connection.addConnectionListener(new ConnListener(endpoint));
-//            configure(connection, cfg);
+            Presence presence = new Presence(Presence.Type.available);
+            presence.setStatus("Ready");
+            presence.setPriority(10);
+            connection.sendStanza(presence);
         } catch (Exception e) {
             log.error(e, e);
         }
 
-        handler.handle(new AsyncResult<String>() {
-            @Override
-            public String result() {
-                return endpoint.getId();
-            }
-
-            @Override
-            public Throwable cause() {
-                return null;
-            }
-
-            @Override
-            public boolean succeeded() {
-                return true;
-            }
-
-            @Override
-            public boolean failed() {
-                return false;
-            }
-        });
+        handler.handle(makeAsyncResult(endpoint.getId(), null, true));
     }
 
     @Override
@@ -246,6 +216,14 @@ public class JabberAdapterServiceImpl implements JabberAdapterService {
         }
     }
 
+    @Override
+    public void getRoomParticipants(String endpointId, String room, Handler<AsyncResult<String>> handler) {
+        Endpoint endpoint = endpointMap.get(endpointId);
+        if (endpoint != null) {
+            List<String> occupants = endpoint.getRoom(room).getOccupants();
+            handler.handle(makeAsyncResult(new JsonArray(occupants).encode(), null, true));
+        }
+    }
 
     private void configure(XMPPConnection connection, JsonObject cfg) throws Exception {
         VCard vCard = new VCard();
@@ -337,10 +315,10 @@ public class JabberAdapterServiceImpl implements JabberAdapterService {
                 jsonObject.put("to", message.getTo());
                 jsonObject.put("subject", message.getSubject());
                 jsonObject.put("body", message.getBody());
+                jsonObject.put("command", 2);
                 vertx.eventBus().publish("/jabber/" + endpoint.getId(), jsonObject);
             }
         }
     }
-
 
 }

@@ -55,4 +55,6 @@ public interface JabberAdapterService {
     void sendRoomMessagePrivate(String endpointId, String room, String message);
 
     void sendMessage(String endpointId, String jid, String message);
+
+    void getRoomParticipants(String endpointId, String room, Handler<AsyncResult<String>> handler);
 }
