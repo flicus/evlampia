@@ -180,7 +180,7 @@ public class JabberAdapterServiceImpl implements JabberAdapterService {
     public void joinRoom(String endpointId, String room, boolean look4subject) {
         Endpoint endpoint = endpointMap.get(endpointId);
         if (endpoint != null) {
-            endpoint.joinRoom(room, new RoomListener(endpoint), look4subject);
+            endpoint.joinRoom(room, new RoomListener(endpoint), new RoomPresenceListener(endpoint), look4subject);
         }
     }
 
@@ -296,6 +296,25 @@ public class JabberAdapterServiceImpl implements JabberAdapterService {
         @Override
         public void reconnectionFailed(Exception e) {
             log.warn("Reconnection failed: ", e);
+        }
+    }
+
+    private class RoomPresenceListener implements PresenceListener {
+
+        private Endpoint endpoint;
+
+        public RoomPresenceListener(Endpoint endpoint) {
+            this.endpoint = endpoint;
+        }
+
+        @Override
+        public void processPresence(Presence presence) {
+            JsonObject jsonObject = new JsonObject();
+            jsonObject.put("from", presence.getFrom());
+            jsonObject.put("to", presence.getTo());
+            jsonObject.put("type", presence.getType().name());
+            jsonObject.put("command", 6);
+            vertx.eventBus().publish("/jabber/" + endpoint.getId(), jsonObject);
         }
     }
 

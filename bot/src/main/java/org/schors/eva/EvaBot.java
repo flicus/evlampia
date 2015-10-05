@@ -44,20 +44,20 @@ public class EvaBot extends AbstractVerticle {
         cfg.put(Constants.LAST_NAME, "snow");
         cfg.put(Constants.PASSWORD, "eva");
 
-        jabber.newEndpoint(cfg, event1 -> {
-            if (event1.succeeded()) {
-                String id = event1.result();
+        jabber.newEndpoint(cfg, connectionEvent -> {
+            if (connectionEvent.succeeded()) {
+                String id = connectionEvent.result();
                 jabber.joinRoom(id, "r1@conference.sskoptsov01", true);
 
-                vertx.eventBus().consumer("/jabber/" + id, event -> {
-                    JsonObject message = (JsonObject) event.body();
+                vertx.eventBus().consumer("/jabber/" + id, messageEvent -> {
+                    JsonObject message = (JsonObject) messageEvent.body();
                     String[] tmp = message.getString("from").split("/");
                     if (tmp.length > 0 && !tmp[tmp.length - 1].startsWith("lampa")) {
                         jabber.sendRoomMessage(id, "r1@conference.sskoptsov01", "echo: " + message.getString("body"));
                     }
                 });
             } else {
-                throw new RuntimeException("Unable to login: " + event1.cause());
+                throw new RuntimeException("Unable to login: " + connectionEvent.cause());
             }
         });
     }

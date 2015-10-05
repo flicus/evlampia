@@ -135,11 +135,12 @@ app.factory('Helper', function () {
     return data;
 });
 
-app.directive('onEnter', function () {
+app.directive('keyHandler', function () {
     return {
         restrict: 'A',
         scope: {
-            handler: '&'
+            onEnter: '&',
+            onTab: '&'
         },
         link: function postLink(scope, element, attrs) {
             //app.log('init onEnter');
@@ -147,11 +148,20 @@ app.directive('onEnter', function () {
                 //app.log('keyup');
                 //app.log(event);
                 if (event.which == 13) {
-                    scope.handler();
+                    scope.onEnter();
+                }
+                if (event.which == 9) {
+                    scope.onTab();
                 }
             });
         }
     }
+});
+
+app.filter('jabberUser', function () {
+    return function (userName) {
+        return parseUserName(userName);
+    };
 });
 
 app.config(function ($routeProvider) {
@@ -181,7 +191,7 @@ app.controller('MainCtrl', function ($scope, Helper, $location) {
     }
 });
 
-app.controller('ChatCtrl', function ($scope, Helper) {
+app.controller('ChatCtrl', function ($scope, Helper, $location) {
     $scope.name = "ChatCtrl";
     log('chat ctrl start');
     $scope.ws = new WebSocket('ws://localhost:8080/ws/api');
@@ -208,17 +218,24 @@ app.controller('ChatCtrl', function ($scope, Helper) {
         var json = JSON.parse(msg.data);
         switch (json.command) {
             case 1:
-                $scope.ws.send(JSON.stringify({'name': $scope.ctx.name, 'command': 4}));    //get participants
+                if (json.result == 102) {
+                    $location.path('/login');
+                } else {
+                    $scope.ws.send(JSON.stringify({'name': $scope.ctx.name, 'command': 4}));    //get participants
+                }
                 break;
             case 2:
                 $scope.$apply(function () {
-                    $scope.ctx.messages.push({'from': json.from, 'body': json.body});
+                    $scope.ctx.messages.push({'from': parseUserName(json.from), 'body': json.body});
                 });
                 break;
             case 4:
                 $scope.$apply(function () {
                     $scope.ctx.users = json.users;
                 });
+                break;
+            case 6: //presence changed
+                $scope.ws.send(JSON.stringify({'name': $scope.ctx.name, 'command': 4}));    //get participants
                 break;
             default :
         }
@@ -229,7 +246,15 @@ app.controller('ChatCtrl', function ($scope, Helper) {
         $scope.$apply(function () {
             $scope.ctx.toSay = "";
         });
+    };
+
+    $scope.addLastUser = function () {
+        var lastMessage = ctx.messages[ctx.messages.length];
+        $scope.$apply(function () {
+            $scope.ctx.toSay = parseUserName(lastMessage.from) + ": " + $scope.ctx.toSay;
+        });
     }
+
 });
 
 app.controller('LoginCtrl', function ($scope, $location, Helper) {
@@ -243,3 +268,17 @@ app.controller('LoginCtrl', function ($scope, $location, Helper) {
     }
 
 });
+
+function parseUserName(username) {
+    if (username && username.indexOf("/")) {
+        return username.substr(username.indexOf("/") + 1);
+    } else {
+        return username;
+    }
+}
+
+function soundClick() {
+    var audio = new Audio();
+    audio.src = 'click.mp3';
+    audio.autoplay = true;
+}

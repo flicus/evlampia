@@ -26,6 +26,7 @@ package org.schors.eva.protocol;
 
 import org.apache.log4j.Logger;
 import org.jivesoftware.smack.MessageListener;
+import org.jivesoftware.smack.PresenceListener;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.tcp.XMPPTCPConnection;
@@ -81,13 +82,14 @@ public class Endpoint {
         this.nick = nick;
     }
 
-    public void joinRoom(String room, MessageListener listener, boolean look4subject) {
+    public void joinRoom(String room, MessageListener listener, PresenceListener presenceListener, boolean look4subject) {
         if (!rooms.containsKey(room)) {
             MultiUserChatManager manager = MultiUserChatManager.getInstanceFor(connection);
             MultiUserChat muc = manager.getMultiUserChat(room);
             try {
                 muc.join(nick);
                 muc.addMessageListener(listener);
+                muc.addParticipantListener(presenceListener);
                 if (look4subject) {
                     muc.addSubjectUpdatedListener((subject, from) -> {
                         if (!subject.contains("http://0xffff.net/logs")) {
