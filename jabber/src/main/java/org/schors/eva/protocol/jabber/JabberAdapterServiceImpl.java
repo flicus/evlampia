@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015 schors
+ * Copyright (c) 2016 schors
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package org.schors.eva.protocol;
+package org.schors.eva.protocol.jabber;
 
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
@@ -41,6 +41,7 @@ import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.jivesoftware.smackx.vcardtemp.VCardManager;
 import org.jivesoftware.smackx.vcardtemp.packet.VCard;
 import org.schors.eva.Constants;
+import org.schors.eva.Util;
 
 import java.util.HashMap;
 import java.util.List;
@@ -57,30 +58,6 @@ public class JabberAdapterServiceImpl implements JabberAdapterService {
     public JabberAdapterServiceImpl(Vertx vertx) {
         this.vertx = vertx;
         AccountManager.sensitiveOperationOverInsecureConnectionDefault(true);
-    }
-
-    private static AsyncResult<String> makeAsyncResult(String result, Throwable cause, boolean success) {
-        return new AsyncResult<String>() {
-            @Override
-            public String result() {
-                return result;
-            }
-
-            @Override
-            public Throwable cause() {
-                return cause;
-            }
-
-            @Override
-            public boolean succeeded() {
-                return success;
-            }
-
-            @Override
-            public boolean failed() {
-                return !success;
-            }
-        };
     }
 
     @Override
@@ -117,10 +94,10 @@ public class JabberAdapterServiceImpl implements JabberAdapterService {
         } catch (Exception e) {
             e.printStackTrace();
             log.error(e, e);
-            handler.handle(makeAsyncResult(null, e, false));
+            handler.handle(Util.makeAsyncResult(null, e, false));
             return;
         }
-        handler.handle(makeAsyncResult(endpoint.getId(), null, true));
+        handler.handle(Util.makeAsyncResult(endpoint.getId(), null, true));
     }
 
     @Override
@@ -153,7 +130,7 @@ public class JabberAdapterServiceImpl implements JabberAdapterService {
             log.error(e, e);
         }
 
-        handler.handle(makeAsyncResult(endpoint.getId(), null, true));
+        handler.handle(Util.makeAsyncResult(endpoint.getId(), null, true));
     }
 
     @Override
@@ -221,7 +198,7 @@ public class JabberAdapterServiceImpl implements JabberAdapterService {
         Endpoint endpoint = endpointMap.get(endpointId);
         if (endpoint != null) {
             List<String> occupants = endpoint.getRoom(room).getOccupants();
-            handler.handle(makeAsyncResult(new JsonArray(occupants).encode(), null, true));
+            handler.handle(Util.makeAsyncResult(new JsonArray(occupants).encode(), null, true));
         }
     }
 

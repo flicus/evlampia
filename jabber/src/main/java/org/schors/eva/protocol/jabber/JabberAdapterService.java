@@ -22,26 +22,39 @@
  * SOFTWARE.
  */
 
-package org.schors.eva;
+package org.schors.eva.protocol.jabber;
 
-import io.vertx.core.DeploymentOptions;
+import io.vertx.codegen.annotations.ProxyGen;
+import io.vertx.core.AsyncResult;
+import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
-import io.vertx.core.VertxOptions;
-import org.schors.eva.protocol.telegram.TelegramAdapter;
+import io.vertx.core.json.JsonObject;
+import io.vertx.serviceproxy.ProxyHelper;
 
-public class Main {
+@ProxyGen
+public interface JabberAdapterService {
 
-    public static void main(String[] args) {
-        VertxOptions options = new VertxOptions().setWorkerPoolSize(40);
-        Vertx vertx = Vertx.vertx(options);
-
-        DeploymentOptions deploymentOptions = new DeploymentOptions().setInstances(1);
-        vertx.deployVerticle(new TelegramAdapter(), deploymentOptions, event -> {
-            vertx.deployVerticle(new EvaBot(), deploymentOptions);
-        });
-//        vertx.deployVerticle(new JabberAdapter(), deploymentOptions, event -> {
-//            vertx.deployVerticle(new WebRootVerticle(), deploymentOptions);
-//            vertx.deployVerticle(new EvaBot(), deploymentOptions);
-//        });
+    static JabberAdapterService create(Vertx vertx) {
+        return new JabberAdapterServiceImpl(vertx);
     }
+
+    static JabberAdapterService createProxy(Vertx vertx, String address) {
+        return ProxyHelper.createProxy(JabberAdapterService.class, vertx, address);
+    }
+
+    void newEndpoint(JsonObject cfg, Handler<AsyncResult<String>> handler);
+
+    void newTmpEndpoint(String nick, Handler<AsyncResult<String>> handler);
+
+    void shutDownEndpoint(String endpointId);
+
+    void joinRoom(String endpointId, String room, boolean look4subject);
+
+    void sendRoomMessage(String endpointId, String room, String message);
+
+    void sendRoomMessagePrivate(String endpointId, String room, String message);
+
+    void sendMessage(String endpointId, String jid, String message);
+
+    void getRoomParticipants(String endpointId, String room, Handler<AsyncResult<String>> handler);
 }

@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015 schors
+ * Copyright (c) 2016 schors
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,6 +22,11 @@
  * SOFTWARE.
  */
 
-@GenModule(name = "vertx-jabber-adapter", groupPackageName = "org.schors.eva.protocol") package org.schors.eva.protocol;
+package org.schors.eva.protocol.telegram;
 
-import io.vertx.codegen.annotations.GenModule;
+import org.telegram.telegrambots.api.objects.Message;
+
+public interface MessageListener {
+
+    void onMessage(Message message);
+}

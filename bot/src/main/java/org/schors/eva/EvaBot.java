@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015 schors
+ * Copyright (c) 2016 schors
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -26,39 +26,63 @@ package org.schors.eva;
 
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.json.JsonObject;
-import org.schors.eva.protocol.JabberAdapterService;
+import org.schors.eva.protocol.telegram.TelegramAdapterService;
 
 public class EvaBot extends AbstractVerticle {
 
     @Override
     public void start() throws Exception {
-        final JabberAdapterService jabber = JabberAdapterService.createProxy(vertx, Constants.SERVICE_JABBER);
+
+
+        final TelegramAdapterService telegram = TelegramAdapterService.createProxy(vertx, Constants.SERVICE_TELEGRAM);
+//        final JabberAdapterService jabber = JabberAdapterService.createProxy(vertx, Constants.SERVICE_JABBER);
 
         JsonObject cfg = new JsonObject();
-        cfg.put(Constants.NICK, "lampa");
-        cfg.put(Constants.ORGANIZATION, "kolhoz");
-        cfg.put(Constants.JID, "eva");
-        cfg.put(Constants.E_MAIL, "aaa.bbb.cc");
-        cfg.put(Constants.FIRST_NAME, "lampa");
-        cfg.put(Constants.HOST, "sskoptsov01");
-        cfg.put(Constants.LAST_NAME, "snow");
-        cfg.put(Constants.PASSWORD, "eva");
+//        cfg.put(Constants.NICK, "lampa");
+//        cfg.put(Constants.ORGANIZATION, "kolhoz");
+//        cfg.put(Constants.JID, "eva");
+//        cfg.put(Constants.E_MAIL, "aaa.bbb.cc");
+//        cfg.put(Constants.FIRST_NAME, "lampa");
+//        cfg.put(Constants.HOST, "sskoptsov01");
+//        cfg.put(Constants.LAST_NAME, "snow");
+//        cfg.put(Constants.PASSWORD, "eva");
+        cfg.put("token", "219739200:AAHXCuDWJPoRhUAjFBXFmljVJhR2uVXdmwc");
+        cfg.put("name", "evlampia_bot");
 
-        jabber.newEndpoint(cfg, connectionEvent -> {
-            if (connectionEvent.succeeded()) {
-                String id = connectionEvent.result();
-                jabber.joinRoom(id, "r1@conference.sskoptsov01", true);
-
-                vertx.eventBus().consumer("/jabber/" + id, messageEvent -> {
+        telegram.newEndpoint(cfg, event -> {
+            if (event.succeeded()) {
+                String id = event.result();
+                vertx.eventBus().consumer("/telegram/" + id, messageEvent -> {
                     JsonObject message = (JsonObject) messageEvent.body();
-                    String[] tmp = message.getString("from").split("/");
-                    if (tmp.length > 0 && !tmp[tmp.length - 1].startsWith("lampa")) {
-                        jabber.sendRoomMessage(id, "r1@conference.sskoptsov01", "echo: " + message.getString("body"));
+                    switch (message.getString("message")) {
+                        case "/help":
+                            telegram.sendMessage(message.getString("chatId"), message.getString("messageId"), "Потом как нибудь помогу");
+                            break;
+                        case "/sovet":
+                            telegram.sendMessage(message.getString("chatId"), message.getString("messageId"), "В сельсовете спроси");
+                            break;
                     }
                 });
             } else {
-                throw new RuntimeException("Unable to login: " + connectionEvent.cause());
+                throw new RuntimeException("Unable to create telegram bot: " + event.cause());
             }
         });
+
+//        jabber.newEndpoint(cfg, connectionEvent -> {
+//            if (connectionEvent.succeeded()) {
+//                String id = connectionEvent.result();
+//                jabber.joinRoom(id, "r1@conference.sskoptsov01", true);
+//
+//                vertx.eventBus().consumer("/jabber/" + id, messageEvent -> {
+//                    JsonObject message = (JsonObject) messageEvent.body();
+//                    String[] tmp = message.getString("from").split("/");
+//                    if (tmp.length > 0 && !tmp[tmp.length - 1].startsWith("lampa")) {
+//                        jabber.sendRoomMessage(id, "r1@conference.sskoptsov01", "echo: " + message.getString("body"));
+//                    }
+//                });
+//            } else {
+//                throw new RuntimeException("Unable to login: " + connectionEvent.cause());
+//            }
+//        });
     }
 }

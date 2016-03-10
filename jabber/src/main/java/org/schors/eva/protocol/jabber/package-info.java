@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015 schors
+ * Copyright (c) 2016 schors
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,26 +22,7 @@
  * SOFTWARE.
  */
 
-package org.schors.eva.protocol;
+@GenModule(name = "vertx-jabber-adapter", groupPackageName = "org.schors.eva.protocol")
+package org.schors.eva.protocol.jabber;
 
-import io.vertx.core.AbstractVerticle;
-import io.vertx.serviceproxy.ProxyHelper;
-import org.apache.log4j.Logger;
-import org.schors.eva.Constants;
-
-public class JabberAdapter extends AbstractVerticle {
-    private static final Logger log = Logger.getLogger(JabberAdapter.class);
-
-    private JabberAdapterService jabberAdapterService;
-
-    @Override
-    public void start() throws Exception {
-        jabberAdapterService = new JabberAdapterServiceImpl(vertx);
-        ProxyHelper.registerService(JabberAdapterService.class, vertx, jabberAdapterService, Constants.SERVICE_JABBER);
-    }
-
-    @Override
-    public void stop() throws Exception {
-        super.stop();
-    }
-}
+import io.vertx.codegen.annotations.GenModule;

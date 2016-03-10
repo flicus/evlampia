@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015 schors
+ * Copyright (c) 2016 schors
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -34,7 +34,7 @@ import io.vertx.core.http.ServerWebSocket;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import org.schors.eva.Constants;
-import org.schors.eva.protocol.JabberAdapterService;
+import org.schors.eva.protocol.jabber.JabberAdapterService;
 
 import java.util.HashMap;
 import java.util.Map;

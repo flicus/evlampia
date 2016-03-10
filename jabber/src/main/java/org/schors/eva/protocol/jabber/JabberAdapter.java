@@ -22,27 +22,26 @@
  * SOFTWARE.
  */
 
-package org.schors.eva;
+package org.schors.eva.protocol.jabber;
 
-public interface Constants {
+import io.vertx.core.AbstractVerticle;
+import io.vertx.serviceproxy.ProxyHelper;
+import org.apache.log4j.Logger;
+import org.schors.eva.Constants;
 
-    String HOST = "host";
-    String JID = "jid";
-    String PASSWORD = "password";
-    String FIRST_NAME = "firstName";
-    String LAST_NAME = "lastName";
-    String E_MAIL = "email";
-    String ORGANIZATION = "organization";
-    String NICK = "nick";
+public class JabberAdapter extends AbstractVerticle {
+    private static final Logger log = Logger.getLogger(JabberAdapter.class);
 
-    String SERVICE_JABBER = "adapter.jabber";
-    String SERVICE_TELEGRAM = "adapter.telegram";
-    String MSG_JABBER_READY = "jabber.ready";
-    String MSG_JABBER_SHUTDOWN = "jabber.shutdown";
+    private JabberAdapterService jabberAdapterService;
 
-    String JSON_COMMAND_CODE = "command";
-    String JSON_NAME = "name";
+    @Override
+    public void start() throws Exception {
+        jabberAdapterService = new JabberAdapterServiceImpl(vertx);
+        ProxyHelper.registerService(JabberAdapterService.class, vertx, jabberAdapterService, Constants.SERVICE_JABBER);
+    }
 
-
-
+    @Override
+    public void stop() throws Exception {
+        super.stop();
+    }
 }

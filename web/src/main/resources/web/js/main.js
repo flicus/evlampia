@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015 schors
+ * Copyright (c) 2016 schors
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -27,6 +27,44 @@ window.log = function (text) {
 };
 
 var app = angular.module('webchat', ['ngRoute']);
+
+app.factory('Cookies', function () {
+    function createCookies(name, value, days) {
+        if (days) {
+            var date = new Date();
+            date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+            var expires = "; expires=" + date.toGMTString();
+        } else var expires = "";
+        document.cookie = escape(name) + "=" + escape(value) + expires + "; path=/";
+    }
+
+    return {
+        add: function (name, value, days) {
+            createCookies(name, value, days);
+        },
+        get: function (name) {
+            var nameEQ = escape(name) + "=";
+            var ca = document.cookie.split(';');
+            for (var i = 0; i < ca.length; i++) {
+                var c = ca[i];
+                while (c.charAt(0) == ' ') c = c.substring(1, c.length);
+                if (c.indexOf(nameEQ) == 0) return unescape(c.substring(nameEQ.length, c.length));
+            }
+            return null;
+        },
+        getAsJson: function (name) {
+            var cookieValue = this.get(name);
+            if (cookieValue) {
+                return $.parseJSON(cookieValue);
+            }
+            return null;
+        },
+        remove: function (name) {
+            createCookies(name, "", -1);
+        }
+
+    }
+});
 
 app.factory('Notification', function () {
 
@@ -180,15 +218,22 @@ app.config(function ($routeProvider) {
         .otherwise('/login');
 });
 
-app.controller('MainCtrl', function ($scope, Helper, $location) {
+app.controller('MainCtrl', function ($scope, Helper, $location, Cookies) {
     $scope.name = "MainCtrl";
     log('main ctrl start');
-    var name = Helper.storage.name;
-    if (name) {
+    var user = Cookies.get("eva");
+    if (user) {
+        $scope.eva = user;
         $location.path('/chat');
     } else {
         $location.path('/login');
     }
+    //var name = Helper.storage.name;
+    //if (name) {
+    //    $location.path('/chat');
+    //} else {
+    //    $location.path('/login');
+    //}
 });
 
 app.controller('ChatCtrl', function ($scope, Helper, $location) {

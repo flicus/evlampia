@@ -22,27 +22,28 @@
  * SOFTWARE.
  */
 
-package org.schors.eva;
+package org.schors.eva.protocol.telegram;
 
-public interface Constants {
+import io.vertx.codegen.annotations.ProxyGen;
+import io.vertx.core.AsyncResult;
+import io.vertx.core.Handler;
+import io.vertx.core.Vertx;
+import io.vertx.core.json.JsonObject;
+import io.vertx.serviceproxy.ProxyHelper;
 
-    String HOST = "host";
-    String JID = "jid";
-    String PASSWORD = "password";
-    String FIRST_NAME = "firstName";
-    String LAST_NAME = "lastName";
-    String E_MAIL = "email";
-    String ORGANIZATION = "organization";
-    String NICK = "nick";
+@ProxyGen
+public interface TelegramAdapterService {
 
-    String SERVICE_JABBER = "adapter.jabber";
-    String SERVICE_TELEGRAM = "adapter.telegram";
-    String MSG_JABBER_READY = "jabber.ready";
-    String MSG_JABBER_SHUTDOWN = "jabber.shutdown";
+    static TelegramAdapterService create(Vertx vertx) {
+        return new TelegramAdapterServiceImpl(vertx);
+    }
 
-    String JSON_COMMAND_CODE = "command";
-    String JSON_NAME = "name";
+    static TelegramAdapterService createProxy(Vertx vertx, String address) {
+        return ProxyHelper.createProxy(TelegramAdapterService.class, vertx, address);
+    }
 
+    void newEndpoint(JsonObject cfg, Handler<AsyncResult<String>> handler);
 
+    void sendMessage(String chatId, String messageId, String message);
 
 }

@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015 schors
+ * Copyright (c) 2016 schors
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,39 +22,24 @@
  * SOFTWARE.
  */
 
-package org.schors.eva.protocol;
+package org.schors.eva.protocol.telegram;
 
-import io.vertx.codegen.annotations.ProxyGen;
-import io.vertx.core.AsyncResult;
-import io.vertx.core.Handler;
-import io.vertx.core.Vertx;
-import io.vertx.core.json.JsonObject;
+import io.vertx.core.AbstractVerticle;
 import io.vertx.serviceproxy.ProxyHelper;
+import org.schors.eva.Constants;
 
-@ProxyGen
-public interface JabberAdapterService {
+public class TelegramAdapter extends AbstractVerticle {
 
-    static JabberAdapterService create(Vertx vertx) {
-        return new JabberAdapterServiceImpl(vertx);
+    private TelegramAdapterService telegramAdapterService;
+
+    @Override
+    public void start() throws Exception {
+        telegramAdapterService = new TelegramAdapterServiceImpl(vertx);
+        ProxyHelper.registerService(TelegramAdapterService.class, vertx, telegramAdapterService, Constants.SERVICE_TELEGRAM);
     }
 
-    static JabberAdapterService createProxy(Vertx vertx, String address) {
-        return ProxyHelper.createProxy(JabberAdapterService.class, vertx, address);
+    @Override
+    public void stop() throws Exception {
+        super.stop();
     }
-
-    void newEndpoint(JsonObject cfg, Handler<AsyncResult<String>> handler);
-
-    void newTmpEndpoint(String nick, Handler<AsyncResult<String>> handler);
-
-    void shutDownEndpoint(String endpointId);
-
-    void joinRoom(String endpointId, String room, boolean look4subject);
-
-    void sendRoomMessage(String endpointId, String room, String message);
-
-    void sendRoomMessagePrivate(String endpointId, String room, String message);
-
-    void sendMessage(String endpointId, String jid, String message);
-
-    void getRoomParticipants(String endpointId, String room, Handler<AsyncResult<String>> handler);
 }

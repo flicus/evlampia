@@ -24,25 +24,31 @@
 
 package org.schors.eva;
 
-public interface Constants {
+import io.vertx.core.AsyncResult;
 
-    String HOST = "host";
-    String JID = "jid";
-    String PASSWORD = "password";
-    String FIRST_NAME = "firstName";
-    String LAST_NAME = "lastName";
-    String E_MAIL = "email";
-    String ORGANIZATION = "organization";
-    String NICK = "nick";
+public class Util {
 
-    String SERVICE_JABBER = "adapter.jabber";
-    String SERVICE_TELEGRAM = "adapter.telegram";
-    String MSG_JABBER_READY = "jabber.ready";
-    String MSG_JABBER_SHUTDOWN = "jabber.shutdown";
+    public static AsyncResult<String> makeAsyncResult(String result, Throwable cause, boolean success) {
+        return new AsyncResult<String>() {
+            @Override
+            public String result() {
+                return result;
+            }
 
-    String JSON_COMMAND_CODE = "command";
-    String JSON_NAME = "name";
+            @Override
+            public Throwable cause() {
+                return cause;
+            }
 
+            @Override
+            public boolean succeeded() {
+                return success;
+            }
 
-
+            @Override
+            public boolean failed() {
+                return !success;
+            }
+        };
+    }
 }

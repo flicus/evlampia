@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015 schors
+ * Copyright (c) 2016 schors
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -28,4 +28,5 @@ version '1.0-SNAPSHOT'
 dependencies {
     compile project(':api')
     compile project(':jabber')
+    compile project(':telegram')
 }
