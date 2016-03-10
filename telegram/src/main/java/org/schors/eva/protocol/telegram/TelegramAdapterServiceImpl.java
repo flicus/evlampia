@@ -59,8 +59,8 @@ public class TelegramAdapterServiceImpl implements TelegramAdapterService, Messa
     }
 
     @Override
-    public void sendMessage(String endpointId, String jid, String message) {
-
+    public void sendMessage(String chatId, String messageId, String message) {
+        this.handler.sendMessage(chatId, messageId, message);
     }
 
 
