@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-@GenModule(name = "vertx-jabber-adapter", groupPackageName = "org.schors.eva.protocol")
+@GenModule(name = "vertx-jabber-adapter", groupPackageName = "org.schors.eva.protocol.jabber")
 package org.schors.eva.protocol.jabber;
 
 import io.vertx.codegen.annotations.GenModule;

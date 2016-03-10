@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-@GenModule(name = "vertx-telegram-adapter", groupPackageName = "org.schors.eva.protocol")
+@GenModule(name = "vertx-telegram-adapter", groupPackageName = "org.schors.eva.protocol.telegram")
 package org.schors.eva.protocol.telegram;
 
 import io.vertx.codegen.annotations.GenModule;
