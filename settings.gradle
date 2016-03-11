@@ -24,8 +24,8 @@
 
 rootProject.name = 'eva'
 include 'starter'
-include 'web'
-include 'jabber'
+//include 'web'
+//include 'jabber'
 include 'bot'
 include 'api'
 include 'telegram'

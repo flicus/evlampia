@@ -31,7 +31,7 @@ import org.schors.eva.protocol.telegram.TelegramAdapterService;
 public class EvaBot extends AbstractVerticle {
 
     @Override
-    public void start() throws Exception {
+    public void start() {
 
 
         final TelegramAdapterService telegram = TelegramAdapterService.createProxy(vertx, Constants.SERVICE_TELEGRAM);

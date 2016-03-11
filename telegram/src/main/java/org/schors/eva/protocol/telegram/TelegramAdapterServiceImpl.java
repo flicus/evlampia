@@ -32,6 +32,7 @@ import org.apache.log4j.Logger;
 import org.schors.eva.Util;
 import org.telegram.telegrambots.TelegramApiException;
 import org.telegram.telegrambots.TelegramBotsApi;
+import org.telegram.telegrambots.api.TelegramApiConfiguration;
 import org.telegram.telegrambots.api.objects.Message;
 
 public class TelegramAdapterServiceImpl implements TelegramAdapterService, MessageListener {
@@ -39,28 +40,29 @@ public class TelegramAdapterServiceImpl implements TelegramAdapterService, Messa
     private static final Logger log = Logger.getLogger(TelegramAdapterServiceImpl.class);
 
     private TelegramBotsApi telegram = new TelegramBotsApi();
-    private TelegramHandler handler;
+    private TelegramHandler telegramHandler;
     private Vertx vertx;
 
     public TelegramAdapterServiceImpl(Vertx vertx) {
         this.vertx = vertx;
+        TelegramApiConfiguration.getInstance().setProxy("genproxy", 8080, "http");
     }
 
     @Override
     public void newEndpoint(JsonObject cfg, Handler<AsyncResult<String>> handler) {
-        this.handler = new TelegramHandler(cfg, this);
+        this.telegramHandler = new TelegramHandler(cfg, this);
         try {
-            this.telegram.registerBot(this.handler);
+            this.telegram.registerBot(this.telegramHandler);
         } catch (TelegramApiException e) {
             log.error(e, e);
             handler.handle(Util.makeAsyncResult(null, e, false));
         }
-        handler.handle(Util.makeAsyncResult(this.handler.getBotUsername(), null, true));
+        handler.handle(Util.makeAsyncResult(this.telegramHandler.getBotUsername(), null, true));
     }
 
     @Override
     public void sendMessage(String chatId, String messageId, String message) {
-        this.handler.sendMessage(chatId, messageId, message);
+        this.telegramHandler.sendMessage(chatId, messageId, message);
     }
 
 
@@ -72,7 +74,7 @@ public class TelegramAdapterServiceImpl implements TelegramAdapterService, Messa
         jsonObject.put("messageId", message.getMessageId());
         jsonObject.put("message", message.getText());
         jsonObject.put("command", 6);
-        vertx.eventBus().publish("/telegram/" + this.handler.getBotUsername(), jsonObject);
+        vertx.eventBus().publish("/telegram/" + this.telegramHandler.getBotUsername(), jsonObject);
     }
 
 }
