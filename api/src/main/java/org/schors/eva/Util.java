@@ -28,7 +28,7 @@ import io.vertx.core.AsyncResult;
 
 public class Util {
 
-    public static AsyncResult<String> makeAsyncResult(String result, Throwable cause, boolean success) {
+    public static AsyncResult<String> makeAsyncResult(final String result, final Throwable cause, final boolean success) {
         return new AsyncResult<String>() {
             @Override
             public String result() {

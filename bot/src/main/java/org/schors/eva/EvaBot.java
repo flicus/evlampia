@@ -56,10 +56,10 @@ public class EvaBot extends AbstractVerticle {
                     JsonObject message = (JsonObject) messageEvent.body();
                     switch (message.getString("message")) {
                         case "/help":
-                            telegram.sendMessage(message.getString("chatId"), message.getString("messageId"), "Потом как нибудь помогу");
+                            telegram.sendMessage(message.getLong("chatId"), message.getInteger("messageId"), "Потом как нибудь помогу");
                             break;
                         case "/sovet":
-                            telegram.sendMessage(message.getString("chatId"), message.getString("messageId"), "В сельсовете спроси");
+                            telegram.sendMessage(message.getLong("chatId"), message.getInteger("messageId"), "В сельсовете спроси");
                             break;
                     }
                 });
