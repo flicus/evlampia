@@ -59,9 +59,9 @@ public class TelegramHandler extends TelegramLongPollingBot {
         return token;
     }
 
-    public void sendMessage(String chatId, String messageId, String message) {
+    public void sendMessage(Long chatId, Integer messageId, String message) {
         SendMessage sendMessage = new SendMessage();
-        sendMessage.setChatId(chatId);
+        sendMessage.setChatId(chatId.toString());
         sendMessage.setText(message);
         try {
             sendMessage(sendMessage);

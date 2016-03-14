@@ -44,6 +44,6 @@ public interface TelegramAdapterService {
 
     void newEndpoint(JsonObject cfg, Handler<AsyncResult<String>> handler);
 
-    void sendMessage(String chatId, String messageId, String message);
+    void sendMessage(Long chatId, Integer messageId, String message);
 
 }

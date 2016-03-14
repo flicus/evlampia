@@ -25,8 +25,21 @@
 package org.schors.eva;
 
 import io.vertx.core.AbstractVerticle;
+import io.vertx.core.AsyncResult;
+import io.vertx.core.Handler;
 import io.vertx.core.json.JsonObject;
+import org.apache.http.HttpEntity;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.conn.ssl.NoopHostnameVerifier;
+import org.apache.http.entity.BufferedHttpEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.util.EntityUtils;
+import org.json.JSONObject;
 import org.schors.eva.protocol.telegram.TelegramAdapterService;
+
+import java.io.IOException;
 
 public class EvaBot extends AbstractVerticle {
 
@@ -54,13 +67,17 @@ public class EvaBot extends AbstractVerticle {
                 String id = event.result();
                 vertx.eventBus().consumer("/telegram/" + id, messageEvent -> {
                     JsonObject message = (JsonObject) messageEvent.body();
-                    switch (message.getString("message")) {
-                        case "/help":
-                            telegram.sendMessage(message.getString("chatId"), message.getString("messageId"), "Потом как нибудь помогу");
-                            break;
-                        case "/sovet":
-                            telegram.sendMessage(message.getString("chatId"), message.getString("messageId"), "В сельсовете спроси");
-                            break;
+                    String text = message.getString("message");
+                    if (text != null) {
+                        if (text.startsWith("/help")) {
+                            telegram.sendMessage(message.getLong("chatId"), message.getInteger("messageId"), "Потом как нибудь помогу");
+                        } else if (text.startsWith("/sovet")) {
+                            getAdvice(handler -> {
+                                if (handler.succeeded()) {
+                                    telegram.sendMessage(message.getLong("chatId"), message.getInteger("messageId"), handler.result());
+                                }
+                            });
+                        }
                     }
                 });
             } else {
@@ -84,5 +101,45 @@ public class EvaBot extends AbstractVerticle {
 //                throw new RuntimeException("Unable to login: " + connectionEvent.cause());
 //            }
 //        });
+    }
+
+    private void getAdvice(Handler<AsyncResult<String>> handler) {
+        CloseableHttpClient httpclient = HttpClientBuilder.create().setSSLHostnameVerifier(new NoopHostnameVerifier()).build();
+        HttpGet httpGet = new HttpGet("");
+        try {
+            CloseableHttpResponse response = httpclient.execute(httpGet);
+            if (response.getStatusLine().getStatusCode() == 200) {
+                HttpEntity ht = response.getEntity();
+                BufferedHttpEntity buf = new BufferedHttpEntity(ht);
+                String responseContent = EntityUtils.toString(buf, "UTF-8");
+                JSONObject jsonObject = new JSONObject(responseContent);
+                handler.handle(Util.makeAsyncResult(jsonObject.getString(""), null, true));
+            } else {
+                handler.handle(
+                        Util.makeAsyncResult(
+                                String.format(
+                                        "Error response from the server: %s (%d)",
+                                        response.getStatusLine().getReasonPhrase(),
+                                        response.getStatusLine().getStatusCode()),
+                                null,
+                                false));
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            handler.handle(Util.makeAsyncResult(null, e, false));
+        }
+
+//        HttpClient client = vertx.createHttpClient();
+//        client.request(HttpMethod.GET, "", response -> {
+//            if (response.statusCode() == 200) {
+//                response.bodyHandler(buffer -> {
+//                    buffer.toString("UTF-8")
+//                });
+//            } else {
+//                handler.handle(Util.makeAsyncResult(String.format("Error response from the server: %s (%d)", response.statusMessage(), response.statusCode()), null, false));
+//            }
+//        }).exceptionHandler(e -> {
+//            handler.handle(Util.makeAsyncResult(null, e, false));
+//        }).end();
     }
 }
