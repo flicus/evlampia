@@ -32,9 +32,8 @@ import org.apache.log4j.Logger;
 import org.schors.eva.Util;
 import org.telegram.telegrambots.TelegramApiException;
 import org.telegram.telegrambots.TelegramBotsApi;
+import org.telegram.telegrambots.api.TelegramApiConfiguration;
 import org.telegram.telegrambots.api.objects.Message;
-
-import java.util.List;
 
 public class TelegramAdapterServiceImpl implements TelegramAdapterService, MessageListener {
 
@@ -46,7 +45,7 @@ public class TelegramAdapterServiceImpl implements TelegramAdapterService, Messa
 
     public TelegramAdapterServiceImpl(Vertx vertx) {
         this.vertx = vertx;
-//        TelegramApiConfiguration.getInstance().setProxy("genproxy", 8080, "http");
+        TelegramApiConfiguration.getInstance().setProxy("genproxy", 8080, "http");
     }
 
     @Override
@@ -56,19 +55,18 @@ public class TelegramAdapterServiceImpl implements TelegramAdapterService, Messa
             this.telegram.registerBot(this.telegramHandler);
         } catch (TelegramApiException e) {
             log.error(e, e);
-            handler.handle(Util.makeAsyncResult(null, e, false));
+            handler.handle(Util.makeAsyncResult((String) null, e, false));
         }
         handler.handle(Util.makeAsyncResult(this.telegramHandler.getBotUsername(), null, true));
     }
 
     @Override
-    public void sendMessage(Long chatId, Integer messageId, String message) {
-        this.telegramHandler.sendMessageInt(chatId, messageId, message, null);
-    }
-
-    @Override
-    public void sendMessage(Long chatId, Integer messageId, String message, List<List<String>> buttons) {
-        this.telegramHandler.sendMessageInt(chatId, messageId, message, buttons);
+    public void sendMessage(JsonObject message) {
+        this.telegramHandler.sendMessageInt(
+                message.getLong("chatId"),
+                message.getInteger("messageId"),
+                message.getString("text"),
+                message.getJsonArray("buttons"));
     }
 
     @Override
@@ -77,8 +75,7 @@ public class TelegramAdapterServiceImpl implements TelegramAdapterService, Messa
         jsonObject.put("from", message.getFrom().getUserName());
         jsonObject.put("chatId", message.getChatId());
         jsonObject.put("messageId", message.getMessageId());
-        jsonObject.put("message", message.getText());
-        jsonObject.put("command", 6);
+        jsonObject.put("text", message.getText());
         vertx.eventBus().publish("/telegram/" + this.telegramHandler.getBotUsername(), jsonObject);
     }
 

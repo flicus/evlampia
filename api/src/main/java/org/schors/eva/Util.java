@@ -25,6 +25,7 @@
 package org.schors.eva;
 
 import io.vertx.core.AsyncResult;
+import io.vertx.core.json.JsonObject;
 
 public class Util {
 
@@ -32,6 +33,30 @@ public class Util {
         return new AsyncResult<String>() {
             @Override
             public String result() {
+                return result;
+            }
+
+            @Override
+            public Throwable cause() {
+                return cause;
+            }
+
+            @Override
+            public boolean succeeded() {
+                return success;
+            }
+
+            @Override
+            public boolean failed() {
+                return !success;
+            }
+        };
+    }
+
+    public static AsyncResult<JsonObject> makeAsyncResult(final JsonObject result, final Throwable cause, final boolean success) {
+        return new AsyncResult<JsonObject>() {
+            @Override
+            public JsonObject result() {
                 return result;
             }
 

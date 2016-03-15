@@ -24,12 +24,17 @@
 
 package org.schors.eva.protocol.telegram;
 
+import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import org.telegram.telegrambots.TelegramApiException;
 import org.telegram.telegrambots.api.methods.SendMessage;
+import org.telegram.telegrambots.api.objects.ReplyKeyboardHide;
+import org.telegram.telegrambots.api.objects.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.api.objects.Update;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 public class TelegramHandler extends TelegramLongPollingBot {
@@ -62,12 +67,27 @@ public class TelegramHandler extends TelegramLongPollingBot {
         return token;
     }
 
-    public void sendMessageInt(Long chatId, Integer messageId, String message, List<List<String>> buttons) {
+    public void sendMessageInt(Long chatId, Integer messageId, String message, JsonArray buttons) {
         SendMessage sendMessage = new SendMessage();
         sendMessage.setChatId(String.valueOf(chatId));
         sendMessage.setText(message);
         if (buttons != null) {
-
+            ReplyKeyboardMarkup markup = new ReplyKeyboardMarkup();
+            markup.setResizeKeyboard(true);
+            markup.setOneTimeKeyboad(true);
+            List<List<String>> list = new ArrayList<>();
+            Iterator i = buttons.iterator();
+            while (i.hasNext()) {
+                List<String> sublist = new ArrayList<>();
+                sublist.add(((JsonArray) i.next()).getString(0));
+                list.add(sublist);
+            }
+            markup.setKeyboard(list);
+            sendMessage.setReplayMarkup(markup);
+        } else {
+            ReplyKeyboardHide keyboardHide = new ReplyKeyboardHide();
+            keyboardHide.setHideKeyboard(true);
+            sendMessage.setReplayMarkup(keyboardHide);
         }
         try {
             sendMessage(sendMessage);
