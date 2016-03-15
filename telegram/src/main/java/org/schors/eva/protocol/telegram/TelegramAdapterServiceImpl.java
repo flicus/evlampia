@@ -32,7 +32,7 @@ import org.apache.log4j.Logger;
 import org.schors.eva.Util;
 import org.telegram.telegrambots.TelegramApiException;
 import org.telegram.telegrambots.TelegramBotsApi;
-import org.telegram.telegrambots.api.TelegramApiConfiguration;
+import org.telegram.telegrambots.api.methods.SendMessage;
 import org.telegram.telegrambots.api.objects.Message;
 
 public class TelegramAdapterServiceImpl implements TelegramAdapterService, MessageListener {
@@ -45,7 +45,7 @@ public class TelegramAdapterServiceImpl implements TelegramAdapterService, Messa
 
     public TelegramAdapterServiceImpl(Vertx vertx) {
         this.vertx = vertx;
-        TelegramApiConfiguration.getInstance().setProxy("genproxy", 8080, "http");
+//        TelegramApiConfiguration.getInstance().setProxy("genproxy", 8080, "http");
     }
 
     @Override
@@ -62,9 +62,13 @@ public class TelegramAdapterServiceImpl implements TelegramAdapterService, Messa
 
     @Override
     public void sendMessage(Long chatId, Integer messageId, String message) {
-        this.handler.sendMessage(chatId, messageId, message);
+        this.telegramHandler.sendMessageInt(chatId, messageId, message);
     }
 
+    @Override
+    public void sendMessage(SendMessage message) {
+        this.telegramHandler.sendMessageInt(message);
+    }
 
     @Override
     public void onMessage(Message message) {

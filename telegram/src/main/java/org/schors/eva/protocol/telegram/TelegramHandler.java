@@ -44,6 +44,7 @@ public class TelegramHandler extends TelegramLongPollingBot {
 
     @Override
     public void onUpdateReceived(Update update) {
+        System.out.println(update);
         if (update.hasMessage()) {
             listener.onMessage(update.getMessage());
         }
@@ -59,12 +60,20 @@ public class TelegramHandler extends TelegramLongPollingBot {
         return token;
     }
 
-    public void sendMessage(Long chatId, Integer messageId, String message) {
+    public void sendMessageInt(Long chatId, Integer messageId, String message) {
         SendMessage sendMessage = new SendMessage();
         sendMessage.setChatId(String.valueOf(chatId));
         sendMessage.setText(message);
         try {
             sendMessage(sendMessage);
+        } catch (TelegramApiException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void sendMessageInt(SendMessage message) {
+        try {
+            sendMessage(message);
         } catch (TelegramApiException e) {
             e.printStackTrace();
         }

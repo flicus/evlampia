@@ -25,14 +25,24 @@
 package org.schors.eva;
 
 import io.vertx.core.AbstractVerticle;
+import io.vertx.core.AsyncResult;
+import io.vertx.core.Handler;
+import io.vertx.core.http.HttpClient;
+import io.vertx.core.http.HttpMethod;
 import io.vertx.core.json.JsonObject;
+import org.json.JSONObject;
 import org.schors.eva.protocol.telegram.TelegramAdapterService;
 
+
 public class EvaBot extends AbstractVerticle {
+
+    private HttpClient httpClient;
+    private TempMail tempMail = new TempMail();
 
     @Override
     public void start() {
 
+        httpClient = vertx.createHttpClient();
 
         final TelegramAdapterService telegram = TelegramAdapterService.createProxy(vertx, Constants.SERVICE_TELEGRAM);
 //        final JabberAdapterService jabber = JabberAdapterService.createProxy(vertx, Constants.SERVICE_JABBER);
@@ -54,13 +64,22 @@ public class EvaBot extends AbstractVerticle {
                 String id = event.result();
                 vertx.eventBus().consumer("/telegram/" + id, messageEvent -> {
                     JsonObject message = (JsonObject) messageEvent.body();
-                    switch (message.getString("message")) {
-                        case "/help":
+                    System.out.println(message);
+                    String text = message.getString("message");
+                    if (text != null) {
+                        if (text.startsWith("/help")) {
                             telegram.sendMessage(message.getLong("chatId"), message.getInteger("messageId"), "Потом как нибудь помогу");
-                            break;
-                        case "/sovet":
-                            telegram.sendMessage(message.getLong("chatId"), message.getInteger("messageId"), "В сельсовете спроси");
-                            break;
+                        } else if (text.startsWith("/sovet")) {
+                            getAdvice(e -> {
+                                if (e.succeeded()) {
+                                    telegram.sendMessage(message.getLong("chatId"), message.getInteger("messageId"), e.result());
+                                }
+                            });
+                        } else if (text.startsWith("/mail")) {
+                            telegram.sendMessage(tempMail.processCommand(null));
+
+
+                        }
                     }
                 });
             } else {
@@ -84,5 +103,39 @@ public class EvaBot extends AbstractVerticle {
 //                throw new RuntimeException("Unable to login: " + connectionEvent.cause());
 //            }
 //        });
+    }
+
+    private void getAdvice(Handler<AsyncResult<String>> handler) {
+
+        httpClient.request(HttpMethod.GET, "fucking-great-advice.ru", "/api/random", response -> {
+            if (response.statusCode() == 200) {
+                response.bodyHandler(buffer -> {
+                    JSONObject jsonObject = new JSONObject(buffer.toString("UTF-8"));
+                    String advice = jsonObject.getString("text");
+                    if (advice != null) advice = advice.replaceAll("\u00a0", " ").replaceAll("&nbsp;", " ");
+                    handler.handle(Util.makeAsyncResult(advice, null, true));
+                });
+            }
+        })
+                .exceptionHandler(event -> {
+                    event.printStackTrace();
+                    handler.handle(Util.makeAsyncResult(null, event, false));
+
+                })
+                .end();
+            /*CloseableHttpClient client = HttpClientBuilder.create().setSSLHostnameVerifier(new NoopHostnameVerifier()).build();
+            HttpGet request = new HttpGet("http://fucking-great-advice.ru/api/random");
+
+            CloseableHttpResponse response = client.execute(request);
+            HttpEntity ht = response.getEntity();
+
+            BufferedHttpEntity buf = new BufferedHttpEntity(ht);
+            String responseString = EntityUtils.toString(buf, "UTF-8");
+
+            JSONObject jsonObject = new JSONObject(responseString);
+            advice = jsonObject.getString("text");
+            if (advice != null) advice = advice.replaceAll("\u00a0", " ").replaceAll("&nbsp;", " ");
+            System.out.println(advice);*/
+
     }
 }
