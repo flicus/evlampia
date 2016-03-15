@@ -30,6 +30,8 @@ import org.telegram.telegrambots.api.methods.SendMessage;
 import org.telegram.telegrambots.api.objects.Update;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 
+import java.util.List;
+
 public class TelegramHandler extends TelegramLongPollingBot {
 
     private String token;
@@ -60,20 +62,15 @@ public class TelegramHandler extends TelegramLongPollingBot {
         return token;
     }
 
-    public void sendMessageInt(Long chatId, Integer messageId, String message) {
+    public void sendMessageInt(Long chatId, Integer messageId, String message, List<List<String>> buttons) {
         SendMessage sendMessage = new SendMessage();
         sendMessage.setChatId(String.valueOf(chatId));
         sendMessage.setText(message);
+        if (buttons != null) {
+
+        }
         try {
             sendMessage(sendMessage);
-        } catch (TelegramApiException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void sendMessageInt(SendMessage message) {
-        try {
-            sendMessage(message);
         } catch (TelegramApiException e) {
             e.printStackTrace();
         }

@@ -27,10 +27,7 @@ package org.schors.eva;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
-import io.vertx.core.AsyncResult;
-import io.vertx.core.Handler;
 import io.vertx.core.http.HttpClient;
-import io.vertx.core.http.HttpMethod;
 import io.vertx.core.json.JsonObject;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -41,8 +38,8 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONObject;
-import org.json.JSONObject;
 import org.schors.eva.protocol.telegram.TelegramAdapterService;
+import org.telegram.telegrambots.api.methods.SendMessage;
 
 import java.io.IOException;
 
@@ -88,9 +85,10 @@ public class EvaBot extends AbstractVerticle {
                                 }
                             });
                         } else if (text.startsWith("/mail")) {
-                            telegram.sendMessage(tempMail.processCommand(null));
-
-
+                            SendMessage reply = tempMail.processCommand(message);
+                            if (reply != null) {
+                                telegram.sendMessage(reply);
+                            }
                         }
                     }
                 });
@@ -116,44 +114,31 @@ public class EvaBot extends AbstractVerticle {
 //            }
 //        });
     }
-
-    private void getAdvice(Handler<AsyncResult<String>> handler) {
-
-        httpClient.request(HttpMethod.GET, "fucking-great-advice.ru", "/api/random", response -> {
-            if (response.statusCode() == 200) {
-                response.bodyHandler(buffer -> {
-                    JSONObject jsonObject = new JSONObject(buffer.toString("UTF-8"));
-                    String advice = jsonObject.getString("text");
-                    if (advice != null) advice = advice.replaceAll("\u00a0", " ").replaceAll("&nbsp;", " ");
-                    handler.handle(Util.makeAsyncResult(advice, null, true));
-                });
-            }
-        })
-                .exceptionHandler(event -> {
-                    event.printStackTrace();
-                    handler.handle(Util.makeAsyncResult(null, event, false));
-
-                })
-                .end();
-            /*CloseableHttpClient client = HttpClientBuilder.create().setSSLHostnameVerifier(new NoopHostnameVerifier()).build();
-            HttpGet request = new HttpGet("http://fucking-great-advice.ru/api/random");
-
-            CloseableHttpResponse response = client.execute(request);
-            HttpEntity ht = response.getEntity();
-
-            BufferedHttpEntity buf = new BufferedHttpEntity(ht);
-            String responseString = EntityUtils.toString(buf, "UTF-8");
-
-            JSONObject jsonObject = new JSONObject(responseString);
-            advice = jsonObject.getString("text");
-            if (advice != null) advice = advice.replaceAll("\u00a0", " ").replaceAll("&nbsp;", " ");
-            System.out.println(advice);*/
-
-    }
+//
+//    private void getAdvice(Handler<AsyncResult<String>> handler) {
+//
+//        httpClient.request(HttpMethod.GET, "fucking-great-advice.ru", "/api/random", response -> {
+//            if (response.statusCode() == 200) {
+//                response.bodyHandler(buffer -> {
+//                    JSONObject jsonObject = new JSONObject(buffer.toString("UTF-8"));
+//                    String advice = jsonObject.getString("text");
+//                    if (advice != null) advice = advice.replaceAll("\u00a0", " ").replaceAll("&nbsp;", " ");
+//                    handler.handle(Util.makeAsyncResult(advice, null, true));
+//                });
+//            }
+//        })
+//                .exceptionHandler(event -> {
+//                    event.printStackTrace();
+//                    handler.handle(Util.makeAsyncResult(null, event, false));
+//
+//                })
+//                .end();
+//
+//    }
 
     private void getAdvice(Handler<AsyncResult<String>> handler) {
         CloseableHttpClient httpclient = HttpClientBuilder.create().setSSLHostnameVerifier(new NoopHostnameVerifier()).build();
-        HttpGet httpGet = new HttpGet("");
+        HttpGet httpGet = new HttpGet("http://fucking-great-advice.ru/api/random");
         try {
             CloseableHttpResponse response = httpclient.execute(httpGet);
             if (response.getStatusLine().getStatusCode() == 200) {
@@ -161,7 +146,9 @@ public class EvaBot extends AbstractVerticle {
                 BufferedHttpEntity buf = new BufferedHttpEntity(ht);
                 String responseContent = EntityUtils.toString(buf, "UTF-8");
                 JSONObject jsonObject = new JSONObject(responseContent);
-                handler.handle(Util.makeAsyncResult(jsonObject.getString(""), null, true));
+                String advice = jsonObject.getString("text");
+                if (advice != null) advice = advice.replaceAll("\u00a0", " ").replaceAll("&nbsp;", " ");
+                handler.handle(Util.makeAsyncResult(advice, null, true));
             } else {
                 handler.handle(
                         Util.makeAsyncResult(

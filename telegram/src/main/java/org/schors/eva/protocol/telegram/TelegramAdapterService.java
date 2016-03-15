@@ -30,7 +30,8 @@ import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonObject;
 import io.vertx.serviceproxy.ProxyHelper;
-import org.telegram.telegrambots.api.methods.SendMessage;
+
+import java.util.List;
 
 @ProxyGen
 public interface TelegramAdapterService {
@@ -47,5 +48,5 @@ public interface TelegramAdapterService {
 
     void sendMessage(Long chatId, Integer messageId, String message);
 
-    void sendMessage(SendMessage message);
+    void sendMessage(Long chatId, Integer messageId, String message, List<List<String>> buttons);
 }

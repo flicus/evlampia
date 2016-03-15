@@ -5,6 +5,7 @@ public class MailDialog {
     private MailState state;
 
     public MailDialog() {
+        this.state = MailState.NEW;
     }
 
     public MailDialog(MailState state, String email) {
