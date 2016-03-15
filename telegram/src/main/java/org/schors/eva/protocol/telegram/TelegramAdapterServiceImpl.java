@@ -45,7 +45,7 @@ public class TelegramAdapterServiceImpl implements TelegramAdapterService, Messa
 
     public TelegramAdapterServiceImpl(Vertx vertx) {
         this.vertx = vertx;
-//        TelegramApiConfiguration.getInstance().setProxy("genproxy", 8080, "http");
+        TelegramApiConfiguration.getInstance().setProxy("genproxy", 8080, "http");
     }
 
     @Override
