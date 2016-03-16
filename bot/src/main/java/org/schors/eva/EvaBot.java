@@ -25,21 +25,9 @@
 package org.schors.eva;
 
 import io.vertx.core.AbstractVerticle;
-import io.vertx.core.AsyncResult;
-import io.vertx.core.Handler;
+import io.vertx.core.DeploymentOptions;
 import io.vertx.core.json.JsonObject;
-import org.apache.http.HttpEntity;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.conn.ssl.NoopHostnameVerifier;
-import org.apache.http.entity.BufferedHttpEntity;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.util.EntityUtils;
-import org.json.JSONObject;
 import org.schors.eva.protocol.telegram.TelegramAdapterService;
-
-import java.io.IOException;
 
 
 public class EvaBot extends AbstractVerticle {
@@ -47,7 +35,21 @@ public class EvaBot extends AbstractVerticle {
     @Override
     public void start() {
 
+        DeploymentOptions deploymentOptions = new DeploymentOptions().setInstances(1);
+        vertx.deployVerticle(new DialogManager(), deploymentOptions, event -> {
+            vertx.deployVerticle(new TempMail(), deploymentOptions);
+            vertx.deployVerticle(new Advice(), deploymentOptions);
+        });
+
         final TelegramAdapterService telegram = TelegramAdapterService.createProxy(vertx, Constants.SERVICE_TELEGRAM);
+
+        vertx.eventBus().consumer("/response.handler", response -> {
+            JsonObject message = (JsonObject) response.body();
+            System.out.println("eb:response handler: " + message);
+            if ("ok".equals(message.getString("result"))) {
+                telegram.sendMessage(message);
+            }
+        });
 
         JsonObject cfg = new JsonObject();
         cfg.put("token", "219739200:AAHXCuDWJPoRhUAjFBXFmljVJhR2uVXdmwc");
@@ -58,7 +60,7 @@ public class EvaBot extends AbstractVerticle {
                 String id = event.result();
                 vertx.eventBus().consumer("/telegram/" + id, messageEvent -> {
                     JsonObject message = (JsonObject) messageEvent.body();
-                    System.out.println(message);
+                    System.out.println("eb: incoming: " + message);
                     vertx.eventBus().publish("/dialog.manager/message.handler", message);
                 });
             } else {
@@ -66,79 +68,6 @@ public class EvaBot extends AbstractVerticle {
             }
         });
 
-        vertx.eventBus().consumer("/response.handler", response -> {
-            JsonObject message = (JsonObject) response.body();
-            if ("ok".equals(message.getString("result"))) {
-                telegram.sendMessage(message);
-            }
-        });
-    }
-//
-//    private void getAdvice(Handler<AsyncResult<String>> handler) {
-//
-//        httpClient.request(HttpMethod.GET, "fucking-great-advice.ru", "/api/random", response -> {
-//            if (response.statusCode() == 200) {
-//                response.bodyHandler(buffer -> {
-//                    JSONObject jsonObject = new JSONObject(buffer.toString("UTF-8"));
-//                    String advice = jsonObject.getString("text");
-//                    if (advice != null) advice = advice.replaceAll("\u00a0", " ").replaceAll("&nbsp;", " ");
-//                    handler.handle(Util.makeAsyncResult(advice, null, true));
-//                });
-//            }
-//        })
-//                .exceptionHandler(event -> {
-//                    event.printStackTrace();
-//                    handler.handle(Util.makeAsyncResult(null, event, false));
-//
-//                })
-//                .end();
-//
-//    }
 
-    private void getAdvice(Handler<AsyncResult<String>> handler) {
-        vertx.executeBlocking(future -> {
-            CloseableHttpClient httpclient = HttpClientBuilder.create().setSSLHostnameVerifier(new NoopHostnameVerifier()).build();
-            HttpGet httpGet = new HttpGet("http://fucking-great-advice.ru/api/random");
-            try {
-                CloseableHttpResponse response = httpclient.execute(httpGet);
-                if (response.getStatusLine().getStatusCode() == 200) {
-                    HttpEntity ht = response.getEntity();
-                    BufferedHttpEntity buf = new BufferedHttpEntity(ht);
-                    String responseContent = EntityUtils.toString(buf, "UTF-8");
-                    JSONObject jsonObject = new JSONObject(responseContent);
-                    String advice = jsonObject.getString("text");
-                    if (advice != null) advice = advice.replaceAll("\u00a0", " ").replaceAll("&nbsp;", " ");
-                    future.complete(advice);
-                } else {
-                    future.fail(String.format(
-                            "Error response from the server: %s (%d)",
-                            response.getStatusLine().getReasonPhrase(),
-                            response.getStatusLine().getStatusCode()));
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-                future.fail(e);
-            }
-        }, res -> {
-            if (res.succeeded()) {
-                handler.handle(Util.makeAsyncResult((String) res.result(), null, true));
-            } else {
-                handler.handle(Util.makeAsyncResult((String) null, res.cause(), false));
-            }
-        });
-
-//        HttpClientOptions options = new HttpClientOptions();
-//        HttpClient client = vertx.createHttpClient();
-//        client.request(HttpMethod.GET, "", response -> {
-//            if (response.statusCode() == 200) {
-//                response.bodyHandler(buffer -> {
-//                    buffer.toString("UTF-8");
-//                });
-//            } else {
-//                handler.handle(Util.makeAsyncResult(String.format("Error response from the server: %s (%d)", response.statusMessage(), response.statusCode()), null, false));
-//            }
-//        }).exceptionHandler(e -> {
-//            handler.handle(Util.makeAsyncResult(null, e, false));
-//        }).end();
     }
 }

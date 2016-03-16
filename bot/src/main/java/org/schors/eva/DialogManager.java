@@ -41,6 +41,7 @@ public class DialogManager extends AbstractVerticle {
     public void start() throws Exception {
         vertx.eventBus().consumer("/dialog.manager/dialog.handler", event -> {
             JsonObject message = (JsonObject) event.body();
+            System.out.println("dm:dialog handler: " + message);
             String cmd = message.getString("command");
             Long chatId = message.getLong("chatId");
             String from = message.getString("from");
@@ -62,6 +63,7 @@ public class DialogManager extends AbstractVerticle {
         });
         vertx.eventBus().consumer("/dialog.manager/command.handler", event -> {
             JsonArray message = (JsonArray) event.body();
+            System.out.println("dm:command handler" + message);
             Iterator i = message.iterator();
             while (i.hasNext()) {
                 JsonObject obj = (JsonObject) i.next();
@@ -70,6 +72,7 @@ public class DialogManager extends AbstractVerticle {
         });
         vertx.eventBus().consumer("/dialog.manager/message.handler", event -> {
             JsonObject message = (JsonObject) event.body();
+            System.out.println("dm:message handler: " + message);
             Long chatId = message.getLong("chatId");
             String from = message.getString("from");
             Map<String, String> chatDialogs = dialogs.get(chatId);
@@ -87,7 +90,7 @@ public class DialogManager extends AbstractVerticle {
     private String findCommandHandler(JsonObject message) {
         String text = message.getString("text");
         for (Map.Entry<String, String> entry : commandHandlers.entrySet()) {
-            if (entry.getKey().startsWith(text)) {
+            if (text.startsWith(entry.getKey())) {
                 return entry.getValue();
             }
         }

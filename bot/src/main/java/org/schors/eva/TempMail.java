@@ -65,88 +65,100 @@ public class TempMail extends AbstractVerticle {
 
         vertx.eventBus().consumer("/message.handler/temp.mail", event -> {
             JsonObject message = (JsonObject) event.body();
+            System.out.println("tm:message handler: " + message);
             final JsonObject reply = message.copy();
-            Long chatId = message.getLong("chatId");
-            String from = message.getString("from");
-            final MailDialog dialog = getOrCreateDialog(chatId, from);
-            switch (dialog.getState()) {
-                case NEW:
-                    JsonObject registerDialog = message.copy();
-                    registerDialog.put("command", "openDialog");
-                    vertx.eventBus().publish("/dialog.manager/dialog.handler", registerDialog);
+            Boolean isPrivate = message.getBoolean("private");
+            if (isPrivate) {
+                Long chatId = message.getLong("chatId");
+                String from = message.getString("from");
+                final MailDialog dialog = getOrCreateDialog(chatId, from);
+                switch (dialog.getState()) {
+                    case NEW:
+                        JsonObject registerDialog = message.copy();
+                        registerDialog.put("command", "openDialog");
+                        registerDialog.put("handler", "temp.mail");
+                        vertx.eventBus().publish("/dialog.manager/dialog.handler", registerDialog);
 
-                    vertx.executeBlocking(future -> {
-                        HttpGet httpGet = new HttpGet("http://api.temp-mail.ru/request/domains/format/json");
-                        if (TelegramApiConfiguration.getInstance().getProxy() != null) {
-                            RequestConfig response = RequestConfig.custom().setProxy(TelegramApiConfiguration.getInstance().getProxy()).build();
-                            httpGet.setConfig(response);
-                        }
-                        try {
-                            CloseableHttpResponse response = httpclient.execute(httpGet);
-                            if (response.getStatusLine().getStatusCode() == 200) {
-                                HttpEntity ht = response.getEntity();
-                                BufferedHttpEntity buf = new BufferedHttpEntity(ht);
-                                String responseContent = EntityUtils.toString(buf, "UTF-8");
-                                JsonArray jsonObject = new JsonArray(responseContent);
-                                List<List<String>> list = new ArrayList<>();
-                                Iterator i = jsonObject.iterator();
-                                while (i.hasNext()) {
-                                    List<String> sublist = new ArrayList<>();
-                                    sublist.add((String) i.next());
-                                    list.add(sublist);
-                                }
-                                JsonArray buttons = new JsonArray(list);
-                                reply.put("text", "Выбери домен");
-                                reply.put("buttons", buttons);
-                                dialog.setState(MailState.SELECTING_DOMAIN);
-                                future.complete(reply);
+                        vertx.executeBlocking(future -> {
+                            HttpGet httpGet = new HttpGet("http://api.temp-mail.ru/request/domains/format/json");
+                            if (TelegramApiConfiguration.getInstance().getProxy() != null) {
+                                RequestConfig response = RequestConfig.custom().setProxy(TelegramApiConfiguration.getInstance().getProxy()).build();
+                                httpGet.setConfig(response);
                             }
-                        } catch (Exception e) {
-                            future.fail(e);
+                            try {
+                                CloseableHttpResponse response = httpclient.execute(httpGet);
+                                if (response.getStatusLine().getStatusCode() == 200) {
+                                    HttpEntity ht = response.getEntity();
+                                    BufferedHttpEntity buf = new BufferedHttpEntity(ht);
+                                    String responseContent = EntityUtils.toString(buf, "UTF-8");
+                                    JsonArray jsonObject = new JsonArray(responseContent);
+                                    List<List<String>> list = new ArrayList<>();
+                                    Iterator i = jsonObject.iterator();
+                                    while (i.hasNext()) {
+                                        List<String> sublist = new ArrayList<>();
+                                        sublist.add((String) i.next());
+                                        list.add(sublist);
+                                    }
+                                    JsonArray buttons = new JsonArray(list);
+                                    reply.put("text", "Выбери домен");
+                                    reply.put("buttons", buttons);
+                                    dialog.setState(MailState.SELECTING_DOMAIN);
+                                    future.complete(reply);
+                                }
+                            } catch (Exception e) {
+                                future.fail(e);
+                            }
+                        }, res -> {
+                            if (res.succeeded()) {
+                                reply.put("result", "ok");
+                            } else {
+                                reply.put("result", "nok");
+                            }
+                            vertx.eventBus().publish("/response.handler", reply);
+                        });
+                        break;
+                    case SELECTING_DOMAIN:
+                        dialog.setEmail(message.getString("text"));
+                        reply.put("text", "Введи имя почтового ящика (часть е-майл адреса перед символом @)");
+                        dialog.setState(MailState.SELECTING_ADDRESS);
+                        reply.put("result", "ok");
+                        vertx.eventBus().publish("/response.handler", reply);
+                        break;
+                    case SELECTING_ADDRESS:
+                        dialog.setEmail(message.getString("text").concat(dialog.getEmail()));
+                        dialog.setState(MailState.WAITING_FOR_MAIL);
+                        Map<String, Set<EmailHolder>> userList = mailboxes.get(chatId);
+                        if (userList == null) {
+                            userList = new ConcurrentHashMap<>();
+                            mailboxes.put(chatId, userList);
                         }
-                    }, res -> {
-                        if (res.succeeded()) {
-                            reply.put("result", "ok");
-                        } else {
-                            reply.put("result", "nok");
+                        Set<EmailHolder> emailList = userList.get(from);
+                        if (emailList == null) {
+                            emailList = new HashSet<>();
+                            userList.put(from, emailList);
                         }
-                    });
-                    break;
-                case SELECTING_DOMAIN:
-                    dialog.setEmail(message.getString("text"));
-                    reply.put("text", "Введи имя почтового ящика (часть е-майл адреса перед символом @)");
-                    dialog.setState(MailState.SELECTING_ADDRESS);
-                    reply.put("result", "ok");
-                    break;
-                case SELECTING_ADDRESS:
-                    dialog.setEmail(message.getString("text").concat(dialog.getEmail()));
-                    dialog.setState(MailState.WAITING_FOR_MAIL);
-                    Map<String, Set<EmailHolder>> userList = mailboxes.get(chatId);
-                    if (userList == null) {
-                        userList = new ConcurrentHashMap<>();
-                        mailboxes.put(chatId, userList);
-                    }
-                    Set<EmailHolder> emailList = userList.get(from);
-                    if (emailList == null) {
-                        emailList = new HashSet<>();
-                        userList.put(from, emailList);
-                    }
 
-                    emailList.add(new EmailHolder(dialog.getEmail()));
-                    reply.put("text", "Отслеживаю новый адрес: " + dialog.getEmail());
-                    dialog.setState(MailState.WAITING_FOR_MAIL);
-                    reply.put("result", "ok");
-                    JsonObject closeDialog = message.copy();
-                    closeDialog.put("command", "closeDialog");
-                    vertx.eventBus().publish("/dialog.manager/dialog.handler", closeDialog);
-                    break;
-                case WAITING_FOR_MAIL:
-                    String t = mailboxes.get(chatId).size() > 0 ? "На данный момент проверяю " : "Пока ничего не проверяю, добавь емайл для мониторинга";
-                    reply.put("text", t);
-                    reply.put("result", "ok");
-                    break;
+                        emailList.add(new EmailHolder(dialog.getEmail()));
+                        reply.put("text", "Отслеживаю новый адрес: " + dialog.getEmail());
+                        dialog.setState(MailState.WAITING_FOR_MAIL);
+                        reply.put("result", "ok");
+                        JsonObject closeDialog = message.copy();
+                        closeDialog.put("command", "closeDialog");
+                        vertx.eventBus().publish("/dialog.manager/dialog.handler", closeDialog);
+                        vertx.eventBus().publish("/response.handler", reply);
+                        break;
+                    case WAITING_FOR_MAIL:
+                        String t = mailboxes.get(chatId).size() > 0 ? "На данный момент проверяю " : "Пока ничего не проверяю, добавь емайл для мониторинга";
+                        reply.put("text", t);
+                        reply.put("result", "ok");
+                        vertx.eventBus().publish("/response.handler", reply);
+                        break;
+                }
+            } else {
+                reply.put("text", "Пройди в приватную беседку");
+                reply.put("result", "ok");
+                vertx.eventBus().publish("/response.handler", reply);
             }
-            vertx.eventBus().publish("/response.handler", reply);
         });
     }
 
@@ -168,31 +180,44 @@ public class TempMail extends AbstractVerticle {
         @Override
         public void handle(Long event) {
 
-            for (Map.Entry<Long, Map<String, Set<EmailHolder>>> chat : mailboxes.entrySet()) {
-                for (Map.Entry<String, Set<EmailHolder>> user : chat.getValue().entrySet()) {
-                    for (EmailHolder email : user.getValue()) {
-                        try {
-                            HttpGet httpGet = new HttpGet(String.format(mailURL, DigestUtils.md5Hex(email.getEmail())));
-                            CloseableHttpResponse response = httpclient.execute(httpGet);
-                            if (response.getStatusLine().getStatusCode() == 200) {
-                                HttpEntity ht = response.getEntity();
-                                BufferedHttpEntity buf = new BufferedHttpEntity(ht);
-                                String responseContent = EntityUtils.toString(buf, "UTF-8");
-                                JsonArray jsonObject = new JsonArray(responseContent);
-                                if (jsonObject != null) {
-                                    if (jsonObject.size() > email.count) {
-                                        System.out.println(jsonObject);
+            System.out.println("mch: handler");
+            vertx.executeBlocking(future -> {
+                for (Map.Entry<Long, Map<String, Set<EmailHolder>>> chat : mailboxes.entrySet()) {
+                    for (Map.Entry<String, Set<EmailHolder>> user : chat.getValue().entrySet()) {
+                        for (EmailHolder email : user.getValue()) {
+                            try {
+                                HttpGet httpGet = new HttpGet(String.format(mailURL, DigestUtils.md5Hex(email.getEmail())));
+                                CloseableHttpResponse response = httpclient.execute(httpGet);
+                                if (response.getStatusLine().getStatusCode() == 200) {
+                                    HttpEntity ht = response.getEntity();
+                                    BufferedHttpEntity buf = new BufferedHttpEntity(ht);
+                                    String responseContent = EntityUtils.toString(buf, "UTF-8");
+                                    JsonArray jsonObject = new JsonArray(responseContent);
+                                    System.out.println(jsonObject);
+                                    if (jsonObject != null) {
+                                        if (jsonObject.size() > email.count) {
+                                            JsonObject mail = jsonObject.getJsonObject(jsonObject.size() - 1);
+                                            System.out.println("new email");
+                                            JsonObject msg = new JsonObject();
+                                            msg.put("chatId", chat.getKey());
+                                            msg.put("result", "ok");
+                                            msg.put("text", mail.getString("mail_from") + " : " + mail.getString("mail_subject"));
+                                            vertx.eventBus().publish("/response.handler", msg);
+                                        }
+                                        email.setCount(jsonObject.size());
                                     }
-                                    email.setCount(jsonObject.size());
                                 }
+                            } catch (Exception e) {
+                                //do  nth
+                                e.printStackTrace();
                             }
-                        } catch (Exception e) {
-
+                            future.complete();
                         }
                     }
                 }
-            }
-            vertx.setTimer(30000, new MailChecker());
+            }, res -> {
+                vertx.setTimer(30000, new MailChecker());
+            });
         }
     }
 
