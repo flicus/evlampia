@@ -75,6 +75,8 @@ public class TelegramHandler extends TelegramLongPollingBot {
             ReplyKeyboardMarkup markup = new ReplyKeyboardMarkup();
             markup.setResizeKeyboard(true);
             markup.setOneTimeKeyboad(true);
+            markup.setSelective(true);
+            sendMessage.setReplayToMessageId(messageId);
             List<List<String>> list = new ArrayList<>();
             Iterator i = buttons.iterator();
             while (i.hasNext()) {

@@ -29,4 +29,5 @@ dependencies {
     compile project(':api')
 //    compile project(':jabber')
     compile project(':telegram')
+    compile 'com.github.flicus:TempMail:v0.2'
 }

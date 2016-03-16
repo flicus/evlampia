@@ -25,35 +25,40 @@
 package org.schors.eva;
 
 import io.vertx.core.AbstractVerticle;
+import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
+import io.vertx.tempmail.TempMailClient;
+import io.vertx.tempmail.TempMailOptions;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.entity.BufferedHttpEntity;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
 import org.telegram.telegrambots.api.TelegramApiConfiguration;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class TempMail extends AbstractVerticle {
+public class TMVerticle extends AbstractVerticle {
 
-    private static final String mailURL = "http://api.temp-mail.ru/request/mail/id/%s/format/json";
-
-    private CloseableHttpClient httpclient = HttpClientBuilder.create().setSSLHostnameVerifier(new NoopHostnameVerifier()).build();
+    private TempMailClient tempMailClient;
     private Map<Long, Map<String, MailDialog>> dialogs = new ConcurrentHashMap<>();
-    private Map<Long, Map<String, Set<EmailHolder>>> mailboxes = new ConcurrentHashMap<>();
+    private Map<String, Long> mai = new ConcurrentHashMap<>();
 
     @Override
     public void start() throws Exception {
 
+        tempMailClient = TempMailClient.create(vertx, new TempMailOptions().setProxy("genproxy", 8080, "http"));
+        final Handler<AsyncResult<JsonObject>> emailHandler = new Handler<AsyncResult<JsonObject>>() {
+            @Override
+            public void handle(AsyncResult<JsonObject> event) {
+
+            }
+        };
         vertx.setTimer(30000, new MailChecker());
 
         JsonArray registerCommand = new JsonArray();
@@ -73,48 +78,27 @@ public class TempMail extends AbstractVerticle {
                 String from = message.getString("from");
                 final MailDialog dialog = getOrCreateDialog(chatId, from);
                 switch (dialog.getState()) {
-                    case NEW:
+                    case NEW_DIALOG:
                         JsonObject registerDialog = message.copy();
                         registerDialog.put("command", "openDialog");
                         registerDialog.put("handler", "temp.mail");
                         vertx.eventBus().publish("/dialog.manager/dialog.handler", registerDialog);
-
-                        vertx.executeBlocking(future -> {
-                            HttpGet httpGet = new HttpGet("http://api.temp-mail.ru/request/domains/format/json");
-                            if (TelegramApiConfiguration.getInstance().getProxy() != null) {
-                                RequestConfig response = RequestConfig.custom().setProxy(TelegramApiConfiguration.getInstance().getProxy()).build();
-                                httpGet.setConfig(response);
-                            }
-                            try {
-                                CloseableHttpResponse response = httpclient.execute(httpGet);
-                                if (response.getStatusLine().getStatusCode() == 200) {
-                                    HttpEntity ht = response.getEntity();
-                                    BufferedHttpEntity buf = new BufferedHttpEntity(ht);
-                                    String responseContent = EntityUtils.toString(buf, "UTF-8");
-                                    JsonArray jsonObject = new JsonArray(responseContent);
-                                    List<List<String>> list = new ArrayList<>();
-                                    Iterator i = jsonObject.iterator();
-                                    while (i.hasNext()) {
-                                        List<String> sublist = new ArrayList<>();
-                                        sublist.add((String) i.next());
-                                        list.add(sublist);
-                                    }
-                                    JsonArray buttons = new JsonArray(list);
-                                    reply.put("text", "Выбери домен");
-                                    reply.put("buttons", buttons);
-                                    dialog.setState(MailState.SELECTING_DOMAIN);
-                                    future.complete(reply);
+                        tempMailClient.getSupportedDomains(e -> {
+                            if (e.succeeded()) {
+                                List<List<String>> list = new ArrayList<>();
+                                Iterator i = e.result().getJsonArray("result").iterator();
+                                while (i.hasNext()) {
+                                    List<String> sublist = new ArrayList<>();
+                                    sublist.add((String) i.next());
+                                    list.add(sublist);
                                 }
-                            } catch (Exception e) {
-                                future.fail(e);
-                            }
-                        }, res -> {
-                            if (res.succeeded()) {
+                                JsonArray buttons = new JsonArray(list);
+                                reply.put("text", "Выбери домен");
+                                reply.put("buttons", buttons);
                                 reply.put("result", "ok");
-                            } else {
-                                reply.put("result", "nok");
+                                dialog.setState(MailState.SELECTING_DOMAIN);
+                                vertx.eventBus().publish("/response.handler", reply);
                             }
-                            vertx.eventBus().publish("/response.handler", reply);
                         });
                         break;
                     case SELECTING_DOMAIN:
@@ -127,18 +111,7 @@ public class TempMail extends AbstractVerticle {
                     case SELECTING_ADDRESS:
                         dialog.setEmail(message.getString("text").concat(dialog.getEmail()));
                         dialog.setState(MailState.WAITING_FOR_MAIL);
-                        Map<String, Set<EmailHolder>> userList = mailboxes.get(chatId);
-                        if (userList == null) {
-                            userList = new ConcurrentHashMap<>();
-                            mailboxes.put(chatId, userList);
-                        }
-                        Set<EmailHolder> emailList = userList.get(from);
-                        if (emailList == null) {
-                            emailList = new HashSet<>();
-                            userList.put(from, emailList);
-                        }
-
-                        emailList.add(new EmailHolder(dialog.getEmail()));
+                        tempMailClient.createMailListener(dialog.getEmail(), emailHandler);
                         reply.put("text", "Отслеживаю новый адрес: " + dialog.getEmail());
                         dialog.setState(MailState.WAITING_FOR_MAIL);
                         reply.put("result", "ok");
@@ -148,7 +121,9 @@ public class TempMail extends AbstractVerticle {
                         vertx.eventBus().publish("/response.handler", reply);
                         break;
                     case WAITING_FOR_MAIL:
-                        String t = mailboxes.get(chatId).size() > 0 ? "На данный момент проверяю " : "Пока ничего не проверяю, добавь емайл для мониторинга";
+                        String t = mailboxes.get(chatId).size() > 0
+                                ? "На данный момент проверяю: " + getCheckedEmails(chatId, from) + helpText(chatId, from)
+                                : "Пока ничего не проверяю, добавь емайл для проверки";
                         reply.put("text", t);
                         reply.put("result", "ok");
                         vertx.eventBus().publish("/response.handler", reply);
@@ -160,6 +135,52 @@ public class TempMail extends AbstractVerticle {
                 vertx.eventBus().publish("/response.handler", reply);
             }
         });
+    }
+
+    private String helpText(Long chatId, String from) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("\nДоступные команды:");
+
+        MailState state = MailState.NEW_DIALOG;
+        Map<String, MailDialog> users = dialogs.get(chatId);
+        if (users != null) {
+            MailDialog mailDialog = users.get(from);
+            if (mailDialog != null) {
+                state = mailDialog.getState();
+            }
+        }
+
+        switch (state) {
+            case NEW_DIALOG:
+                break;
+            case SELECTING_ADDRESS:
+                sb.append("\n/stop - отмена");
+                break;
+            case SELECTING_DOMAIN:
+                sb.append("\n/stop - отмена");
+                break;
+            case WAITING_FOR_MAIL:
+                sb.append("\n/stop - прекратить все проверки")
+                        .append("\n/show - показать письма")
+                        .append("\n/add  - добавить почтовый ящик")
+                        .append("\n/delete - удалить почтовый ящик");
+                break;
+        }
+        return sb.toString();
+    }
+
+    private String getCheckedEmails(Long chatId, String from) {
+        StringBuilder sb = new StringBuilder("\n");
+        Map<String, Set<EmailHolder>> users = mailboxes.get(chatId);
+        if (users != null) {
+            Set<EmailHolder> emails = users.get(from);
+            if (emails != null && emails.size() > 0) {
+                for (EmailHolder emailHolder : emails) {
+                    sb.append(emailHolder.getEmail()).append("\n");
+                }
+            }
+        }
+        return sb.toString();
     }
 
     private MailDialog getOrCreateDialog(Long chatId, String from) {
@@ -187,6 +208,10 @@ public class TempMail extends AbstractVerticle {
                         for (EmailHolder email : user.getValue()) {
                             try {
                                 HttpGet httpGet = new HttpGet(String.format(mailURL, DigestUtils.md5Hex(email.getEmail())));
+                                if (TelegramApiConfiguration.getInstance().getProxy() != null) {
+                                    RequestConfig response = RequestConfig.custom().setProxy(TelegramApiConfiguration.getInstance().getProxy()).build();
+                                    httpGet.setConfig(response);
+                                }
                                 CloseableHttpResponse response = httpclient.execute(httpGet);
                                 if (response.getStatusLine().getStatusCode() == 200) {
                                     HttpEntity ht = response.getEntity();

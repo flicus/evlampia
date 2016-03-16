@@ -37,7 +37,7 @@ public class EvaBot extends AbstractVerticle {
 
         DeploymentOptions deploymentOptions = new DeploymentOptions().setInstances(1);
         vertx.deployVerticle(new DialogManager(), deploymentOptions, event -> {
-            vertx.deployVerticle(new TempMail(), deploymentOptions);
+            vertx.deployVerticle(new TMVerticle(), deploymentOptions);
             vertx.deployVerticle(new Advice(), deploymentOptions);
         });
 
