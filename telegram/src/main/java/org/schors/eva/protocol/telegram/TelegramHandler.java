@@ -26,6 +26,7 @@ package org.schors.eva.protocol.telegram;
 
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
+import org.schors.eva.Constants;
 import org.telegram.telegrambots.TelegramApiException;
 import org.telegram.telegrambots.api.methods.SendMessage;
 import org.telegram.telegrambots.api.objects.ReplyKeyboardHide;
@@ -44,8 +45,8 @@ public class TelegramHandler extends TelegramLongPollingBot {
     private MessageListener listener;
 
     public TelegramHandler(JsonObject cfg, MessageListener listener) {
-        token = cfg.getString("token");
-        botName = cfg.getString("name");
+        token = cfg.getString(Constants.MAP_TOKEN);
+        botName = cfg.getString(Constants.MAP_NAME);
         this.listener = listener;
     }
 

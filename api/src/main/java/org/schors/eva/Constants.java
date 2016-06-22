@@ -40,8 +40,29 @@ public interface Constants {
     String MSG_JABBER_READY = "jabber.ready";
     String MSG_JABBER_SHUTDOWN = "jabber.shutdown";
 
-    String JSON_COMMAND_CODE = "command";
-    String JSON_NAME = "name";
+    String MAP_TOKEN = "token";
+    String MAP_NAME = "name";
+    String MAP_COMMAND = "command";
+    String MAP_CHAT_ID = "chatId";
+    String MAP_FROM = "from";
+    String MAP_HANDLER = "handler";
+    String MAP_TEXT = "text";
+    String MAP_PRIVATE = "private";
+    String MAP_RESULT = "result";
+    String MAP_BUTTONS = "buttons";
+
+    String CMD_OPEN_DIALOG = "openDialog";
+    String CMD_CLOSE_DIALOG = "closeDialog";
+
+    String RESPONSE_HANDLER = "/response.handler";
+    String MESSAGE_HANDLER = "/message.handler";
+
+    String DM_MESSAGE_HANDLER = "/dialog.manager/message.handler";
+    String DM_DIALOG_HANDLER = "/dialog.manager/dialog.handler";
+    String DM_COMMAND_HANDLER = "/dialog.manager/command.handler";
+
+    String RES_OK = "ok";
+
 
 
 

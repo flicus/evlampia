@@ -39,56 +39,56 @@ public class DialogManager extends AbstractVerticle {
 
     @Override
     public void start() throws Exception {
-        vertx.eventBus().consumer("/dialog.manager/dialog.handler", event -> {
+        vertx.eventBus().consumer(Constants.DM_DIALOG_HANDLER, event -> {
             JsonObject message = (JsonObject) event.body();
             System.out.println("dm:dialog handler: " + message);
-            String cmd = message.getString("command");
-            Long chatId = message.getLong("chatId");
-            String from = message.getString("from");
+            String cmd = message.getString(Constants.MAP_COMMAND);
+            Long chatId = message.getLong(Constants.MAP_CHAT_ID);
+            String from = message.getString(Constants.MAP_FROM);
             Map<String, String> m = dialogs.get(chatId);
             switch (cmd) {
-                case "openDialog":
+                case Constants.CMD_OPEN_DIALOG:
                     if (m == null) {
                         m = new ConcurrentHashMap<String, String>();
                         dialogs.put(chatId, m);
                     }
-                    m.put(from, message.getString("handler"));
+                    m.put(from, message.getString(Constants.MAP_HANDLER));
                     break;
-                case "closeDialog":
+                case Constants.CMD_CLOSE_DIALOG:
                     if (m != null) {
                         m.remove(from);
                     }
                     break;
             }
         });
-        vertx.eventBus().consumer("/dialog.manager/command.handler", event -> {
+        vertx.eventBus().consumer(Constants.DM_COMMAND_HANDLER, event -> {
             JsonArray message = (JsonArray) event.body();
             System.out.println("dm:command handler" + message);
             Iterator i = message.iterator();
             while (i.hasNext()) {
                 JsonObject obj = (JsonObject) i.next();
-                commandHandlers.put(obj.getString("command"), obj.getString("handler"));
+                commandHandlers.put(obj.getString(Constants.MAP_COMMAND), obj.getString(Constants.MAP_HANDLER));
             }
         });
-        vertx.eventBus().consumer("/dialog.manager/message.handler", event -> {
+        vertx.eventBus().consumer(Constants.DM_MESSAGE_HANDLER, event -> {
             JsonObject message = (JsonObject) event.body();
             System.out.println("dm:message handler: " + message);
-            Long chatId = message.getLong("chatId");
-            String from = message.getString("from");
+            Long chatId = message.getLong(Constants.MAP_CHAT_ID);
+            String from = message.getString(Constants.MAP_FROM);
             Map<String, String> chatDialogs = dialogs.get(chatId);
             if (chatDialogs != null && chatDialogs.get(from) != null) {
-                vertx.eventBus().publish("/message.handler/" + chatDialogs.get(from), message);
+                vertx.eventBus().publish(Constants.MESSAGE_HANDLER + "/" + chatDialogs.get(from), message);
             } else {
                 String commandHandler = findCommandHandler(message);
                 if (commandHandler != null) {
-                    vertx.eventBus().publish("/message.handler/" + commandHandler, message);
+                    vertx.eventBus().publish(Constants.MESSAGE_HANDLER + "/" + commandHandler, message);
                 }
             }
         });
     }
 
     private String findCommandHandler(JsonObject message) {
-        String text = message.getString("text");
+        String text = message.getString(Constants.MAP_TEXT);
         for (Map.Entry<String, String> entry : commandHandlers.entrySet()) {
             if (text.startsWith(entry.getKey())) {
                 return entry.getValue();

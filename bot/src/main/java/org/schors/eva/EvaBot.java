@@ -43,7 +43,7 @@ public class EvaBot extends AbstractVerticle {
 
         final TelegramAdapterService telegram = TelegramAdapterService.createProxy(vertx, Constants.SERVICE_TELEGRAM);
 
-        vertx.eventBus().consumer("/response.handler", response -> {
+        vertx.eventBus().consumer(Constants.RESPONSE_HANDLER, response -> {
             JsonObject message = (JsonObject) response.body();
             System.out.println("eb:response handler: " + message);
             if ("ok".equals(message.getString("result"))) {
@@ -52,8 +52,8 @@ public class EvaBot extends AbstractVerticle {
         });
 
         JsonObject cfg = new JsonObject();
-        cfg.put("token", "219739200:AAHXCuDWJPoRhUAjFBXFmljVJhR2uVXdmwc");
-        cfg.put("name", "evlampia_bot");
+        cfg.put(Constants.MAP_TOKEN, "219739200:AAHXCuDWJPoRhUAjFBXFmljVJhR2uVXdmwc");
+        cfg.put(Constants.MAP_NAME, "evlampia_bot");
 
         telegram.newEndpoint(cfg, event -> {
             if (event.succeeded()) {
@@ -61,7 +61,7 @@ public class EvaBot extends AbstractVerticle {
                 vertx.eventBus().consumer("/telegram/" + id, messageEvent -> {
                     JsonObject message = (JsonObject) messageEvent.body();
                     System.out.println("eb: incoming: " + message);
-                    vertx.eventBus().publish("/dialog.manager/message.handler", message);
+                    vertx.eventBus().publish(Constants.DM_MESSAGE_HANDLER, message);
                 });
             } else {
                 throw new RuntimeException("Unable to create telegram bot: " + event.cause());

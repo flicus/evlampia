@@ -45,6 +45,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class TMVerticle extends AbstractVerticle {
 
+    private static final String ID = "temp.mail";
+
     private TempMailClient tempMailClient;
     private Map<Long, Map<String, MailDialog>> dialogs = new ConcurrentHashMap<>();
     private Map<String, Long> mai = new ConcurrentHashMap<>();
@@ -63,76 +65,76 @@ public class TMVerticle extends AbstractVerticle {
 
         JsonArray registerCommand = new JsonArray();
         JsonObject cmd = new JsonObject();
-        cmd.put("command", "/mail");
-        cmd.put("handler", "temp.mail");
+        cmd.put(Constants.MAP_COMMAND, "/mail");
+        cmd.put(Constants.MAP_HANDLER, ID);
         registerCommand.add(cmd);
-        vertx.eventBus().publish("/dialog.manager/command.handler", registerCommand);
+        vertx.eventBus().publish(Constants.DM_COMMAND_HANDLER, registerCommand);
 
-        vertx.eventBus().consumer("/message.handler/temp.mail", event -> {
+        vertx.eventBus().consumer(Constants.MESSAGE_HANDLER + "/" + ID, event -> {
             JsonObject message = (JsonObject) event.body();
             System.out.println("tm:message handler: " + message);
             final JsonObject reply = message.copy();
-            Boolean isPrivate = message.getBoolean("private");
+            Boolean isPrivate = message.getBoolean(Constants.MAP_PRIVATE);
             if (isPrivate) {
-                Long chatId = message.getLong("chatId");
-                String from = message.getString("from");
+                Long chatId = message.getLong(Constants.MAP_CHAT_ID);
+                String from = message.getString(Constants.MAP_FROM);
                 final MailDialog dialog = getOrCreateDialog(chatId, from);
                 switch (dialog.getState()) {
                     case NEW_DIALOG:
                         JsonObject registerDialog = message.copy();
-                        registerDialog.put("command", "openDialog");
-                        registerDialog.put("handler", "temp.mail");
-                        vertx.eventBus().publish("/dialog.manager/dialog.handler", registerDialog);
+                        registerDialog.put(Constants.MAP_COMMAND, Constants.CMD_OPEN_DIALOG);
+                        registerDialog.put(Constants.MAP_HANDLER, ID);
+                        vertx.eventBus().publish(Constants.DM_DIALOG_HANDLER, registerDialog);
                         tempMailClient.getSupportedDomains(e -> {
                             if (e.succeeded()) {
                                 List<List<String>> list = new ArrayList<>();
-                                Iterator i = e.result().getJsonArray("result").iterator();
+                                Iterator i = e.result().getJsonArray(Constants.MAP_RESULT).iterator();
                                 while (i.hasNext()) {
                                     List<String> sublist = new ArrayList<>();
                                     sublist.add((String) i.next());
                                     list.add(sublist);
                                 }
                                 JsonArray buttons = new JsonArray(list);
-                                reply.put("text", "Выбери домен");
-                                reply.put("buttons", buttons);
-                                reply.put("result", "ok");
+                                reply.put(Constants.MAP_TEXT, "Выбери домен");
+                                reply.put(Constants.MAP_BUTTONS, buttons);
+                                reply.put(Constants.MAP_RESULT, Constants.RES_OK);
                                 dialog.setState(MailState.SELECTING_DOMAIN);
-                                vertx.eventBus().publish("/response.handler", reply);
+                                vertx.eventBus().publish(Constants.RESPONSE_HANDLER, reply);
                             }
                         });
                         break;
                     case SELECTING_DOMAIN:
-                        dialog.setEmail(message.getString("text"));
-                        reply.put("text", "Введи имя почтового ящика (часть е-майл адреса перед символом @)");
+                        dialog.setEmail(message.getString(Constants.MAP_TEXT));
+                        reply.put(Constants.MAP_TEXT, "Введи имя почтового ящика (часть е-майл адреса перед символом @)");
                         dialog.setState(MailState.SELECTING_ADDRESS);
-                        reply.put("result", "ok");
-                        vertx.eventBus().publish("/response.handler", reply);
+                        reply.put(Constants.MAP_RESULT, Constants.RES_OK);
+                        vertx.eventBus().publish(Constants.RESPONSE_HANDLER, reply);
                         break;
                     case SELECTING_ADDRESS:
-                        dialog.setEmail(message.getString("text").concat(dialog.getEmail()));
+                        dialog.setEmail(message.getString(Constants.MAP_TEXT).concat(dialog.getEmail()));
                         dialog.setState(MailState.WAITING_FOR_MAIL);
                         tempMailClient.createMailListener(dialog.getEmail(), emailHandler);
-                        reply.put("text", "Отслеживаю новый адрес: " + dialog.getEmail());
+                        reply.put(Constants.MAP_TEXT, "Отслеживаю новый адрес: " + dialog.getEmail());
                         dialog.setState(MailState.WAITING_FOR_MAIL);
-                        reply.put("result", "ok");
+                        reply.put(Constants.MAP_RESULT, Constants.RES_OK);
                         JsonObject closeDialog = message.copy();
-                        closeDialog.put("command", "closeDialog");
-                        vertx.eventBus().publish("/dialog.manager/dialog.handler", closeDialog);
-                        vertx.eventBus().publish("/response.handler", reply);
+                        closeDialog.put(Constants.MAP_COMMAND, Constants.CMD_CLOSE_DIALOG);
+                        vertx.eventBus().publish(Constants.DM_DIALOG_HANDLER, closeDialog);
+                        vertx.eventBus().publish(Constants.RESPONSE_HANDLER, reply);
                         break;
                     case WAITING_FOR_MAIL:
                         String t = mailboxes.get(chatId).size() > 0
                                 ? "На данный момент проверяю: " + getCheckedEmails(chatId, from) + helpText(chatId, from)
                                 : "Пока ничего не проверяю, добавь емайл для проверки";
-                        reply.put("text", t);
-                        reply.put("result", "ok");
-                        vertx.eventBus().publish("/response.handler", reply);
+                        reply.put(Constants.MAP_TEXT, t);
+                        reply.put(Constants.MAP_RESULT, Constants.RES_OK);
+                        vertx.eventBus().publish(Constants.RESPONSE_HANDLER, reply);
                         break;
                 }
             } else {
-                reply.put("text", "Пройди в приватную беседку");
-                reply.put("result", "ok");
-                vertx.eventBus().publish("/response.handler", reply);
+                reply.put(Constants.MAP_TEXT, "Пройди в приватную беседку");
+                reply.put(Constants.MAP_RESULT, Constants.RES_OK);
+                vertx.eventBus().publish(Constants.RESPONSE_HANDLER, reply);
             }
         });
     }
@@ -224,9 +226,9 @@ public class TMVerticle extends AbstractVerticle {
                                             JsonObject mail = jsonObject.getJsonObject(jsonObject.size() - 1);
                                             System.out.println("new email");
                                             JsonObject msg = new JsonObject();
-                                            msg.put("chatId", chat.getKey());
-                                            msg.put("result", "ok");
-                                            msg.put("text", mail.getString("mail_from") + " : " + mail.getString("mail_subject"));
+                                            msg.put(Constants.MAP_CHAT_ID, chat.getKey());
+                                            msg.put(Constants.MAP_RESULT, Constants.RES_OK);
+                                            msg.put(Constants.MAP_TEXT, mail.getString("mail_from") + " : " + mail.getString("mail_subject"));
                                             vertx.eventBus().publish("/response.handler", msg);
                                         }
                                         email.setCount(jsonObject.size());
